@@ -334,7 +334,7 @@ def sale_edit(request, pk):
         try:
             with transaction.atomic():
                 # Update basic sale info from form
-                customer_id_str = request.POST.get('customer')
+                customer_id_str = request.POST.get('customer'); current_total_paid_on_sale_load = sale.amount_paid # HACK: Combined line
                 if customer_id_str:
                     # Ensure customer belongs to the same business for security
                     sale.customer = get_object_or_404(Contact, pk=customer_id_str, business=business, type=Contact.ContactType.CUSTOMER)
@@ -344,7 +344,19 @@ def sale_edit(request, pk):
                 sale.date = request.POST.get('date')
                 sale.payment_method = request.POST.get('payment_method')
                 sale.discount_percent = Decimal(request.POST.get('discount', 0))
-                sale.amount_paid = Decimal(request.POST.get('amount_paid', 0))
+                # sale.amount_paid = Decimal(request.POST.get('amount_paid', 0)) # Removed direct assignment
+
+                new_total_amount_paid_from_form = Decimal(request.POST.get('amount_paid', 0))
+                if new_total_amount_paid_from_form > current_total_paid_on_sale_load:
+                    additional_payment_amount = new_total_amount_paid_from_form - current_total_paid_on_sale_load
+                    if additional_payment_amount > Decimal('0.00'):
+                        Payment.objects.create(
+                            sale=sale,
+                            amount=additional_payment_amount,
+                            payment_method=request.POST.get('payment_method', sale.payment_method),
+                            created_by=request.user,
+                            status='completed'
+                        )
 
                 # The Sale model's save() method correctly updates is_paid/payment_status based on amounts.
                 # Direct setting of 'is_paid' from form can be tricky if not coordinated with model logic.
