@@ -75,45 +75,21 @@ def retail_login_view(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            is_retail_user = False
+            # Business type check is removed.
+            auth_login(request, user)
             try:
-                # Check for profile, then business, then business type.
-                # Ensures no AttributeError if profile or business is None.
-                profile = getattr(user, 'profile', None)
-                if profile:
-                    business = getattr(profile, 'business', None)
-                    if business: # Check if business object exists
-                        business_type_str = getattr(business, 'type', None)
-                        if business_type_str: # Check if the type string is not None or empty
-                            if business_type_str.strip().lower() == 'retail':
-                                is_retail_user = True
-            except Exception:
-                # Catch any potential DoesNotExist from related fields if not pre-fetched
-                # or other unexpected errors during attribute access.
-                # In a real scenario, this should be logged: logger.error("Error accessing profile/business type", exc_info=True)
-                pass
-
-            if is_retail_user:
-                auth_login(request, user)
-                # Assuming 'retail:sales_view' is the correct URL name.
-                # This needs to be confirmed from retail/urls.py.
-                # Example: return redirect('retail:sales_view')
-                # For now, using a placeholder or a common dashboard name.
-                # If 'retail:sales_view' is not defined yet, this will error out
-                # once a user successfully logs in.
-                try:
-                    retail_url = reverse('retail:sales_view')
-                    return redirect(retail_url)
-                except Exception: # Broad exception for NoReverseMatch or other issues
-                    messages.warning(request, "Retail dashboard URL not configured, redirecting to main page.")
-                    return redirect("core:index") # Fallback redirect
-            else:
-                messages.error(request, 'Access Denied: This portal is for retail users only, or your profile/business information is incomplete or not set to "retail" type.')
+                retail_url = reverse('retail:sales_view')
+                return redirect(retail_url)
+            except Exception: # Broad exception for NoReverseMatch or other issues
+                messages.warning(request, "Retail dashboard URL not configured, redirecting to main page.")
+                return redirect("core:index") # Fallback redirect
         else:
             messages.error(request, 'Invalid username or password.')
 
-        return render(request, 'userauths/retail_login.html') # Re-render on failed POST
+        # This return is for the case where user is None (auth failed) or other unhandled POST issues
+        return render(request, 'userauths/retail_login.html')
 
-    return render(request, 'userauths/retail_login.html') # Render on GET
+    # This return is for GET request
+    return render(request, 'userauths/retail_login.html')
 
 

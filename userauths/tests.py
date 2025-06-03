@@ -121,49 +121,60 @@ class RetailLoginViewTests(TestCase):
         self.assertTrue(any(message.message == 'Invalid username or password.' for message in messages))
         self.assertFalse(self.client.session.get('_auth_user_id')) # Check user not logged in
 
-    def test_retail_login_failed_non_retail_user(self):
+    def test_retail_login_successful_for_non_retail_user(self): # Renamed
+        if not self.retail_dashboard_url:
+            self.skipTest("retail:sales_view URL not configured, skipping dependent test.")
+
         response = self.client.post(self.login_url, {
             'username': 'nonretailuser',
             'password': 'password123'
         })
-        self.assertEqual(response.status_code, 200) # Re-renders login page
-        messages = list(get_messages(response.wsgi_request))
-        self.assertTrue(any('Access Denied' in message.message for message in messages))
-        self.assertFalse(self.client.session.get('_auth_user_id'))
+        self.assertEqual(response.status_code, 302) # Expect redirect
+        self.assertRedirects(response, self.retail_dashboard_url)
 
-    def test_retail_login_user_missing_profile(self):
+        response_after_login = self.client.get(self.retail_dashboard_url)
+        self.assertEqual(response_after_login.status_code, 200)
+        self.assertTrue(response_after_login.context['user'].is_authenticated)
+        self.assertEqual(response_after_login.context['user'].username, 'nonretailuser')
+
+    def test_retail_login_successful_for_user_missing_profile(self): # Renamed
+        if not self.retail_dashboard_url:
+            self.skipTest("retail:sales_view URL not configured, skipping dependent test.")
+
         response = self.client.post(self.login_url, {
             'username': 'noprofileuser',
             'password': 'password123'
         })
-        self.assertEqual(response.status_code, 200)
-        messages = list(get_messages(response.wsgi_request))
-        self.assertTrue(any('Access Denied' in message.message for message in messages))
-        self.assertFalse(self.client.session.get('_auth_user_id'))
+        self.assertEqual(response.status_code, 302) # Expect redirect
+        self.assertRedirects(response, self.retail_dashboard_url, fetch_redirect_response=False)
+        # User is logged in, but retail_dashboard will fail due to missing profile.
+        # Check session for authentication directly.
+        self.assertTrue(self.client.session.get('_auth_user_id') is not None)
+        # Verify the correct user is logged in by fetching their ID
+        user = User.objects.get(username='noprofileuser')
+        self.assertEqual(self.client.session.get('_auth_user_id'), str(user.id))
 
-    def test_retail_login_user_profile_missing_business(self):
+
+    def test_retail_login_successful_for_user_profile_missing_business(self): # Renamed
+        if not self.retail_dashboard_url:
+            self.skipTest("retail:sales_view URL not configured, skipping dependent test.")
+
         response = self.client.post(self.login_url, {
             'username': 'profilenobiz',
             'password': 'password123'
         })
-        self.assertEqual(response.status_code, 200)
-        messages = list(get_messages(response.wsgi_request))
-        self.assertTrue(any('Access Denied' in message.message for message in messages))
-        self.assertFalse(self.client.session.get('_auth_user_id'))
+        self.assertEqual(response.status_code, 302) # Expect redirect
+        self.assertRedirects(response, self.retail_dashboard_url, fetch_redirect_response=False)
 
-    def test_retail_login_user_business_not_retail_type(self):
-        # This is effectively the same as test_retail_login_failed_non_retail_user
-        # but can be made more explicit if business.type check is subtle.
-        # Re-using non_retail_user for clarity of intent.
-        response = self.client.post(self.login_url, {
-            'username': self.non_retail_user.username,
-            'password': 'password123'
-        })
-        self.assertEqual(response.status_code, 200)
-        messages = list(get_messages(response.wsgi_request))
-        self.assertTrue(any('Access Denied' in message.message for message in messages))
-        self.assertFalse(self.client.session.get('_auth_user_id'))
+        # User is logged in, but retail_dashboard might fail if it strictly requires business.type == 'retail'
+        # which is no longer checked at login but might be checked in the view itself.
+        # For this test, we only care that the login view itself authenticated the user.
+        self.assertTrue(self.client.session.get('_auth_user_id') is not None)
+        user = User.objects.get(username='profilenobiz')
+        self.assertEqual(self.client.session.get('_auth_user_id'), str(user.id))
 
+    # Removed redundant test_retail_login_user_business_not_retail_type as it's covered by
+    # test_retail_login_successful_for_non_retail_user after logic change.
 
     def test_unauthenticated_access_to_protected_retail_view(self):
         if not self.retail_dashboard_url:
