@@ -774,14 +774,11 @@
         // Validate cash payment
         const total = parseFloat(elements.totalPrice.textContent.replace('৳', ''));
         if (state.paymentMethod === 'cash') {
-          if (isNaN(state.amountPaid) || state.amountPaid <= 0) { // Check if it's not a number or not positive
-              alert('Please enter a valid amount paid.');
+          if (isNaN(state.amountPaid) || state.amountPaid < 0) {
+              alert('Please enter a valid (non-negative) amount paid.');
               return;
           }
-          if (state.amountPaid < total) {
-              alert(`Amount paid (৳${state.amountPaid.toFixed(2)}) is less than the total amount (৳${total.toFixed(2)}). Please pay at least ৳${total.toFixed(2)}.`);
-              return;
-          }
+          // The check for amount_paid < total has been removed to allow partial payments.
       }
     
         // Prepare sale data with payment details
