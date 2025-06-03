@@ -82,8 +82,11 @@ def retail_login_view(request):
                 profile = getattr(user, 'profile', None)
                 if profile:
                     business = getattr(profile, 'business', None)
-                    if business and getattr(business, 'type', None) == 'retail':
-                        is_retail_user = True
+                    if business: # Check if business object exists
+                        business_type_str = getattr(business, 'type', None)
+                        if business_type_str: # Check if the type string is not None or empty
+                            if business_type_str.strip().lower() == 'retail':
+                                is_retail_user = True
             except Exception:
                 # Catch any potential DoesNotExist from related fields if not pre-fetched
                 # or other unexpected errors during attribute access.
