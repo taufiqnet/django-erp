@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+</head>
+<body class="p-4 bg-gray-100">
+<div class="container mx-auto p-6 mb-24"> <!-- Added mb-24 to prevent content from being hidden behind the fixed footer -->
+    <h1 class="text-2xl font-bold mb-4">New Sales Transaction</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Business Selection -->
+        <div>
+            <label for="business" class="block text-sm font-medium text-gray-700">Business</label>
+            <select id="business" class="w-full p-2 border border-gray-300 rounded mt-1" required>
+                <option value="">-- Select Business --</option>
+                {% for business in businesses %}
+                <option value="{{ business.id }}">{{ business.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Customer Selection -->
+        <div>
+            <label for="customer" class="block text-sm font-medium text-gray-700">Customer</label>
+            <select id="customer" class="w-full p-2 border border-gray-300 rounded mt-1">
+                {% if default_customer %}
+                    <option value="{{ default_customer.id }}" selected>{{ default_customer.first_name }} {{ default_customer.last_name }}</option>
+                {% else %}
+                    <option value="">-- Search for a customer --</option>
+                {% endif %}
+            </select>
+        </div>
+    </div>
+
+    <!-- Add Product Section -->
+    <div class="mb-4 py-4">
+        <h2 class="text-lg font-semibold mb-2">Add Products</h2>
+        <div class="mb-4">
+            <label for="productSearch" class="block text-sm font-medium text-gray-700">Search Product</label>
+            <select id="productSearch" class="w-full p-2 border border-gray-300 rounded mt-1 select2">
+                <option value="">-- Select Product --</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Product List Table -->
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-300">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="px-4 py-2 text-center border border-gray-200">SL#</th>
+                    <th class="px-4 py-2 text-center border border-gray-200">SKU</th>
+                    <th class="px-4 py-2 text-center border border-gray-200">Product</th>
+                    <th class="px-4 py-2 text-center border border-gray-200">Quantity</th>
+                    <th class="px-4 py-2 text-center border border-gray-200">Unit Price</th>
+                    <th class="px-4 py-2 text-center border border-gray-200">Item Discount (Fixed)</th>
+                    <th class="px-4 py-2 text-center border border-gray-200">Subtotal</th>
+                    <th class="px-4 py-2 text-center border border-gray-200">Action</th>
+                </tr>
+            </thead>
+            <tbody id="productList" class="text-center"></tbody>
+        </table>
+    </div>
+
+    <!-- Transaction Summary -->
+    <div class="mt-6 grid grid-cols-3 gap-4">
+        <!-- Left Column (Empty) -->
+        <div></div>
+        <!-- Left Column (Empty) -->
+        <div></div>
+
+        <!-- Right Column (Input Fields) -->
+        <div>
+            <div class="mb-4">
+                <label for="shipping_cost" class="block text-sm font-semibold text-gray-700">Shipping Cost</label>
+                <input type="number" id="shipping_cost" class="w-full p-2 border border-gray-300 rounded mt-1" value="0" min="0" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="order_discount" class="block text-sm font-semibold text-gray-700">Order Discount (Fixed)</label>
+                <input type="number" id="order_discount" class="w-full p-2 border border-gray-300 rounded mt-1" value="0" min="0" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="total" class="block text-sm font-semibold text-gray-700">Total Amount</label>
+                <input type="text" id="total" class="w-full p-2 border border-gray-300 rounded mt-1" readonly>
+            </div>
+
+            <!-- Paid Amount -->
+            <div class="mb-4">
+                <label for="paid_amount" class="block text-sm font-semibold text-gray-700">Paid Amount</label>
+                <input type="number" id="paid_amount" class="w-full p-2 border border-gray-300 rounded mt-1" value="0" min="0">
+            </div>
+
+            <!-- Due Amount -->
+            <div class="mb-4">
+                <label for="due_amount" class="block text-sm font-semibold text-gray-700">Due Amount</label>
+                <input type="text" id="due_amount" class="w-full p-2 border border-gray-300 rounded mt-1" readonly>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fixed Footer -->
+<div class="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-4 border-t border-gray-200">
+    <div class="container mx-auto flex justify-between items-center">
+        <div>
+            <span class="text-lg font-bold">Total Amount:</span>
+            <span id="totalFooter" class="text-lg font-bold ml-2">0.00</span>
+        </div>
+        <button id="submitOrder" class="bg-green-500 text-white px-6 py-3 rounded-lg text-lg font-semibold">Submit Order</button>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        let products = []; // Array to store selected products
+        let slNo = 1; // Initialize serial number counter
+
+        // Initialize Select2 for customer search with server-side pagination
+        $('#customer').select2({
+            placeholder: "Search for a customer...",
+            allowClear: true,
+            ajax: {
+                url: "{% url 'sales:customer_search' %}",
+                dataType: "json",
+                delay: 300, // Debounce delay
+                data: function(params) {
+                    return {
+                        q: params.term, // Search term
+                        page: params.page || 1, // Page number
+                        business_id: $('#business').val() // Pass business ID
+                    };
+                },
+                processResults: function(data, params) {
+                    params.page = params.page || 1;
+                    return {
+                        results: data.results,
+                        pagination: {
+                            more: data.pagination.more // Indicates if there are more results
+                        }
+                    };
+                }
+            }
+        });
+    
+        // Initialize Select2 for product search with server-side pagination
+        $('#productSearch').select2({
+            placeholder: "Search for a product...",
+            allowClear: true,
+            ajax: {
+                url: "{% url 'sales:product_search' %}",
+                dataType: "json",
+                delay: 300, // Debounce delay
+                data: function(params) {
+                    return {
+                        q: params.term, // Search term
+                        page: params.page || 1, // Page number
+                        business_id: $('#business').val() // Pass business ID
+                    };
+                },
+                processResults: function(data, params) {
+                    params.page = params.page || 1;
+                    return {
+                        results: data.results,
+                        pagination: {
+                            more: data.pagination.more // Indicates if there are more results
+                        }
+                    };
+                }
+            }
+        });
+    
+        // Add product to the table
+        $('#productSearch').on('select2:select', function(e) {
+            let productId = e.params.data.id;
+            let productName = e.params.data.text;
+            let unitPrice = e.params.data.price;
+            let sku = e.params.data.sku;
+    
+            // Check if the product is already in the table
+            if (productId && !$(`#productRow_${productId}`).length) {
+                products.push(productId); // Add product to the array
+    
+                // Add row to the table with SL No.
+                let row = `
+                    <tr id="productRow_${productId}" class="border border-gray-200">
+                        <td class="px-4 py-2 text-center border border-gray-200">${slNo}</td> <!-- SL No. column -->
+                        <td class="px-4 py-2 text-center border border-gray-200">${sku}</td>
+                        <td class="px-4 py-2 text-center border border-gray-200">${productName}</td>
+                        <td class="px-4 py-2 text-center border border-gray-200"><input type="number" class="quantity w-20 p-1 border rounded" value="1" min="1"></td>
+                        <td class="px-4 py-2 text-center border border-gray-200 unitPrice">${unitPrice}</td>
+                        <td class="px-4 py-2 text-center border border-gray-200"><input type="number" class="itemDiscount w-20 p-1 border rounded" value="0" min="0"></td>
+                        <td class="px-4 py-2 text-center border border-gray-200 subtotal">${unitPrice}</td>
+                        <td class="px-4 py-2 text-center border border-gray-200"><button class="removeProduct bg-red-500 text-white px-2 py-1 rounded" data-product-id="${productId}">Remove</button></td>
+                    </tr>
+                `;
+                $('#productList').append(row);
+    
+                // Increment SL No. for the next row
+                slNo++;
+    
+                // Update total amount
+                updateTotal();
+            }
+        });
+    
+        // Remove product from the table
+        $(document).on('click', '.removeProduct', function() {
+            let productId = $(this).data('product-id');
+            $(`#productRow_${productId}`).remove();
+            products = products.filter(id => id !== productId); // Remove product from the array
+    
+            // Recalculate SL No. for all rows
+            recalculateSlNo();
+    
+            // Update total amount
+            updateTotal();
+        });
+    
+        // Function to recalculate SL No. after removing a row
+        function recalculateSlNo() {
+            slNo = 1; // Reset SL No. counter
+            $('#productList tr').each(function() {
+                $(this).find('td:first').text(slNo); // Update SL No. in the first column
+                slNo++;
+            });
+        }
+    
+        // Update quantity or discount
+        $(document).on('input', '.quantity, .itemDiscount', function() {
+            updateTotal();
+        });
+    
+        // Update shipping cost or order discount
+        $(document).on('input', '#shipping_cost, #order_discount', function() {
+            updateTotal();
+        });
+    
+        // Update paid amount and due amount
+        $(document).on('input', '#paid_amount', function() {
+            updateDueAmount();
+        });
+    
+        // Function to calculate and update the total amount
+        function updateTotal() {
+            let total = 0;
+    
+            // Calculate subtotal for each product
+            $('#productList tr').each(function() {
+                let quantity = parseFloat($(this).find('.quantity').val()) || 0;
+                let unitPrice = parseFloat($(this).find('.unitPrice').text()) || 0;
+                let itemDiscount = parseFloat($(this).find('.itemDiscount').val()) || 0;
+                let subtotal = (quantity * unitPrice) - itemDiscount;
+                $(this).find('.subtotal').text(subtotal.toFixed(2));
+                total += subtotal;
+            });
+    
+            // Add shipping cost and subtract order discount
+            let shippingCost = parseFloat($('#shipping_cost').val()) || 0;
+            let orderDiscount = parseFloat($('#order_discount').val()) || 0;
+            total = total + shippingCost - orderDiscount;
+    
+            // Update total amount in the input field and footer
+            $('#total').val(total.toFixed(2));
+            $('#totalFooter').text(total.toFixed(2));
+    
+            // Update due amount
+            updateDueAmount();
+        }
+    
+        // Function to calculate and update the due amount
+        function updateDueAmount() {
+            let totalAmount = parseFloat($('#total').val()) || 0;
+            let paidAmount = parseFloat($('#paid_amount').val()) || 0;
+            let dueAmount = totalAmount - paidAmount;
+    
+            // Update due amount field
+            $('#due_amount').val(dueAmount.toFixed(2));
+        }
+    
+        // Submit order
+        $('#submitOrder').click(function() {
+            let businessId = $('#business').val();
+            let customerId = $('#customer').val(); // This will be empty if no customer is selected
+            let shippingCost = $('#shipping_cost').val();
+            let orderDiscount = $('#order_discount').val();
+            let totalAmount = $('#total').val();
+            let paidAmount = $('#paid_amount').val();
+            let dueAmount = $('#due_amount').val();
+    
+            // Prepare product data
+            let productsData = [];
+            $('#productList tr').each(function() {
+                let productId = $(this).attr('id').replace('productRow_', '');
+                let quantity = $(this).find('.quantity').val();
+                let itemDiscount = $(this).find('.itemDiscount').val();
+                let subtotal = $(this).find('.subtotal').text();
+                productsData.push({
+                    product_id: productId,
+                    quantity: quantity,
+                    item_discount: itemDiscount,
+                    total_price: subtotal
+                });
+            });
+    
+            // Send data to the server
+            $.ajax({
+                url: "{% url 'sales:create_order' %}",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    business_id: businessId,
+                    customer_id: customerId || null, // Send null if no customer is selected
+                    shipping_cost: shippingCost,
+                    order_discount: orderDiscount,
+                    total_amount: totalAmount,
+                    paid_amount: paidAmount,
+                    due_amount: dueAmount,
+                    products: productsData
+                }),
+                success: function(response) {
+                    // Reset form fields
+                    $('#business').val('').trigger('change'); // Reset business dropdown
+                    $('#customer').val('').trigger('change'); // Reset customer dropdown
+                    $('#productSearch').val('').trigger('change'); // Reset product search
+                    $('#shipping_cost').val(0); // Reset shipping cost
+                    $('#order_discount').val(0); // Reset order discount
+                    $('#total').val(0); // Reset total amount
+                    $('#paid_amount').val(0); // Reset paid amount
+                    $('#due_amount').val(0); // Reset due amount
+                    $('#productList').empty(); // Clear product table
+    
+                    // Reset SL No. counter
+                    slNo = 1;
+    
+                    // Show success message
+                    alert('Order created successfully!');
+    
+                    // Reload the page
+                    window.location.reload();
+                },
+                error: function(xhr, status, error) {
+                    alert('Error creating order: ' + xhr.responseJSON.error);
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

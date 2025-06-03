@@ -1,0 +1,1665 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>WBSoft</title>
+  <!-- General Meta Tags -->
+  <meta name="description" content="WBSoft provides cutting-edge software solutions, ERP systems, websites, and IT services that empower businesses across industries.">
+  <meta name="keywords" content="WBSoft, software solutions, ERP systems, websites, IT services, business software, web development">
+  <meta name="author" content="WBSoft">
+  
+  <!-- Open Graph Meta Tags for Facebook and Social Media -->
+  <meta property="og:title" content="Welcome to WBSoft">
+  <meta property="og:description" content="We provide innovative web-based software solutions, ERP systems, websites, and IT services to help businesses grow.">
+  <meta property="og:image" content="{% static 'assets/website/img/logo.jpg' %}">
+  <meta property="og:url" content="https://wbsoftbd.com/about">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="WBSoft">
+
+  <!-- Favicons -->
+  <link href="{% static 'assets/website/img/logo.jpg' %}" rel="icon">
+  <link href="{% static 'assets/website/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Raleway:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+      body {
+          font-family: 'Inter', sans-serif;
+      }
+      .hero-gradient {
+          background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      }
+      .service-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+  </style>
+
+  <style>
+    /* Modal transitions */
+    .modal-enter {
+        opacity: 0;
+    }
+    .modal-enter-active {
+        opacity: 1;
+        transition: opacity 200ms;
+    }
+    .modal-exit {
+        opacity: 1;
+    }
+    .modal-exit-active {
+        opacity: 0;
+        transition: opacity 200ms;
+    }
+    
+    /* Modal content scroll */
+    .modal-content {
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    
+    /* Hide scrollbar when modal is open */
+    body.modal-open {
+        overflow: hidden;
+    }
+    </style>
+  
+
+</head>
+
+<body class="bg-gray-50">
+    <!-- Navigation -->
+<nav class="bg-white shadow-lg sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-20 items-center">
+          <div class="flex items-center">
+              <div class="flex-shrink-0">
+                  <a href="#home" class="text-2xl font-bold text-blue-800">WBSoft</a>
+              </div>
+              <div class="hidden md:block ml-10">
+                  <div class="flex space-x-8">
+                      <a href="#home" class="text-blue-800 font-medium px-3 py-2 hover:text-blue-600">Home</a>
+                      <a href="#services" class="text-gray-600 hover:text-blue-800 font-medium px-3 py-2">Services</a>
+                      <a href="#portfolio" class="text-gray-600 hover:text-blue-800 font-medium px-3 py-2">Portfolio</a>
+                      <a href="#team" class="text-gray-600 hover:text-blue-800 font-medium px-3 py-2">Team</a>
+                      <a href="#testimonials" class="text-gray-600 hover:text-blue-800 font-medium px-3 py-2">Testimonials</a>
+                      <a href="#training" class="text-gray-600 hover:text-blue-800 font-medium px-3 py-2">Training</a>
+                      <a href="#careers" class="text-gray-600 hover:text-blue-800 font-medium px-3 py-2">Careers</a>
+                      <a href="/blog/" class="text-gray-600 hover:text-blue-800 font-medium px-3 py-2">Blog</a>
+                  </div>
+              </div>
+          </div>
+          <div class="hidden md:block">
+              <a href="#contact" class="bg-blue-700 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-800 transition duration-300">Get Started</a>
+          </div>
+          <!-- Mobile menu button -->
+          <div class="md:hidden">
+            <button type="button" 
+                    class="text-gray-500 hover:text-blue-800 focus:outline-none" 
+                    id="mobile-menu-button"
+                    aria-expanded="false"
+                    aria-controls="mobile-menu">
+                <span class="sr-only">Open main menu</span>
+                <!-- Hamburger icon -->
+                <svg class="h-6 w-6 block" id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                <!-- Close icon (hidden by default) -->
+                <svg class="h-6 w-6 hidden" id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+  <!-- Mobile menu -->
+  <div class="md:hidden hidden" id="mobile-menu">
+    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white">
+        <a href="#home" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-800 hover:bg-gray-50">Home</a>
+        <a href="#services" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-800 hover:bg-gray-50">Services</a>
+        <a href="#portfolio" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-800 hover:bg-gray-50">Portfolio</a>
+        <a href="#team" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-800 hover:bg-gray-50">Team</a>
+        <a href="#testimonials" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-800 hover:bg-gray-50">Testimonials</a>
+        <a href="#training" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-800 hover:bg-gray-50">Training</a>
+        <a href="#careers" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-800 hover:bg-gray-50">Careers</a>
+        <a href="/blog/" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-800 hover:bg-gray-50">Blog</a>
+        <a href="#contact" class="block w-full text-center px-3 py-2 rounded-md text-base font-medium text-white bg-blue-700 hover:bg-blue-800">Get Started</a>
+    </div>
+</div>
+</nav>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const mobileMenuButton = document.getElementById('mobile-menu-button');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const menuOpenIcon = document.getElementById('menu-open-icon');
+      const menuCloseIcon = document.getElementById('menu-close-icon');
+      
+      mobileMenuButton.addEventListener('click', function() {
+          const isExpanded = this.getAttribute('aria-expanded') === 'true';
+          
+          // Toggle menu visibility
+          mobileMenu.classList.toggle('hidden');
+          
+          // Toggle icons
+          menuOpenIcon.classList.toggle('hidden');
+          menuCloseIcon.classList.toggle('hidden');
+          
+          // Update aria-expanded attribute
+          this.setAttribute('aria-expanded', !isExpanded);
+      });
+      
+      // Close menu when clicking on a link
+      const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+      mobileMenuLinks.forEach(link => {
+          link.addEventListener('click', function() {
+              mobileMenu.classList.add('hidden');
+              menuOpenIcon.classList.remove('hidden');
+              menuCloseIcon.classList.add('hidden');
+              mobileMenuButton.setAttribute('aria-expanded', 'false');
+          });
+      });
+  });
+  </script>
+
+    <!-- Hero Section -->
+    <div id="home" class="hero-gradient text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">Innovative Digital Solutions for Your Business</h1>
+                    <p class="text-xl text-blue-100 mb-8">We deliver cutting-edge software, web development, and IT services to help your business thrive in the digital age.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="bg-white text-blue-800 px-8 py-3 rounded-md font-semibold hover:bg-gray-100 transition duration-300">Explore Services</a>
+                        <a href="#" class="border-2 border-white text-white px-8 py-3 rounded-md font-semibold hover:bg-white hover:text-blue-800 transition duration-300">Contact Us</a>
+                    </div>
+                </div>
+                <div>
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                         alt="Digital Solutions" 
+                         class="rounded-lg shadow-2xl">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Services Section -->
+    <div id="services" class="py-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Our Professional Services</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Comprehensive digital solutions tailored to your business needs</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden service-card transition duration-300">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                         alt="Custom Software Development" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-8">
+                        <div class="text-blue-700 font-semibold mb-2">Software Services</div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Custom Software Development</h3>
+                        <p class="text-gray-600 mb-6">Tailored solutions designed to streamline your business operations and drive efficiency.</p>
+                        <a href="#custom-software" class="text-blue-700 font-medium hover:text-blue-800 flex items-center">
+                            See Demo Software here ...
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Service 2 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden service-card transition duration-300">
+                    <img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                         alt="Web Development" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-8">
+                        <div class="text-blue-700 font-semibold mb-2">Web Development</div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Enterprise Web Solutions</h3>
+                        <p class="text-gray-600 mb-6">High-performance websites and web applications built with modern technologies.</p>
+                        <a href="#enterprise-web" class="text-blue-700 font-medium hover:text-blue-800 flex items-center">
+                            See Demo Website here ...
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Service 3 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden service-card transition duration-300">
+                    <img src="https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                         alt="IT Services" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-8">
+                        <div class="text-blue-700 font-semibold mb-2">IT Services</div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Managed IT Services</h3>
+                        <p class="text-gray-600 mb-6">Comprehensive IT support and infrastructure management for your business.</p>
+                        <a href="#managed-it" class="text-blue-700 font-medium hover:text-blue-800 flex items-center">
+                            Learn more
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Software Development Modal -->
+    <div id="custom-software-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-900 opacity-75"></div>
+            </div>
+            
+            <!-- Modal content -->
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-7xl sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <!-- Close button -->
+                            <div class="absolute top-0 right-0 pt-4 pr-4">
+                                <button type="button" class="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none" id="close-custom-software-modal">
+                                    <span class="sr-only">Close</span>
+                                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <!-- Modal content -->
+                            <div class="py-8 bg-white">
+                                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                                    <div class="text-center mb-16">
+                                        <h2 class="text-3xl font-bold text-gray-900 mb-4">Custom Software Development</h2>
+                                        <p class="text-xl text-gray-600 max-w-3xl mx-auto">Tailored solutions designed to streamline your business operations</p>
+                                    </div>
+
+                                    <!-- Software Solution Categories -->
+                                    <div class="grid md:grid-cols-3 gap-8">
+                                        <!-- Retail Management System -->
+                                        <div class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                                            <img src="https://images.unsplash.com/photo-1559028012-481c04fa702d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1436&q=80" 
+                                                alt="Retail Management System" 
+                                                class="w-full h-64 object-cover transition duration-500 group-hover:scale-105">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-0 group-hover:opacity-80 transition duration-300"></div>
+                                            <div class="p-6 bg-white">
+                                                <h3 class="text-xl font-bold text-gray-900 mb-2">Retail Management System</h3>
+                                                <p class="text-gray-600">Comprehensive solution for inventory control, sales tracking, and customer management.</p>
+                                                <div class="mt-4 flex flex-wrap gap-2">
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Inventory Control</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">POS Integration</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Analytics</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Ecommerce Solution -->
+                                        <div class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                                            <img src="https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                                                alt="Ecommerce Solution" 
+                                                class="w-full h-64 object-cover transition duration-500 group-hover:scale-105">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-0 group-hover:opacity-80 transition duration-300"></div>
+                                            <div class="p-6 bg-white">
+                                                <h3 class="text-xl font-bold text-gray-900 mb-2">Ecommerce Solutions</h3>
+                                                <p class="text-gray-600">Custom online stores with secure payment gateways and inventory management.</p>
+                                                <div class="mt-4 flex flex-wrap gap-2">
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Multi-vendor</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Payment Gateway</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Mobile Ready</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- HR Payroll System -->
+                                        <div class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                                            <img src="https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" 
+                                                alt="HR Payroll System" 
+                                                class="w-full h-64 object-cover transition duration-500 group-hover:scale-105">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-0 group-hover:opacity-80 transition duration-300"></div>
+                                            <div class="p-6 bg-white">
+                                                <h3 class="text-xl font-bold text-gray-900 mb-2">HR & Payroll System</h3>
+                                                <p class="text-gray-600">Automated payroll processing, attendance tracking, and employee management.</p>
+                                                <div class="mt-4 flex flex-wrap gap-2">
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Payroll Processing</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Leave Management</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Tax Compliance</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Development Process -->
+                                    <div class="mt-20 bg-gray-50 rounded-xl p-8 md:p-12">
+                                        <div class="text-center mb-12">
+                                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Our Development Approach</h3>
+                                            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Methodical process to deliver robust business solutions</p>
+                                        </div>
+                                        
+                                        <div class="grid md:grid-cols-4 gap-8">
+                                            <div class="text-center">
+                                                <div class="mx-auto h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                                    <span class="text-blue-700 text-2xl font-bold">1</span>
+                                                </div>
+                                                <h4 class="font-semibold text-gray-900 mb-2">Requirement Analysis</h4>
+                                                <p class="text-gray-600">Detailed business process mapping</p>
+                                            </div>
+                                            
+                                            <div class="text-center">
+                                                <div class="mx-auto h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                                    <span class="text-blue-700 text-2xl font-bold">2</span>
+                                                </div>
+                                                <h4 class="font-semibold text-gray-900 mb-2">System Design</h4>
+                                                <p class="text-gray-600">Architecture and database design</p>
+                                            </div>
+                                            
+                                            <div class="text-center">
+                                                <div class="mx-auto h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                                    <span class="text-blue-700 text-2xl font-bold">3</span>
+                                                </div>
+                                                <h4 class="font-semibold text-gray-900 mb-2">Development</h4>
+                                                <p class="text-gray-600">Agile development with sprints</p>
+                                            </div>
+                                            
+                                            <div class="text-center">
+                                                <div class="mx-auto h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                                    <span class="text-blue-700 text-2xl font-bold">4</span>
+                                                </div>
+                                                <h4 class="font-semibold text-gray-900 mb-2">Deployment</h4>
+                                                <p class="text-gray-600">Training and ongoing support</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- CTA Section -->
+                                    <div class="mt-16 text-center">
+                                        <h3 class="text-2xl font-bold text-gray-900 mb-6">Need a custom solution for your business?</h3>
+                                        <a href="#contact" class="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-md shadow-sm text-white bg-blue-700 hover:bg-blue-800">
+                                            Request a Consultation
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Structure of Web Design-->
+    <div id="enterprise-web-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-900 opacity-75"></div>
+            </div>
+            
+            <!-- Modal content -->
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-7xl sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <!-- Close button -->
+                            <div class="absolute top-0 right-0 pt-4 pr-4">
+                                <button type="button" class="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none" id="close-modal">
+                                    <span class="sr-only">Close</span>
+                                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <!-- Modal content goes here -->
+                            <div class="py-8 bg-white">
+                                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                                    <div class="text-center mb-16">
+                                        <h2 class="text-3xl font-bold text-gray-900 mb-4">Enterprise Web Solutions</h2>
+                                        <p class="text-xl text-gray-600 max-w-3xl mx-auto">Custom web solutions designed to drive business growth across industries</p>
+                                    </div>
+
+                                    <!-- Enterprise Web Solutions Section -->
+
+                                    <!-- Web Solution Categories -->
+                                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                        <!-- Ecommerce Solution -->
+                                        <div class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                                            <img src="https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                                                alt="Ecommerce Solution" 
+                                                class="w-full h-64 object-cover transition duration-500 group-hover:scale-105">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-0 group-hover:opacity-80 transition duration-300"></div>
+                                            <div class="p-6 bg-white">
+                                                <h3 class="text-xl font-bold text-gray-900 mb-2">Ecommerce Platforms</h3>
+                                                <p class="text-gray-600">Custom online stores with secure payment gateways, inventory management, and analytics dashboards.</p>
+                                                <div class="mt-4 flex flex-wrap gap-2">
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Shopify</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">WooCommerce</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Magento</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Corporate Website -->
+                                        <div class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                                            <img src="https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1469&q=80" 
+                                                alt="Corporate Website" 
+                                                class="w-full h-64 object-cover transition duration-500 group-hover:scale-105">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-0 group-hover:opacity-80 transition duration-300"></div>
+                                            <div class="p-6 bg-white">
+                                                <h3 class="text-xl font-bold text-gray-900 mb-2">Corporate Websites</h3>
+                                                <p class="text-gray-600">Professional websites with CMS integration, multilingual support, and brand-focused design.</p>
+                                                <div class="mt-4 flex flex-wrap gap-2">
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">WordPress</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Drupal</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Custom CMS</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Real Estate Portal -->
+                                        <div class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                                            <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1473&q=80" 
+                                                alt="Real Estate Portal" 
+                                                class="w-full h-64 object-cover transition duration-500 group-hover:scale-105">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-0 group-hover:opacity-80 transition duration-300"></div>
+                                            <div class="p-6 bg-white">
+                                                <h3 class="text-xl font-bold text-gray-900 mb-2">Real Estate Portals</h3>
+                                                <p class="text-gray-600">Property listing platforms with advanced search, virtual tours, and CRM integration.</p>
+                                                <div class="mt-4 flex flex-wrap gap-2">
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Property Search</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Lead Capture</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Map Integration</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Healthcare Portal -->
+                                        <div class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                                            <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                                                alt="Healthcare Portal" 
+                                                class="w-full h-64 object-cover transition duration-500 group-hover:scale-105">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-0 group-hover:opacity-80 transition duration-300"></div>
+                                            <div class="p-6 bg-white">
+                                                <h3 class="text-xl font-bold text-gray-900 mb-2">Healthcare Portals</h3>
+                                                <p class="text-gray-600">Secure patient portals with appointment scheduling, telemedicine, and EHR integration.</p>
+                                                <div class="mt-4 flex flex-wrap gap-2">
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">HIPAA Compliant</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Online Booking</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Patient Records</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Education Platform -->
+                                        <div class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                                            <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                                                alt="Education Platform" 
+                                                class="w-full h-64 object-cover transition duration-500 group-hover:scale-105">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-0 group-hover:opacity-80 transition duration-300"></div>
+                                            <div class="p-6 bg-white">
+                                                <h3 class="text-xl font-bold text-gray-900 mb-2">Education Platforms</h3>
+                                                <p class="text-gray-600">LMS solutions with course management, student tracking, and interactive learning tools.</p>
+                                                <div class="mt-4 flex flex-wrap gap-2">
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Moodle</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Video Lessons</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Quizzes</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Restaurant Ordering -->
+                                        <div class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                                            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80" 
+                                                alt="Restaurant Ordering" 
+                                                class="w-full h-64 object-cover transition duration-500 group-hover:scale-105">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-0 group-hover:opacity-80 transition duration-300"></div>
+                                            <div class="p-6 bg-white">
+                                                <h3 class="text-xl font-bold text-gray-900 mb-2">Restaurant Ordering</h3>
+                                                <p class="text-gray-600">Online food ordering systems with menu management, payment processing, and delivery tracking.</p>
+                                                <div class="mt-4 flex flex-wrap gap-2">
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Online Menu</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Table Booking</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">POS Integration</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Web Development Process -->
+                                    <div class="mt-20 bg-gray-50 rounded-xl p-8 md:p-12">
+                                        <div class="text-center mb-12">
+                                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Our Web Development Process</h3>
+                                            <p class="text-xl text-gray-600 max-w-3xl mx-auto">A structured approach to deliver exceptional results</p>
+                                        </div>
+                                        
+                                        <div class="grid md:grid-cols-4 gap-8">
+                                            <div class="text-center">
+                                                <div class="mx-auto h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                                    <span class="text-blue-700 text-2xl font-bold">1</span>
+                                                </div>
+                                                <h4 class="font-semibold text-gray-900 mb-2">Discovery</h4>
+                                                <p class="text-gray-600">Requirements gathering and planning</p>
+                                            </div>
+                                            
+                                            <div class="text-center">
+                                                <div class="mx-auto h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                                    <span class="text-blue-700 text-2xl font-bold">2</span>
+                                                </div>
+                                                <h4 class="font-semibold text-gray-900 mb-2">Design</h4>
+                                                <p class="text-gray-600">UI/UX prototyping and wireframing</p>
+                                            </div>
+                                            
+                                            <div class="text-center">
+                                                <div class="mx-auto h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                                    <span class="text-blue-700 text-2xl font-bold">3</span>
+                                                </div>
+                                                <h4 class="font-semibold text-gray-900 mb-2">Development</h4>
+                                                <p class="text-gray-600">Coding and implementation</p>
+                                            </div>
+                                            
+                                            <div class="text-center">
+                                                <div class="mx-auto h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                                    <span class="text-blue-700 text-2xl font-bold">4</span>
+                                                </div>
+                                                <h4 class="font-semibold text-gray-900 mb-2">Launch</h4>
+                                                <p class="text-gray-600">Testing, deployment, and support</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- CTA Section -->
+                                    <div class="mt-16 text-center">
+                                        <h3 class="text-2xl font-bold text-gray-900 mb-6">Ready to build your enterprise web solution?</h3>
+                                        <a href="#contact" class="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-md shadow-sm text-white bg-blue-700 hover:bg-blue-800">
+                                            Get a Free Consultation
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                            </svg>
+                                        </a>
+                                    </div>
+            
+        
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Managed IT Services Modal -->
+    <div id="managed-it-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-900 opacity-75"></div>
+            </div>
+            
+            <!-- Modal content -->
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-7xl sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <!-- Close button -->
+                            <div class="absolute top-0 right-0 pt-4 pr-4">
+                                <button type="button" class="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none" id="close-managed-it-modal">
+                                    <span class="sr-only">Close</span>
+                                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <!-- Modal content -->
+                            <div class="py-8 bg-white">
+                                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                                    <div class="text-center mb-16">
+                                        <h2 class="text-3xl font-bold text-gray-900 mb-4">Managed IT Services</h2>
+                                        <p class="text-xl text-gray-600 max-w-3xl mx-auto">Proactive IT support and infrastructure management to keep your business running smoothly</p>
+                                    </div>
+
+                                    <!-- IT Service Categories -->
+                                    <div class="grid md:grid-cols-3 gap-8">
+                                        <!-- Network Management -->
+                                        <div class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80" 
+                                                alt="Network Management" 
+                                                class="w-full h-64 object-cover transition duration-500 group-hover:scale-105">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-0 group-hover:opacity-80 transition duration-300"></div>
+                                            <div class="p-6 bg-white">
+                                                <h3 class="text-xl font-bold text-gray-900 mb-2">Network Management</h3>
+                                                <p class="text-gray-600">24/7 monitoring and maintenance of your network infrastructure for optimal performance.</p>
+                                                <div class="mt-4 flex flex-wrap gap-2">
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Firewall Setup</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">VPN Configuration</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Wi-Fi Optimization</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Cloud Services -->
+                                        <div class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                                            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1472&q=80" 
+                                                alt="Cloud Services" 
+                                                class="w-full h-64 object-cover transition duration-500 group-hover:scale-105">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-0 group-hover:opacity-80 transition duration-300"></div>
+                                            <div class="p-6 bg-white">
+                                                <h3 class="text-xl font-bold text-gray-900 mb-2">Cloud Services</h3>
+                                                <p class="text-gray-600">Secure cloud solutions including migration, management, and optimization.</p>
+                                                <div class="mt-4 flex flex-wrap gap-2">
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">AWS</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Azure</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Google Cloud</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Cybersecurity -->
+                                        <div class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                                            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                                                alt="Cybersecurity" 
+                                                class="w-full h-64 object-cover transition duration-500 group-hover:scale-105">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-0 group-hover:opacity-80 transition duration-300"></div>
+                                            <div class="p-6 bg-white">
+                                                <h3 class="text-xl font-bold text-gray-900 mb-2">Cybersecurity</h3>
+                                                <p class="text-gray-600">Comprehensive protection against threats with regular security audits and updates.</p>
+                                                <div class="mt-4 flex flex-wrap gap-2">
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Threat Detection</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Data Encryption</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">Compliance</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Service Features -->
+                                    <div class="mt-20 bg-gray-50 rounded-xl p-8 md:p-12">
+                                        <div class="text-center mb-12">
+                                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Our IT Service Features</h3>
+                                            <p class="text-xl text-gray-600 max-w-3xl mx-auto">What makes our managed IT services stand out</p>
+                                        </div>
+                                        
+                                        <div class="grid md:grid-cols-3 gap-8">
+                                            <div class="text-center p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition duration-300">
+                                                <div class="mx-auto h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                                    </svg>
+                                                </div>
+                                                <h4 class="text-lg font-semibold text-gray-900 mb-2">Proactive Monitoring</h4>
+                                                <p class="text-gray-600">24/7 system monitoring to prevent issues before they occur</p>
+                                            </div>
+                                            
+                                            <div class="text-center p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition duration-300">
+                                                <div class="mx-auto h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                                    </svg>
+                                                </div>
+                                                <h4 class="text-lg font-semibold text-gray-900 mb-2">Security First</h4>
+                                                <p class="text-gray-600">Enterprise-grade security protocols and regular updates</p>
+                                            </div>
+                                            
+                                            <div class="text-center p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition duration-300">
+                                                <div class="mx-auto h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                                                    </svg>
+                                                </div>
+                                                <h4 class="text-lg font-semibold text-gray-900 mb-2">Rapid Response</h4>
+                                                <p class="text-gray-600">Quick resolution times with dedicated support teams</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- CTA Section -->
+                                    <div class="mt-16 text-center">
+                                        <h3 class="text-2xl font-bold text-gray-900 mb-6">Let us handle your IT infrastructure</h3>
+                                        <a href="#contact" class="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-md shadow-sm text-white bg-blue-700 hover:bg-blue-800">
+                                            Get IT Support Now
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    
+
+    <!-- Portfolio Section -->
+    <div id="portfolio" class="py-8 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+              <h2 class="text-3xl font-bold text-gray-900 mb-4">Our Portfolio</h2>
+              <p class="text-xl text-gray-600 max-w-3xl mx-auto">See our successful projects across different industries</p>
+          </div>
+
+          <!-- Portfolio Filter -->
+          <div class="flex justify-center mb-12">
+              <div class="inline-flex rounded-md shadow-sm" id="portfolio-filter">
+                  <button type="button" 
+                          class="px-6 py-3 text-sm font-medium rounded-l-lg bg-blue-700 text-white filter-btn active" 
+                          data-filter="all">
+                      All Projects
+                  </button>
+                  <button type="button" 
+                          class="px-6 py-3 text-sm font-medium bg-white text-gray-700 hover:bg-gray-50 filter-btn" 
+                          data-filter="software">
+                      Software
+                  </button>
+                  <button type="button" 
+                          class="px-6 py-3 text-sm font-medium bg-white text-gray-700 hover:bg-gray-50 rounded-r-lg filter-btn" 
+                          data-filter="web-design">
+                      Web Design
+                  </button>
+              </div>
+          </div>
+
+          <!-- Portfolio Grid -->
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="portfolio-grid">
+              <!-- Portfolio Item 1 - Software -->
+              <div class="portfolio-item group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition duration-300" data-category="software">
+                  <img src="https://images.unsplash.com/photo-1555774698-0b77e0d5fac6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                      alt="ERP System" 
+                      class="w-full h-64 object-cover transition duration-500 group-hover:scale-105">
+                  <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-0 group-hover:opacity-80 transition duration-300"></div>
+                  <div class="absolute bottom-0 left-0 p-6 translate-y-8 group-hover:translate-y-0 transition duration-300">
+                      <span class="inline-block px-3 py-1 text-sm font-medium text-white bg-blue-700 rounded-full mb-2">Software</span>
+                      <h3 class="text-xl font-bold text-white">Enterprise ERP System</h3>
+                      <p class="text-gray-300 mt-1">Custom ERP solution for manufacturing industry</p>
+                  </div>
+              </div>
+
+              <!-- Portfolio Item 2 - Web Design -->
+              <div class="portfolio-item group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition duration-300" data-category="web-design">
+                  <img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                      alt="Ecommerce Website" 
+                      class="w-full h-64 object-cover transition duration-500 group-hover:scale-105">
+                  <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-0 group-hover:opacity-80 transition duration-300"></div>
+                  <div class="absolute bottom-0 left-0 p-6 translate-y-8 group-hover:translate-y-0 transition duration-300">
+                      <span class="inline-block px-3 py-1 text-sm font-medium text-white bg-blue-700 rounded-full mb-2">Web Design</span>
+                      <h3 class="text-xl font-bold text-white">Ecommerce Platform</h3>
+                      <p class="text-gray-300 mt-1">Modern online store with payment integration</p>
+                  </div>
+              </div>
+
+              <!-- Portfolio Item 3 - Software -->
+              <div class="portfolio-item group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition duration-300" data-category="software">
+                  <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                      alt="Healthcare Software" 
+                      class="w-full h-64 object-cover transition duration-500 group-hover:scale-105">
+                  <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-0 group-hover:opacity-80 transition duration-300"></div>
+                  <div class="absolute bottom-0 left-0 p-6 translate-y-8 group-hover:translate-y-0 transition duration-300">
+                      <span class="inline-block px-3 py-1 text-sm font-medium text-white bg-blue-700 rounded-full mb-2">Software</span>
+                      <h3 class="text-xl font-bold text-white">Hospital Management</h3>
+                      <p class="text-gray-300 mt-1">Complete solution for patient management</p>
+                  </div>
+              </div>
+
+              <!-- Portfolio Item 4 - Web Design -->
+              <div class="portfolio-item group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition duration-300" data-category="web-design">
+                  <img src="https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1469&q=80" 
+                      alt="Corporate Website" 
+                      class="w-full h-64 object-cover transition duration-500 group-hover:scale-105">
+                  <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-0 group-hover:opacity-80 transition duration-300"></div>
+                  <div class="absolute bottom-0 left-0 p-6 translate-y-8 group-hover:translate-y-0 transition duration-300">
+                      <span class="inline-block px-3 py-1 text-sm font-medium text-white bg-blue-700 rounded-full mb-2">Web Design</span>
+                      <h3 class="text-xl font-bold text-white">Corporate Website</h3>
+                      <p class="text-gray-300 mt-1">Professional business website with CMS</p>
+                  </div>
+              </div>
+
+              <!-- Portfolio Item 5 - Software -->
+              <div class="portfolio-item group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition duration-300" data-category="software">
+                  <img src="https://images.unsplash.com/photo-1559028012-481c04fa702d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1436&q=80" 
+                      alt="Inventory System" 
+                      class="w-full h-64 object-cover transition duration-500 group-hover:scale-105">
+                  <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-0 group-hover:opacity-80 transition duration-300"></div>
+                  <div class="absolute bottom-0 left-0 p-6 translate-y-8 group-hover:translate-y-0 transition duration-300">
+                      <span class="inline-block px-3 py-1 text-sm font-medium text-white bg-blue-700 rounded-full mb-2">Software</span>
+                      <h3 class="text-xl font-bold text-white">Inventory Management</h3>
+                      <p class="text-gray-300 mt-1">Retail inventory tracking and reporting</p>
+                  </div>
+              </div>
+
+              <!-- Portfolio Item 6 - Web Design -->
+              <div class="portfolio-item group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition duration-300" data-category="web-design">
+                  <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                      alt="Educational Portal" 
+                      class="w-full h-64 object-cover transition duration-500 group-hover:scale-105">
+                  <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-0 group-hover:opacity-80 transition duration-300"></div>
+                  <div class="absolute bottom-0 left-0 p-6 translate-y-8 group-hover:translate-y-0 transition duration-300">
+                      <span class="inline-block px-3 py-1 text-sm font-medium text-white bg-blue-700 rounded-full mb-2">Web Design</span>
+                      <h3 class="text-xl font-bold text-white">Educational Portal</h3>
+                      <p class="text-gray-300 mt-1">Online learning platform for universities</p>
+                  </div>
+              </div>
+          </div>
+
+          <!-- View More Button -->
+          <div class="text-center mt-12">
+              <a href="#" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-700 hover:bg-blue-800">
+                  View All Projects
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+              </a>
+          </div>
+      </div>
+    </div>
+
+
+    <!-- Our Team Section -->
+    <div id="team" class="py-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Our Expert Team</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">The talented professionals behind WBSoft's success</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              <!-- Team Member 1 - Male -->
+              <div class="bg-white rounded-xl shadow-md overflow-hidden transition duration-300 hover:shadow-lg">
+                  <div class="relative pt-[100%] overflow-hidden">
+                    <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" 
+                    alt="Rafiqul Islam" 
+                    class="absolute top-0 left-0 w-full h-full object-cover">
+                  </div>
+                  <div class="p-6 text-center">
+                      <h3 class="text-xl font-bold text-gray-900 mb-1">Rafiqul Islam</h3>
+                      <p class="text-blue-700 font-medium">Graphics Designer</p>
+                  </div>
+              </div>
+              
+              <!-- Team Member 2 - Male -->
+              <div class="bg-white rounded-xl shadow-md overflow-hidden transition duration-300 hover:shadow-lg">
+                <div class="relative pt-[100%] overflow-hidden">
+                    <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" 
+                         alt="Michael Chen" 
+                         class="absolute top-0 left-0 w-full h-full object-cover">
+                </div>
+                <div class="p-6 text-center">
+                    <h3 class="text-xl font-bold text-gray-900 mb-1">Rahed Ul Alam</h3>
+                    <p class="text-blue-700 font-medium">Web Developer</p>
+                </div>
+            </div>
+            
+              
+              <!-- Team Member 3 - Male -->
+              <div class="bg-white rounded-xl shadow-md overflow-hidden transition duration-300 hover:shadow-lg">
+                  <div class="relative pt-[100%] overflow-hidden">
+                    <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" 
+                    alt="Kamrul Khan" 
+                    class="absolute top-0 left-0 w-full h-full object-cover">
+                  </div>
+                  <div class="p-6 text-center">
+                      <h3 class="text-xl font-bold text-gray-900 mb-1">Kamrul Khan</h3>
+                      <p class="text-blue-700 font-medium">Digital Marketer</p>
+                  </div>
+              </div>
+              
+              <!-- Team Member 4 - Female (last) -->
+              <div class="bg-white rounded-xl shadow-md overflow-hidden transition duration-300 hover:shadow-lg">
+                  <div class="relative pt-[100%] overflow-hidden">
+                    <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" 
+                    alt="Saidul Islam Sakib" 
+                    class="absolute top-0 left-0 w-full h-full object-cover">
+                  </div>
+                  <div class="p-6 text-center">
+                      <h3 class="text-xl font-bold text-gray-900 mb-1">Saidul Islam Sakib</h3>
+                      <p class="text-blue-700 font-medium">UX/UI Designer</p>
+                  </div>
+              </div>
+          </div>
+            
+            <div class="text-center mt-12">
+                <a href="#" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-700 hover:bg-blue-800">
+                    Meet The Full Team
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- CTA Section -->
+    <div class="bg-blue-800 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold mb-6">Ready to transform your business?</h2>
+                    <p class="text-xl text-blue-100 mb-8">Let's discuss how we can help you achieve your digital goals.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="#" class="bg-white text-blue-800 px-8 py-3 rounded-md font-semibold text-center hover:bg-gray-100 transition duration-300">Get Free Consultation</a>
+                    <a href="#" class="border-2 border-white text-white px-8 py-3 rounded-md font-semibold text-center hover:bg-white hover:text-blue-800 transition duration-300">Call Us Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client Testimonials Section -->
+    <div id="testimonials" class="py-8 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+              <h2 class="text-3xl font-bold text-gray-900 mb-4">What Our Clients Say</h2>
+              <p class="text-xl text-gray-600 max-w-3xl mx-auto">Trusted by businesses worldwide. Here's what they have to say about us.</p>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-8">
+              <!-- Testimonial 1 -->
+              <div class="bg-gray-50 p-8 rounded-xl shadow-sm hover:shadow-md transition duration-300">
+                  <div class="flex items-center mb-6">
+                      <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" 
+                            alt="Sarah Johnson" 
+                            class="w-12 h-12 rounded-full object-cover">
+                      <div class="ml-4">
+                          <h4 class="font-bold text-gray-900">Sarah Johnson</h4>
+                          <p class="text-blue-700">CEO, TechSolutions Inc.</p>
+                      </div>
+                  </div>
+                  <p class="text-gray-600 italic mb-6">"WBSoft transformed our outdated systems into a modern, efficient platform. Their team delivered beyond our expectations with their technical expertise and attention to detail."</p>
+                  <div class="flex text-yellow-400">
+                      ★ ★ ★ ★ ★
+                  </div>
+              </div>
+
+              <!-- Testimonial 2 -->
+              <div class="bg-gray-50 p-8 rounded-xl shadow-sm hover:shadow-md transition duration-300">
+                  <div class="flex items-center mb-6">
+                      <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" 
+                            alt="Michael Chen" 
+                            class="w-12 h-12 rounded-full object-cover">
+                      <div class="ml-4">
+                          <h4 class="font-bold text-gray-900">Michael Chen</h4>
+                          <p class="text-blue-700">Director, Global Retail</p>
+                      </div>
+                  </div>
+                  <p class="text-gray-600 italic mb-6">"The inventory management system WBSoft developed reduced our operational costs by 30%. Their understanding of retail workflows is truly impressive."</p>
+                  <div class="flex text-yellow-400">
+                      ★ ★ ★ ★ ★
+                  </div>
+              </div>
+
+              <!-- Testimonial 3 -->
+              <div class="bg-gray-50 p-8 rounded-xl shadow-sm hover:shadow-md transition duration-300">
+                  <div class="flex items-center mb-6">
+                      <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=688&q=80" 
+                            alt="Emily Rodriguez" 
+                            class="w-12 h-12 rounded-full object-cover">
+                      <div class="ml-4">
+                          <h4 class="font-bold text-gray-900">Emily Rodriguez</h4>
+                          <p class="text-blue-700">CMO, HealthPlus</p>
+                      </div>
+                  </div>
+                  <p class="text-gray-600 italic mb-6">"From concept to launch, WBSoft demonstrated exceptional professionalism. Our patient portal has received 95% positive feedback thanks to their UX expertise."</p>
+                  <div class="flex text-yellow-400">
+                      ★ ★ ★ ★ ★
+                  </div>
+              </div>
+          </div>
+
+          <!-- Trust Indicators -->
+          <div class="mt-16 grid md:grid-cols-3 gap-8 text-center">
+              <div>
+                  <div class="text-4xl font-bold text-blue-700 mb-2">150+</div>
+                  <p class="text-gray-600">Satisfied Clients</p>
+              </div>
+              <div>
+                  <div class="text-4xl font-bold text-blue-700 mb-2">98%</div>
+                  <p class="text-gray-600">Client Retention Rate</p>
+              </div>
+              <div>
+                  <div class="text-4xl font-bold text-blue-700 mb-2">4.9/5</div>
+                  <p class="text-gray-600">Average Rating</p>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <!-- Training Programs Section -->
+    <div id="training" class="py-8 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+              <h2 class="text-3xl font-bold text-gray-900 mb-4">Professional Training Programs</h2>
+              <p class="text-xl text-gray-600 max-w-3xl mx-auto">Master in-demand digital skills with our industry-leading courses</p>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-8">
+              <!-- Digital Marketing Card -->
+              <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+                  <div class="relative h-48 bg-gradient-to-r from-purple-600 to-blue-600 flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                  </div>
+                  <div class="p-8">
+                      <h3 class="text-xl font-bold text-gray-900 mb-4">Digital Marketing Mastery</h3>
+                      <p class="text-gray-600 mb-6">Comprehensive training covering SEO, social media, PPC, email marketing, and analytics tools.</p>
+                      <div class="mb-6">
+                          <h4 class="font-semibold text-gray-900 mb-2">Course Highlights:</h4>
+                          <ul class="space-y-2 text-gray-600">
+                              <li class="flex items-start">
+                                  <svg class="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                  </svg>
+                                  <span>Google Ads & Analytics Certification</span>
+                              </li>
+                              <li class="flex items-start">
+                                  <svg class="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                  </svg>
+                                  <span>Content strategy development</span>
+                              </li>
+                              <li class="flex items-start">
+                                  <svg class="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                  </svg>
+                                  <span>Social media campaign management</span>
+                              </li>
+                          </ul>
+                      </div>
+                      <div class="flex justify-between items-center">
+                          <span class="text-lg font-bold text-blue-700">8 Weeks</span>
+                          <a href="#" class="px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800 transition duration-300">Enroll Now</a>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- Graphic Design Card -->
+              <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+                  <div class="relative h-48 bg-gradient-to-r from-pink-600 to-red-600 flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                  </div>
+                  <div class="p-8">
+                      <h3 class="text-xl font-bold text-gray-900 mb-4">Professional Graphic Design</h3>
+                      <p class="text-gray-600 mb-6">Master Adobe Creative Suite and design principles for print and digital media.</p>
+                      <div class="mb-6">
+                          <h4 class="font-semibold text-gray-900 mb-2">Course Highlights:</h4>
+                          <ul class="space-y-2 text-gray-600">
+                              <li class="flex items-start">
+                                  <svg class="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                  </svg>
+                                  <span>Photoshop, Illustrator, InDesign</span>
+                              </li>
+                              <li class="flex items-start">
+                                  <svg class="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                  </svg>
+                                  <span>Brand identity development</span>
+                              </li>
+                              <li class="flex items-start">
+                                  <svg class="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                  </svg>
+                                  <span>UI/UX fundamentals</span>
+                              </li>
+                          </ul>
+                      </div>
+                      <div class="flex justify-between items-center">
+                          <span class="text-lg font-bold text-blue-700">10 Weeks</span>
+                          <a href="#" class="px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800 transition duration-300">Enroll Now</a>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- Web Development Card -->
+              <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+                  <div class="relative h-48 bg-gradient-to-r from-green-600 to-teal-600 flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                      </svg>
+                  </div>
+                  <div class="p-8">
+                      <h3 class="text-xl font-bold text-gray-900 mb-4">Full Stack Web Development</h3>
+                      <p class="text-gray-600 mb-6">Become a proficient developer with modern frontend and backend technologies.</p>
+                      <div class="mb-6">
+                          <h4 class="font-semibold text-gray-900 mb-2">Course Highlights:</h4>
+                          <ul class="space-y-2 text-gray-600">
+                              <li class="flex items-start">
+                                  <svg class="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                  </svg>
+                                  <span>HTML5, CSS3, JavaScript (ES6+)</span>
+                              </li>
+                              <li class="flex items-start">
+                                  <svg class="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                  </svg>
+                                  <span>React.js & Node.js frameworks</span>
+                              </li>
+                              <li class="flex items-start">
+                                  <svg class="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                  </svg>
+                                  <span>Database integration (MongoDB, MySQL)</span>
+                              </li>
+                          </ul>
+                      </div>
+                      <div class="flex justify-between items-center">
+                          <span class="text-lg font-bold text-blue-700">12 Weeks</span>
+                          <a href="#" class="px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800 transition duration-300">Enroll Now</a>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Additional Info -->
+          <div class="mt-16 bg-white rounded-xl shadow-md p-8 md:p-12">
+              <div class="grid md:grid-cols-2 gap-8 items-center">
+                  <div>
+                      <h3 class="text-2xl font-bold text-gray-900 mb-4">Why Choose Our Training Programs?</h3>
+                      <ul class="space-y-4 text-gray-600">
+                          <li class="flex items-start">
+                              <div class="flex-shrink-0 h-6 w-6 text-blue-700">
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                  </svg>
+                              </div>
+                              <p class="ml-3"><strong>Industry Experts:</strong> Learn from professionals with 10+ years experience</p>
+                          </li>
+                          <li class="flex items-start">
+                              <div class="flex-shrink-0 h-6 w-6 text-blue-700">
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                  </svg>
+                              </div>
+                              <p class="ml-3"><strong>Project-Based:</strong> Build real portfolio pieces during training</p>
+                          </li>
+                          <li class="flex items-start">
+                              <div class="flex-shrink-0 h-6 w-6 text-blue-700">
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                  </svg>
+                              </div>
+                              <p class="ml-3"><strong>Career Support:</strong> Resume prep and job placement assistance</p>
+                          </li>
+                      </ul>
+                  </div>
+                  <div class="bg-blue-50 rounded-lg p-6">
+                      <h4 class="text-lg font-semibold text-gray-900 mb-4">Upcoming Batch Schedule</h4>
+                      <div class="space-y-4">
+                          <div class="flex justify-between border-b border-gray-200 pb-2">
+                              <span class="text-gray-700">Digital Marketing</span>
+                              <span class="font-medium">July 5, 2025</span>
+                          </div>
+                          <div class="flex justify-between border-b border-gray-200 pb-2">
+                              <span class="text-gray-700">Graphic Design</span>
+                              <span class="font-medium">September 12, 2025</span>
+                          </div>
+                          <div class="flex justify-between border-b border-gray-200 pb-2">
+                              <span class="text-gray-700">Web Development</span>
+                              <span class="font-medium">October 19, 2025</span>
+                          </div>
+                      </div>
+                      <div class="mt-6">
+                          <a href="#" class="inline-flex items-center text-blue-700 font-medium">
+                              Download full syllabus
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                              </svg>
+                          </a>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+
+
+    <!-- Careers Section -->
+    <div id="careers" class="py-8 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+              <h2 class="text-3xl font-bold text-gray-900 mb-4">Join Our Team</h2>
+              <p class="text-xl text-gray-600 max-w-3xl mx-auto">Build your career with WBSoft and work on exciting projects</p>
+          </div>
+          
+          <div class="grid md:grid-cols-3 gap-8">
+              <!-- Career 1 -->
+              <div class="bg-white rounded-xl shadow-md overflow-hidden service-card transition duration-300">
+                  <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1469&q=80" 
+                      alt="Software Developer" 
+                      class="w-full h-48 object-cover">
+                  <div class="p-8">
+                      <div class="text-blue-700 font-semibold mb-2">Development</div>
+                      <h3 class="text-xl font-bold text-gray-900 mb-4">Senior Software Developer</h3>
+                      <p class="text-gray-600 mb-4">Design and implement complex software solutions using modern technologies.</p>
+                      <div class="flex flex-wrap gap-2 mb-6">
+                          <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Python</span>
+                          <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Django</span>
+                          <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">React</span>
+                      </div>
+                      <a href="#" class="text-blue-700 font-medium hover:text-blue-800 flex items-center">
+                          Apply Now
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                          </svg>
+                      </a>
+                  </div>
+              </div>
+              
+              <!-- Career 2 -->
+              <div class="bg-white rounded-xl shadow-md overflow-hidden service-card transition duration-300">
+                  <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                      alt="UI/UX Designer" 
+                      class="w-full h-48 object-cover">
+                  <div class="p-8">
+                      <div class="text-blue-700 font-semibold mb-2">Design</div>
+                      <h3 class="text-xl font-bold text-gray-900 mb-4">UI/UX Designer</h3>
+                      <p class="text-gray-600 mb-4">Create intuitive and beautiful user interfaces for web and mobile applications.</p>
+                      <div class="flex flex-wrap gap-2 mb-6">
+                          <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Figma</span>
+                          <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Adobe XD</span>
+                          <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">User Research</span>
+                      </div>
+                      <a href="#" class="text-blue-700 font-medium hover:text-blue-800 flex items-center">
+                          Apply Now
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                          </svg>
+                      </a>
+                  </div>
+              </div>
+              
+              <!-- Career 3 -->
+              <div class="bg-white rounded-xl shadow-md overflow-hidden service-card transition duration-300">
+                  <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1469&q=80" 
+                      alt="Project Manager" 
+                      class="w-full h-48 object-cover">
+                  <div class="p-8">
+                      <div class="text-blue-700 font-semibold mb-2">Management</div>
+                      <h3 class="text-xl font-bold text-gray-900 mb-4">Project Manager</h3>
+                      <p class="text-gray-600 mb-4">Lead software projects from conception to delivery with agile methodologies.</p>
+                      <div class="flex flex-wrap gap-2 mb-6">
+                          <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Agile</span>
+                          <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Scrum</span>
+                          <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">JIRA</span>
+                      </div>
+                      <a href="#" class="text-blue-700 font-medium hover:text-blue-800 flex items-center">
+                          Apply Now
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                          </svg>
+                      </a>
+                  </div>
+              </div>
+          </div>
+
+          <!-- View All Button -->
+          <div class="text-center mt-12">
+              <a href="#" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-700 hover:bg-blue-800">
+                  View All Open Positions
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+              </a>
+          </div>
+
+          <!-- Why Join Us -->
+          <div class="mt-20 bg-white rounded-xl shadow-md p-8 md:p-12">
+              <div class="text-center mb-12">
+                  <h3 class="text-2xl font-bold text-gray-900 mb-4">Why Work at WBSoft?</h3>
+                  <p class="text-xl text-gray-600 max-w-3xl mx-auto">We offer more than just a job - we offer a career with purpose</p>
+              </div>
+              
+              <div class="grid md:grid-cols-3 gap-8">
+                  <div class="text-center p-6 rounded-lg hover:bg-gray-50 transition duration-300">
+                      <div class="mx-auto h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                      </div>
+                      <h4 class="text-lg font-semibold text-gray-900 mb-2">Challenging Projects</h4>
+                      <p class="text-gray-600">Work on innovative projects that push technological boundaries</p>
+                  </div>
+                  
+                  <div class="text-center p-6 rounded-lg hover:bg-gray-50 transition duration-300">
+                      <div class="mx-auto h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                          </svg>
+                      </div>
+                      <h4 class="text-lg font-semibold text-gray-900 mb-2">Continuous Learning</h4>
+                      <p class="text-gray-600">Regular training and opportunities to learn new technologies</p>
+                  </div>
+                  
+                  <div class="text-center p-6 rounded-lg hover:bg-gray-50 transition duration-300">
+                      <div class="mx-auto h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                          </svg>
+                      </div>
+                      <h4 class="text-lg font-semibold text-gray-900 mb-2">Great Culture</h4>
+                      <p class="text-gray-600">Collaborative environment with talented, passionate colleagues</p>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+
+
+
+
+
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="grid md:grid-cols-4 gap-12">
+                <div>
+                    <h3 class="text-xl font-bold mb-6">WBSoft</h3>
+                    <p class="text-gray-400">Innovative digital solutions for forward-thinking businesses.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Services</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Custom Software</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Web Development</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Mobile Apps</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Cloud Solutions</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Blog</a></li>	
+						<li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>						
+                        <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Contact</h4>
+                    <address class="text-gray-400 not-italic">
+                        <p>H-10, Block-H, Road-8,</p>
+                        <p>Banasree, Dhaka-1219, Bangladesh</p>
+                        <p class="mt-2">support@wbsoftbd.com</p>
+                        <p>+88 01846-750962</p>
+                    </address>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400">© 2023 WBSoft. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <span class="sr-only">Facebook</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <span class="sr-only">LinkedIn</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <span class="sr-only">Twitter</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+	
+	
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const portfolioItems = document.querySelectorAll('.portfolio-item');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => btn.classList.remove('active', 'bg-blue-700', 'text-white'));
+            filterButtons.forEach(btn => btn.classList.add('bg-white', 'text-gray-700'));
+            
+            // Add active class to clicked button
+            this.classList.add('active', 'bg-blue-700', 'text-white');
+            this.classList.remove('bg-white', 'text-gray-700');
+            
+            const filterValue = this.getAttribute('data-filter');
+            
+            portfolioItems.forEach(item => {
+                if (filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+</script>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get modal elements
+        const modal = document.getElementById('enterprise-web-modal');
+        const openModalLink = document.querySelector('a[href="#enterprise-web"]');
+        const closeModalBtn = document.getElementById('close-modal');
+        
+        // Open modal when clicking "Learn more"
+        if (openModalLink) {
+            openModalLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+            });
+        }
+        
+        // Close modal when clicking close button
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', function() {
+                modal.classList.add('hidden');
+                document.body.style.overflow = ''; // Restore scrolling
+            });
+        }
+        
+        // Close modal when clicking outside the modal content
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+        });
+    });
+    </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Enterprise Web Solutions Modal
+            const webModal = document.getElementById('enterprise-web-modal');
+            const openWebModalLink = document.querySelector('a[href="#enterprise-web"]');
+            const closeWebModalBtn = document.getElementById('close-modal');
+            
+            // Custom Software Development Modal
+            const softwareModal = document.getElementById('custom-software-modal');
+            const openSoftwareModalLink = document.querySelector('a[href="#custom-software"]');
+            const closeSoftwareModalBtn = document.getElementById('close-custom-software-modal');
+            
+            // Open modal functions
+            function openModal(modal) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // Close modal functions
+            function closeModal(modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+            
+            // Event listeners for Web Solutions modal
+            if (openWebModalLink) {
+                openWebModalLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openModal(webModal);
+                });
+            }
+            
+            if (closeWebModalBtn) {
+                closeWebModalBtn.addEventListener('click', function() {
+                    closeModal(webModal);
+                });
+            }
+            
+            // Event listeners for Software Development modal
+            if (openSoftwareModalLink) {
+                openSoftwareModalLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openModal(softwareModal);
+                });
+            }
+            
+            if (closeSoftwareModalBtn) {
+                closeSoftwareModalBtn.addEventListener('click', function() {
+                    closeModal(softwareModal);
+                });
+            }
+            
+            // Close modals when clicking outside
+            [webModal, softwareModal].forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeModal(modal);
+                    }
+                });
+            });
+            
+            // Close modals with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    if (!webModal.classList.contains('hidden')) {
+                        closeModal(webModal);
+                    }
+                    if (!softwareModal.classList.contains('hidden')) {
+                        closeModal(softwareModal);
+                    }
+                }
+            });
+        });
+        </script>
+
+
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Modal management functions
+                function openModal(modal) {
+                    modal.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                }
+                
+                function closeModal(modal) {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }
+                
+                // Set up all modals
+                const modals = [
+                    {
+                        id: 'enterprise-web-modal',
+                        trigger: 'a[href="#enterprise-web"]',
+                        close: 'close-modal'
+                    },
+                    {
+                        id: 'custom-software-modal',
+                        trigger: 'a[href="#custom-software"]',
+                        close: 'close-custom-software-modal'
+                    },
+                    {
+                        id: 'managed-it-modal',
+                        trigger: 'a[href="#managed-it"]',
+                        close: 'close-managed-it-modal'
+                    }
+                ];
+                
+                modals.forEach(config => {
+                    const modal = document.getElementById(config.id);
+                    const trigger = document.querySelector(config.trigger);
+                    const closeBtn = document.getElementById(config.close);
+                    
+                    if (trigger) {
+                        trigger.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            openModal(modal);
+                        });
+                    }
+                    
+                    if (closeBtn) {
+                        closeBtn.addEventListener('click', function() {
+                            closeModal(modal);
+                        });
+                    }
+                    
+                    if (modal) {
+                        modal.addEventListener('click', function(e) {
+                            if (e.target === modal) {
+                                closeModal(modal);
+                            }
+                        });
+                    }
+                });
+                
+                // Close all modals with Escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        modals.forEach(config => {
+                            const modal = document.getElementById(config.id);
+                            if (modal && !modal.classList.contains('hidden')) {
+                                closeModal(modal);
+                            }
+                        });
+                    }
+                });
+            });
+            </script>
+</body>
+</html>

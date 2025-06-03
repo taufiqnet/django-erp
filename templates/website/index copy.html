@@ -1,0 +1,595 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>WBSoft</title>
+  <!-- General Meta Tags -->
+  <meta name="description" content="WBSoft provides cutting-edge software solutions, ERP systems, websites, and IT services that empower businesses across industries.">
+  <meta name="keywords" content="WBSoft, software solutions, ERP systems, websites, IT services, business software, web development">
+  <meta name="author" content="WBSoft">
+  
+  <!-- Open Graph Meta Tags for Facebook and Social Media -->
+  <meta property="og:title" content="Welcome to WBSoft">
+  <meta property="og:description" content="We provide innovative web-based software solutions, ERP systems, websites, and IT services to help businesses grow.">
+  <meta property="og:image" content="{% static 'assets/website/img/logo.jpg' %}">
+  <meta property="og:url" content="https://wbsoftbd.com/about">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="WBSoft">
+
+  <!-- Favicons -->
+  <link href="{% static 'assets/website/img/logo.jpg' %}" rel="icon">
+  <link href="{% static 'assets/website/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Raleway:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'assets/website/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/website/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/website/vendor/aos/aos.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/website/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/website/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/website/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="{% static 'assets/website/css/main.css' %}" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+</head>
+
+<body class="index-page">
+  <header id="header" class="header sticky-top">
+    <div class="topbar d-flex align-items-center">
+      <div class="container d-flex justify-content-center justify-content-md-between">
+        <div class="contact-info d-flex align-items-center">
+          <i class="bi bi-envelope d-flex align-items-center">
+            <a href="mailto:support@wbsoftbd.com">support@wbsoftbd.com</a>
+          </i>
+          <i class="bi bi-phone d-flex align-items-center ms-4">
+            <span>+88 01846-750962</span>
+          </i>
+        </div>
+        <div class="social-links d-none d-md-flex align-items-center">
+          <a href="https://www.facebook.com/wbsoftbd" class="facebook"><i class="bi bi-facebook"></i></a>
+          <a href="https://www.linkedin.com/company/102021396/admin/dashboard/" class="linkedin"><i class="bi bi-linkedin"></i></a>
+          <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
+        </div>
+      </div>
+    </div><!-- End Top Bar -->
+
+    <div class="branding d-flex align-items-center">
+      <div class="container position-relative d-flex align-items-center justify-content-between">
+        <a href="" class="logo d-flex align-items-center me-auto">
+          <h1 class="sitename">WBSoft</h1>
+        </a>
+
+        <nav id="navmenu" class="navmenu">
+          <ul>
+            <li><a href="#hero" class="active">Home</a></li>
+            <li><a href="#about">About</a></li>        
+            <li class="dropdown">
+              <a href="#services"><span>Services</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+              <ul>
+                <li class="dropdown">
+                  <a href="#"><span>Software</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                  <ul>
+                    <li><a href="#">ERP</a></li>
+                    <li><a href="#">HRM</a></li> 
+                    <li><a href="#">Hospital Management</a></li>
+                    <li><a href="#">E-commerce</a></li>
+                    <li><a href="#">POS</a></li>
+                    <li><a href="#">CRM</a></li>
+                    <li><a href="#">Accounting</a></li>
+                    <li><a href="#">SCM</a></li>
+                    <li><a href="#">Project Management</a></li>
+                    <li><a href="#">Inventory Management</a></li>
+                    <li><a href="#">BPM</a></li>
+                  </ul>
+                </li>
+                <li class="dropdown">
+                  <a href="#"><span>Websites</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                  <ul>
+                    <li><a href="#">Business and Corporate</a></li>
+                    <li><a href="#">E-commerce</a></li>
+                    <li><a href="#">Educational</a></li>
+                    <li><a href="#">Real Estate</a></li>
+                    <li><a href="#">Health and Fitness</a></li>
+                    <li><a href="#">Travel and Tourism</a></li>
+                    <li><a href="#">Gaming</a></li>
+                  </ul>
+                </li>
+                <li><a href="#">Digital Marketing</a></li>
+                <li><a href="#">Email Marketing</a></li>
+                <li><a href="#">Web Hosting and Domain</a></li>
+                <li><a href="#">IT Training</a></li>
+                <li><a href="#">E-commerce Solutions</a></li>
+              </ul>
+            </li>
+            <li><a href="#departments">Projects</a></li>
+            <li><a href="#doctors">Supports</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+
+        <a class="cta-btn d-none d-sm-block" href="">Sign Up/Login</a>
+      </div>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero section light-background">
+
+        <img src="{% static 'assets/website/img/bg.png' %}" alt="" data-aos="fade-in">
+    
+        <div class="container position-relative">
+    
+        <div class="welcome position-relative" data-aos="fade-down" data-aos-delay="100">
+            <h2>WELCOME TO WBSoft</h2>
+            <p>We are a company making web-based software, websites, and IT services.</p>
+        </div><!-- End Welcome -->
+    
+        <div class="content row gy-4">
+            <div class="col-lg-4 d-flex align-items-stretch">
+            <div class="why-box" data-aos="zoom-out" data-aos-delay="200">
+                <h3>Why Choose WBSoft?</h3>
+                <p>
+                WBSoft delivers innovative web-based software, stunning websites, e-commerce solutions, and comprehensive IT services, including digital marketing, SEO, IT training, 
+                web hosting, domain management, and custom software solutions, ensuring the best products and unparalleled support for your business needs. 
+                </p>
+                <div class="text-center">
+                <a href="#about" class="more-btn"><span>Learn More</span> <i class="bi bi-chevron-right"></i></a>
+                </div>
+            </div>
+            </div><!-- End Why Box -->
+    
+            <div class="col-lg-8 d-flex align-items-stretch">
+            <div class="d-flex flex-column justify-content-center">
+                <div class="row gy-4">
+    
+                <div class="col-xl-4 d-flex align-items-stretch">
+                    <div class="icon-box" data-aos="zoom-out" data-aos-delay="300">
+                    <i class="bi bi-clipboard-data"></i>
+                    <h4>Software Services</h4>
+                    <p>WBSoft develops and supports web-based ERP, HRM, CRM, POS, E-Commerce, BPM, Accounting, and inventory management solutions.</p>
+                    </div>
+                </div><!-- End Icon Box -->
+    
+                <div class="col-xl-4 d-flex align-items-stretch">
+                    <div class="icon-box" data-aos="zoom-out" data-aos-delay="400">
+                    <i class="bi bi-gem"></i>
+                    <h4>Website Services</h4>
+                    <p>WBSoft builds and customizes websites for business, e-commerce, education, real estate, health, travel, and gaming industries.</p>
+                    </div>
+                </div><!-- End Icon Box -->
+    
+                <div class="col-xl-4 d-flex align-items-stretch">
+                    <div class="icon-box" data-aos="zoom-out" data-aos-delay="500">
+                    <i class="bi bi-inboxes"></i>
+                    <h4>IT Services</h4>
+                    <p>WBSoft offers digital marketing, email marketing, web hosting, IT training, and e-commerce solutions.</p>
+                    </div>
+                </div><!-- End Icon Box -->
+    
+                </div>
+            </div>
+            </div>
+        </div><!-- End Content-->
+    
+        </div>
+    
+    </section><!-- /Hero Section -->
+
+    <!-- About Section -->
+<section id="about" class="about section">
+
+    <div class="container">
+  
+      <div class="row gy-4 gx-5">
+  
+        <div class="col-lg-6 position-relative align-self-start" data-aos="fade-up" data-aos-delay="200">
+          <img src="{% static 'assets/website/img/about.jpg' %}" class="img-fluid" alt="">
+          <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox pulsating-play-btn"></a>
+        </div>
+  
+        <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="100">
+          <h3>About Us</h3>
+          <p>
+            Welcome to WBSoft, a leading innovator in cutting-edge software solutions designed to empower businesses across industries. With a focus on ERP and other software, 
+            websites, and IT services, we are committed to delivering high-performance technology that simplifies operations, boosts efficiency, 
+            and drives growth.
+          </p>
+          <p>    
+            WBSoft started with a passion for solving business challenges through scalable software. With industry expertise, we create tailored solutions, empowering 
+            clients to thrive in today’s competitive landscape.
+          </p>
+          <ul>
+            <li>
+              <i class="fa-solid fa-vial-circle-check"></i>
+              <div>
+                <h5>Our Vision</h5>
+                <p>We envision a future where every business, no matter its size, has access to world-class technology solutions that transform the way they operate.</p>
+              </div>
+            </li>
+            <li>
+              <i class="fa-solid fa-pump-medical"></i>
+              <div>
+                <h5>Our Mission</h5>
+                <p>Our mission is to empower our clients to reach new heights of success through innovative software that is reliable, secure, and easy to use.</p>
+              </div>
+            </li>
+            <li>
+              <i class="fa-solid fa-heart-circle-xmark"></i>
+              <div>
+                <h5>Our Expertise</h5>
+                <p>WBSoft specializes in ERP and software, websites offering tools to streamline processes, 
+                  boost productivity, and enhance customer experiences, driving tangible results for businesses.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+  
+      </div>
+  
+    </div>
+  
+  </section><!-- /About Section -->
+  
+  <!-- Stats Section -->
+    <section id="stats" class="stats section light-background">
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row gy-4">
+
+          <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
+            <i class="fa-solid fa-user-doctor"></i>
+            <div class="stats-item">
+              <span>11</span>
+              <p>Softwares</p>
+            </div>
+          </div><!-- End Stats Item -->
+
+          <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
+            <i class="fa-regular fa-hospital"></i>
+            <div class="stats-item">
+              <span>26</span>
+              <p>Websites</p>
+            </div>
+          </div><!-- End Stats Item -->
+
+          <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
+            <i class="fas fa-flask"></i>
+            <div class="stats-item">
+              <span>5</span>
+              <p>Other Services</p>
+            </div>
+          </div><!-- End Stats Item -->
+
+          <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
+            <i class="fas fa-award"></i>
+            <div class="stats-item">
+              <span>37</span>
+              <p>Projects</p>
+            </div>
+          </div><!-- End Stats Item -->
+
+        </div>
+
+      </div>
+
+    </section><!-- /Stats Section -->
+
+<!-- Services Section -->
+    <section id="services" class="services section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Services</h2>
+        <p>Choose the services that your business wants to expand</p>
+      </div><!-- End Section Title -->
+
+      <div class="container">
+
+        <div class="row gy-4">
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="service-item  position-relative">
+              <div class="icon">
+                <i class="fas fa-heartbeat"></i>
+              </div>
+              <a href="#" class="stretched-link">
+                <h3>Software</h3>
+              </a>
+              <p>Enterprise Resource Planning (ERP)</p>
+              <p>Human Resource Management (HRM)</p>
+              <p>Hospital Management (HMS)</p>
+              <p>E-commerce Software</p>
+              <p>Point of Sales (POS)</p>
+              <p>Customer Relationship Management (CRM)</p>
+              <p>Accounting Software</p>
+              <p>Supply Chain Management (SCM)</p>
+              <p>Project Management</p>
+              <p>Inventory Management</p>
+              <p>Business Process Management (BPM)</p>
+            </div>
+          </div><!-- End Service Item -->
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item position-relative">
+              <div class="icon">
+                <i class="fas fa-pills"></i>
+              </div>
+              <a href="#" class="stretched-link">
+                <h3>Websites</h3>
+              </a>
+              <p>Business and Corporate</p>
+              <p>E-commerce</p>
+              <p>Educational</p>
+              <p>Real Estate</p>
+              <p>Health and Fitness</p>
+              <p>Travel and Tourism</p>
+              <p>Gaming</p>
+            </div>
+          </div><!-- End Service Item -->
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="service-item position-relative">
+              <div class="icon">
+                <i class="fas fa-hospital-user"></i>
+              </div>
+              <a href="#" class="stretched-link">
+                <h3>Digital Marketing</h3>
+              </a>
+              <p>Search Engine Optimization (SEO)</p>
+              <p>Social Media Marketing (SMM)</p>
+              <p>Email Marketing</p>
+              <p>Website Design and Development</p>
+              <p>E-commerce Marketing</p>
+            </div>
+          </div><!-- End Service Item -->
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+            <div class="service-item position-relative">
+              <div class="icon">
+                <i class="fas fa-dna"></i>
+              </div>
+              <a href="#" class="stretched-link">
+                <h3>Web Hosting and Domain</h3>
+              </a>
+              <p>Domain Registration Services</p>
+              <p>Web Hosting Services</p>
+              <p>Email Hosting Services</p>
+              <p>Website Backup and Recovery</p>
+              <p>Website Security Services</p>
+              <p>Website Migration Services</p>
+              <p>Website Monitoring and Uptime Services</p>
+              <p>Managed Services</p>
+              <p>Developer Tools</p>
+              <p>E-commerce Hosting Features</p>
+              <p>Free Hosting and Domain Services</p>
+              <p>Enterprise Hosting Solutions</p>
+              <a href="#" class="stretched-link"></a>
+            </div>
+          </div><!-- End Service Item -->
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+            <div class="service-item position-relative">
+              <div class="icon">
+                <i class="fas fa-wheelchair"></i>
+              </div>
+              <a href="#" class="stretched-link">
+                <h3>IT Training</h3>
+              </a>
+              <p>Programming and Development</p>
+              <p>Cloud Computing</p>
+              <p>Database Training</p>
+              <p>IT Project Management</p>
+              <p>IT Soft Skills</p>
+              <p>IT for Non-Tech Professionals</p>
+              <p>IT Training for Specific Industries</p>
+              <a href="#" class="stretched-link"></a>
+            </div>
+          </div><!-- End Service Item -->
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
+            <div class="service-item position-relative">
+              <div class="icon">
+                <i class="fas fa-notes-medical"></i>
+              </div>
+              <a href="#" class="stretched-link">
+                <h3>E-commerce Solutions</h3>
+              </a>
+              <p>E-Commerce Platform Development</p>
+              <p>E-Commerce Website Design</p>
+              <p>E-Commerce Integration Services</p>
+              <p>E-Commerce Analytics and Reporting</p>
+              <p>Inventory and Order Management</p>
+              <a href="#" class="stretched-link"></a>
+            </div>
+          </div><!-- End Service Item -->
+
+        </div>
+
+      </div>
+
+    </section><!-- /Services Section -->
+
+    <!-- Appointment Section -->
+    <section id="appointment" class="appointment section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Schedule a Consultation</h2>
+        <p>Let us help you with your software, websites and other IT services needs. Whether you're looking for a custom solution, a product demo, or technical support, we're here to assist.</p>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <form action="forms/appointment.php" method="post" role="form" class="php-email-form">
+          <div class="row">
+            <div class="col-md-4 form-group">
+              <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required="">
+            </div>
+            <div class="col-md-4 form-group mt-3 mt-md-0">
+              <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required="">
+            </div>
+            <div class="col-md-4 form-group mt-3 mt-md-0">
+              <input type="tel" class="form-control" name="phone" id="phone" placeholder="Your Phone" required="">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 form-group mt-3">
+              <input type="datetime-local" name="date" class="form-control datepicker" id="date" placeholder="Appointment Date" required="">
+            </div>
+            <div class="col-md-4 form-group mt-3">
+              <select name="department" id="department" class="form-select" required="">
+                <option value="">Select Category</option>
+                <option value="Department 1">Software</option>
+                <option value="Department 2">Websites</option>
+                <option value="Department 3">Other Services</option>
+              </select>
+            </div>
+            <div class="col-md-4 form-group mt-3">
+              <select name="doctor" id="doctor" class="form-select" required="">
+                <option value="">Select Services</option>
+                <option value="Doctor 1">ERP</option>
+                <option value="Doctor 2">HRM</option>
+                <option value="Doctor 3">Hospital Management</option>
+                <option value="Doctor 3">E-commerce</option>
+                <option value="Doctor 3">POS</option>
+                <option value="Doctor 3">CRM</option>
+                <option value="Doctor 3">Accounting</option>
+                <option value="Doctor 3">SCM</option>
+                <option value="Doctor 3">Project Management</option>
+                <option value="Doctor 3">Inventory Management</option>
+                <option value="Doctor 3">BPM</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group mt-3">
+            <textarea class="form-control" name="message" rows="5" placeholder="Message (Optional)"></textarea>
+          </div>
+          <div class="mt-3">
+            <div class="loading">Loading</div>
+            <div class="error-message"></div>
+            <div class="sent-message">Your appointment request has been sent successfully. Thank you!</div>
+            <div class="text-center"><button type="submit">Request Consultation</button></div>
+          </div>
+        </form>
+
+      </div>
+
+    </section><!-- /Appointment Section -->
+  
+  </main>
+
+  <footer id="footer" class="footer light-background">
+
+    <div class="container footer-top">
+      <div class="row gy-4">
+        <div class="col-lg-4 col-md-6 footer-about">
+          <a href="index.html" class="logo d-flex align-items-center">
+            <span class="sitename">WBSoft</span>
+          </a>
+          <div class="footer-contact pt-3">
+            <p>H-10, Block-H, Road-8,</p>
+            <p>Banasree, Dhaka-1219, Bangladesh</p>
+            <p class="mt-3"><strong>Phone:</strong> <span>+88 01846-750962</span></p>
+            <p><strong>Email:</strong> <span>support@wbsoftbd.com</span></p>
+          </div>
+          <div class="social-links d-flex mt-4">
+            <a href=""><i class="bi bi-twitter-x"></i></a>
+            <a href=""><i class="bi bi-facebook"></i></a>
+            <a href=""><i class="bi bi-instagram"></i></a>
+            <a href=""><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Category</h4>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About us</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Terms of service</a></li>
+            <li><a href="#">Privacy policy</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Our Services</h4>
+          <ul>
+            <li><a href="#">Software</a></li>
+            <li><a href="#">Web Design & Development</a></li>
+            <li><a href="#">Digital Marketing</a></li>
+            <li><a href="#">Web Hosting and Domain</a></li>
+            <li><a href="#">IT Training</a></li>
+            <li><a href="#">E-commerce Solutions</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Hic solutasetp</h4>
+          <ul>
+            <li><a href="#">Molestiae accusamus iure</a></li>
+            <li><a href="#">Excepturi dignissimos</a></li>
+            <li><a href="#">Suscipit distinctio</a></li>
+            <li><a href="#">Dilecta</a></li>
+            <li><a href="#">Sit quas consectetur</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Nobis illum</h4>
+          <ul>
+            <li><a href="#">Ipsam</a></li>
+            <li><a href="#">Laudantium dolorum</a></li>
+            <li><a href="#">Dinera</a></li>
+            <li><a href="#">Trodelas</a></li>
+            <li><a href="#">Flexo</a></li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">WBSoft</strong> <span>All Rights Reserved</span></p>
+    
+    </div>
+
+  </footer>
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  {% comment %} <div id="preloader"></div> {% endcomment %}
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'assets/website/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/website/vendor/php-email-form/validate.js' %}"></script>
+  <script src="{% static 'assets/website/vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'assets/website/vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'assets/website/vendor/purecounter/purecounter_vanilla.js' %}"></script>
+  <script src="{% static 'assets/website/vendor/swiper/swiper-bundle.min.js' %}"></script>
+  
+  <!-- Main JS File -->
+  <script src="{% static 'assets/website/js/main.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+  <script>
+    AOS.init();
+  </script>
+</body>
+
+</html>

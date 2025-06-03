@@ -1,0 +1,587 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Same head content as your main page -->
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>WBSoft - Computer Shop</title>
+  <meta name="description" content="Shop for high-quality computer components and accessories at WBSoft">
+  
+  <!-- Favicons -->
+  <link href="{% static 'assets/website/img/logo.jpg' %}" rel="icon">
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+      body {
+          font-family: 'Inter', sans-serif;
+      }
+      .product-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+      .cart-badge {
+          position: absolute;
+          top: -8px;
+          right: -8px;
+          background-color: #1d4ed8;
+          color: white;
+          border-radius: 50%;
+          width: 22px;
+          height: 22px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+      }
+  </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Navigation (same as your main page but with active shop link) -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="index.html" class="text-2xl font-bold text-blue-800">WBSoft</a>
+                    </div>
+                    <div class="hidden md:block ml-10">
+                        <div class="flex space-x-8">
+                            <a href="index.html" class="text-gray-600 hover:text-blue-800 font-medium px-3 py-2">Home</a>
+                            <a href="shop.html" class="text-blue-800 font-medium px-3 py-2">Shop</a>
+                            <a href="#contact" class="text-gray-600 hover:text-blue-800 font-medium px-3 py-2">Contact</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <!-- Cart icon with badge -->
+                    <div class="relative ml-4">
+                        <a href="#cart" class="text-gray-600 hover:text-blue-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            <span class="cart-badge hidden">0</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- Mobile menu button (same as your main page) -->
+                <div class="md:hidden">
+                    <button type="button" class="text-gray-500 hover:text-blue-800 focus:outline-none" id="mobile-menu-button">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="h-6 w-6 block" id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section for Shop -->
+    <div class="bg-gradient-to-r from-blue-800 to-blue-600 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-4">Computer Products</h1>
+                <p class="text-xl text-blue-100 max-w-3xl mx-auto">High-quality computer components and accessories for professionals and enthusiasts</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Filters -->
+    <div class="bg-white py-6 border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h2 class="text-lg font-semibold text-gray-900">Computer Hardware</h2>
+                    <p class="text-sm text-gray-500">Showing all products</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div>
+                        <label for="sort" class="sr-only">Sort</label>
+                        <select id="sort" class="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm">
+                            <option>Sort by: Featured</option>
+                            <option>Price: Low to High</option>
+                            <option>Price: High to Low</option>
+                            <option>Newest Arrivals</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <!-- Product 1 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden product-card transition duration-300">
+                <div class="relative pt-[70%] bg-gray-100">
+                    <img src="https://images.unsplash.com/photo-1593640408182-31c70c8268f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80" 
+                         alt="Gaming Laptop" 
+                         class="absolute top-0 left-0 w-full h-full object-contain p-4">
+                </div>
+                <div class="p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Gaming Laptop Pro</h3>
+                    <div class="flex items-center mb-2">
+                        <div class="flex text-yellow-400">
+                            ★ ★ ★ ★ ★
+                        </div>
+                        <span class="text-gray-500 text-sm ml-2">(24)</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">High-performance gaming laptop with RTX 3080</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xl font-bold text-gray-900">$1,899.99</span>
+                        <button class="add-to-cart bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition duration-300" 
+                                data-id="1" 
+                                data-name="Gaming Laptop Pro" 
+                                data-price="1899.99">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden product-card transition duration-300">
+                <div class="relative pt-[70%] bg-gray-100">
+                    <img src="https://images.unsplash.com/photo-1587202372775-e229f1723e1b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80" 
+                         alt="Wireless Keyboard" 
+                         class="absolute top-0 left-0 w-full h-full object-contain p-4">
+                </div>
+                <div class="p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Mechanical Keyboard</h3>
+                    <div class="flex items-center mb-2">
+                        <div class="flex text-yellow-400">
+                            ★ ★ ★ ★ ☆
+                        </div>
+                        <span class="text-gray-500 text-sm ml-2">(18)</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">RGB mechanical keyboard with blue switches</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xl font-bold text-gray-900">$129.99</span>
+                        <button class="add-to-cart bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition duration-300" 
+                                data-id="2" 
+                                data-name="Mechanical Keyboard" 
+                                data-price="129.99">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden product-card transition duration-300">
+                <div class="relative pt-[70%] bg-gray-100">
+                    <img src="https://images.unsplash.com/photo-1540932239986-30128078f3c5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80" 
+                         alt="4K Monitor" 
+                         class="absolute top-0 left-0 w-full h-full object-contain p-4">
+                </div>
+                <div class="p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">27" 4K Monitor</h3>
+                    <div class="flex items-center mb-2">
+                        <div class="flex text-yellow-400">
+                            ★ ★ ★ ★ ★
+                        </div>
+                        <span class="text-gray-500 text-sm ml-2">(32)</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">Ultra HD monitor with HDR and 144Hz refresh</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xl font-bold text-gray-900">$499.99</span>
+                        <button class="add-to-cart bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition duration-300" 
+                                data-id="3" 
+                                data-name="27\" 4K Monitor" 
+                                data-price="499.99">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden product-card transition duration-300">
+                <div class="relative pt-[70%] bg-gray-100">
+                    <img src="https://images.unsplash.com/photo-1591488320449-011701bb6704?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                         alt="Gaming Mouse" 
+                         class="absolute top-0 left-0 w-full h-full object-contain p-4">
+                </div>
+                <div class="p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Wireless Gaming Mouse</h3>
+                    <div class="flex items-center mb-2">
+                        <div class="flex text-yellow-400">
+                            ★ ★ ★ ★ ☆
+                        </div>
+                        <span class="text-gray-500 text-sm ml-2">(15)</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">Precision wireless mouse with 12 programmable buttons</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xl font-bold text-gray-900">$79.99</span>
+                        <button class="add-to-cart bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition duration-300" 
+                                data-id="4" 
+                                data-name="Wireless Gaming Mouse" 
+                                data-price="79.99">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 5 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden product-card transition duration-300">
+                <div class="relative pt-[70%] bg-gray-100">
+                    <img src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1528&q=80" 
+                         alt="SSD Drive" 
+                         class="absolute top-0 left-0 w-full h-full object-contain p-4">
+                </div>
+                <div class="p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">1TB NVMe SSD</h3>
+                    <div class="flex items-center mb-2">
+                        <div class="flex text-yellow-400">
+                            ★ ★ ★ ★ ★
+                        </div>
+                        <span class="text-gray-500 text-sm ml-2">(42)</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">Ultra-fast SSD with read speeds up to 3500MB/s</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xl font-bold text-gray-900">$129.99</span>
+                        <button class="add-to-cart bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition duration-300" 
+                                data-id="5" 
+                                data-name="1TB NVMe SSD" 
+                                data-price="129.99">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 6 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden product-card transition duration-300">
+                <div class="relative pt-[70%] bg-gray-100">
+                    <img src="https://images.unsplash.com/photo-1592155931584-901ac15763e3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1473&q=80" 
+                         alt="Bluetooth Headphones" 
+                         class="absolute top-0 left-0 w-full h-full object-contain p-4">
+                </div>
+                <div class="p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Noise Cancelling Headphones</h3>
+                    <div class="flex items-center mb-2">
+                        <div class="flex text-yellow-400">
+                            ★ ★ ★ ★ ☆
+                        </div>
+                        <span class="text-gray-500 text-sm ml-2">(27)</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">Premium wireless headphones with ANC technology</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xl font-bold text-gray-900">$199.99</span>
+                        <button class="add-to-cart bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition duration-300" 
+                                data-id="6" 
+                                data-name="Noise Cancelling Headphones" 
+                                data-price="199.99">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 7 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden product-card transition duration-300">
+                <div class="relative pt-[70%] bg-gray-100">
+                    <img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                         alt="Webcam" 
+                         class="absolute top-0 left-0 w-full h-full object-contain p-4">
+                </div>
+                <div class="p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">4K Webcam</h3>
+                    <div class="flex items-center mb-2">
+                        <div class="flex text-yellow-400">
+                            ★ ★ ★ ★ ☆
+                        </div>
+                        <span class="text-gray-500 text-sm ml-2">(19)</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">Ultra HD webcam with built-in microphone</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xl font-bold text-gray-900">$149.99</span>
+                        <button class="add-to-cart bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition duration-300" 
+                                data-id="7" 
+                                data-name="4K Webcam" 
+                                data-price="149.99">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 8 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden product-card transition duration-300">
+                <div class="relative pt-[70%] bg-gray-100">
+                    <img src="https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                         alt="Laptop Stand" 
+                         class="absolute top-0 left-0 w-full h-full object-contain p-4">
+                </div>
+                <div class="p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Adjustable Laptop Stand</h3>
+                    <div class="flex items-center mb-2">
+                        <div class="flex text-yellow-400">
+                            ★ ★ ★ ★ ★
+                        </div>
+                        <span class="text-gray-500 text-sm ml-2">(36)</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">Ergonomic stand for better posture and cooling</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xl font-bold text-gray-900">$39.99</span>
+                        <button class="add-to-cart bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition duration-300" 
+                                data-id="8" 
+                                data-name="Adjustable Laptop Stand" 
+                                data-price="39.99">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-12 flex justify-center">
+            <nav class="flex items-center space-x-2">
+                <a href="#" class="px-3 py-1 rounded-md bg-blue-700 text-white">1</a>
+                <a href="#" class="px-3 py-1 rounded-md text-gray-700 hover:bg-gray-100">2</a>
+                <a href="#" class="px-3 py-1 rounded-md text-gray-700 hover:bg-gray-100">3</a>
+                <a href="#" class="px-3 py-1 rounded-md text-gray-700 hover:bg-gray-100">Next →</a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Footer (same as your main page) -->
+    <footer class="bg-gray-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="grid md:grid-cols-4 gap-12">
+                <div>
+                    <h3 class="text-xl font-bold mb-6">WBSoft</h3>
+                    <p class="text-gray-400">Innovative digital solutions for forward-thinking businesses.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Shop</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Laptops</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Components</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Accessories</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Deals</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">FAQs</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Shipping</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Returns</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Contact</h4>
+                    <address class="text-gray-400 not-italic">
+                        <p>H-10, Block-H, Road-8,</p>
+                        <p>Banasree, Dhaka-1219, Bangladesh</p>
+                        <p class="mt-2">support@wbsoftbd.com</p>
+                        <p>+88 01846-750962</p>
+                    </address>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400">© 2023 WBSoft. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <span class="sr-only">Facebook</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <span class="sr-only">LinkedIn</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Shopping Cart Modal -->
+    <div id="cart-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-900 opacity-75"></div>
+            </div>
+            
+            <!-- Modal content -->
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <!-- Close button -->
+                            <div class="absolute top-0 right-0 pt-4 pr-4">
+                                <button type="button" class="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none" id="close-cart-modal">
+                                    <span class="sr-only">Close</span>
+                                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Your Shopping Cart</h3>
+                            <div class="cart-content">
+                                <!-- Cart items will be inserted here by JavaScript -->
+                                <div class="empty-cart-message py-8 text-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                    <p class="mt-2 text-gray-600">Your cart is empty</p>
+                                </div>
+                            </div>
+                            
+                            <div class="cart-total hidden mt-6 border-t pt-4">
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Subtotal:</span>
+                                    <span class="font-bold">$0.00</span>
+                                </div>
+                                <div class="mt-6">
+                                    <button class="w-full bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition duration-300">
+                                        Proceed to Checkout
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for cart functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize cart
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            updateCartBadge();
+            
+            // Add to cart buttons
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const name = this.getAttribute('data-name');
+                    const price = parseFloat(this.getAttribute('data-price'));
+                    
+                    // Check if item already in cart
+                    const existingItem = cart.find(item => item.id === id);
+                    
+                    if (existingItem) {
+                        existingItem.quantity += 1;
+                    } else {
+                        cart.push({
+                            id: id,
+                            name: name,
+                            price: price,
+                            quantity: 1
+                        });
+                    }
+                    
+                    // Save to localStorage and update UI
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    updateCartBadge();
+                    showAddedToCart(name);
+                });
+            });
+            
+            // Cart icon click
+            document.querySelector('a[href="#cart"]').addEventListener('click', function(e) {
+                e.preventDefault();
+                openCartModal();
+            });
+            
+            // Close cart modal
+            document.getElementById('close-cart-modal').addEventListener('click', function() {
+                document.getElementById('cart-modal').classList.add('hidden');
+            });
+            
+            // Update cart badge
+            function updateCartBadge() {
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                const badge = document.querySelector('.cart-badge');
+                
+                if (totalItems > 0) {
+                    badge.textContent = totalItems;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            }
+            
+            // Show "added to cart" notification
+            function showAddedToCart(productName) {
+                // In a real app, you might show a toast notification here
+                console.log(`${productName} added to cart`);
+            }
+            
+            // Open cart modal and display items
+            function openCartModal() {
+                const modal = document.getElementById('cart-modal');
+                const cartContent = document.querySelector('.cart-content');
+                const cartTotal = document.querySelector('.cart-total');
+                const emptyCartMsg = document.querySelector('.empty-cart-message');
+                
+                if (cart.length === 0) {
+                    cartContent.innerHTML = emptyCartMsg.outerHTML;
+                    cartTotal.classList.add('hidden');
+                } else {
+                    // Generate cart items HTML
+                    let html = '';
+                    let subtotal = 0;
+                    
+                    cart.forEach(item => {
+                        const itemTotal = item.price * item.quantity;
+                        subtotal += itemTotal;
+                        
+                        html += `
+                            <div class="cart-item flex justify-between items-center py-4 border-b">
+                                <div>
+                                    <h4 class="font-medium">${item.name}</h4>
+                                    <p class="text-gray-600 text-sm">$${item.price.toFixed(2)} × ${item.quantity}</p>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="font-bold mr-4">$${itemTotal.toFixed(2)}</span>
+                                    <button class="remove-item text-red-500 hover:text-red-700" data-id="${item.id}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    cartContent.innerHTML = html;
+                    document.querySelector('.cart-total span:last-child').textContent = `$${subtotal.toFixed(2)}`;
+                    cartTotal.classList.remove('hidden');
+                    
+                    // Add event listeners to remove buttons
+                    document.querySelectorAll('.remove-item').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const itemId = this.getAttribute('data-id');
+                            cart = cart.filter(item => item.id !== itemId);
+                            localStorage.setItem('cart', JSON.stringify(cart));
+                            updateCartBadge();
+                            openCartModal(); // Refresh the modal
+                        });
+                    });
+                }
+                
+                modal.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

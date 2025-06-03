@@ -1,0 +1,35 @@
+{% extends 'partials/base.html' %}
+
+{% block title %}ShopMate - Category{% endblock %}
+
+{% block content %}
+
+<!-- Category Section -->
+<section class="container mx-auto my-8">
+    <h2 class="text-center text-2xl font-bold mb-6">Categories</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for c in categories %}
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <!-- Category Image -->
+            <div class="flex justify-center items-center bg-gray-100 h-48">
+                {% if c.image %}
+                <img src="{{ c.image.url }}" alt="{{ c.title }}" class="h-full object-cover w-full">
+                {% else %}
+                <img src="https://via.placeholder.com/300x200" alt="{{ c.title }}" class="h-full object-cover w-full">
+                {% endif %}
+            </div>
+            <!-- Card Body -->
+            <div class="p-4 text-center">
+                <h5 class="text-lg font-semibold text-gray-800 truncate">
+                    <a href="{% url 'core:category-product-list' c.cid %}" class="text-blue-600 hover:underline">
+                        {{ c.title }}
+                    </a>
+                </h5>
+                <p class="text-gray-600 mt-2">{{ c.product_count }} Product{{ c.product_count|pluralize }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

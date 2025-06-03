@@ -1,0 +1,73 @@
+{% extends 'partials/base.html' %}
+
+{% block title %}ShopMate - Checkout{% endblock %}
+
+{% block content %}
+<section class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">Checkout</h1>
+
+    <div class="bg-white shadow-lg rounded-lg p-6">
+        {% if request.session.cart_data_obj %}
+        <div class="grid grid-cols-5 gap-4 border-b pb-4 mb-4">
+            <h2 class="font-bold">Product</h2>
+            <h2 class="font-bold">Quantity</h2>
+            <h2 class="font-bold">Price</h2>
+            <h2 class="font-bold">Total</h2>
+            <h2 class="font-bold">Action</h2>
+        </div>
+
+        {% for key, item in request.session.cart_data_obj.items %}
+        <div class="grid grid-cols-5 gap-4 items-center border-b pb-4 mb-4">
+            <!-- Product Details -->
+            <div class="flex items-center space-x-4">
+                <img src="{{ item.image }}" alt="{{ item.title }}" class="w-16 h-16 object-contain">
+                <div>
+                    <h3 class="font-semibold">{{ item.title }}</h3>
+                </div>
+            </div>
+
+            <!-- Quantity Controls -->
+            <div class="flex items-center space-x-4">
+                <button 
+                    class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold hover:bg-red-600 decrease-btn" 
+                    data-id="{{ key }}">-</button>
+                <span class="font-semibold">{{ item.qty }}</span>
+                <button 
+                    class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold hover:bg-green-600 increase-btn" 
+                    data-id="{{ key }}">+</button>
+            </div>
+
+            <!-- Price and Total -->
+            <div>${{ item.price }}</div>
+            <div>${{ item.total|floatformat:2 }}</div>
+
+            <!-- Remove Button -->
+            <div>
+                <button 
+                    class="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold hover:bg-red-700 delete-btn" 
+                    data-id="{{ key }}">Remove</button>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Final Amount -->
+        <div class="text-right mt-6">
+            <h3 class="text-xl font-bold">Grand Total: ${{ final.total_price|floatformat:2 }}</h3>
+        </div>
+
+        <!-- Checkout Button -->
+        <div class="text-right mt-6">
+            <a href="{% url 'core:place-order' %}" class="bg-blue-600 text-white px-6 py-3 rounded shadow hover:bg-blue-700">
+                Place Order
+            </a>
+        </div>
+        {% else %}
+        <div class="text-center py-8">
+            <h3 class="text-lg font-semibold">Your cart is empty!</h3>
+            <a href="{% url 'core:product-list' %}" class="text-blue-500 hover:underline">Continue Shopping</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

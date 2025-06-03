@@ -1,0 +1,88 @@
+<!-- sales/pos_screen.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Screen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container p-4 mx-auto">
+        <h1 class="mb-4 text-2xl font-bold">Point of Sale (POS) Screen</h1>
+        <form method="post" class="p-6 bg-white rounded-lg shadow-md">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label class="block text-gray-700">Customer</label>
+                {{ order_form.customer }}
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Payment Method</label>
+                {{ order_form.payment_method }}
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Shipping Address</label>
+                {{ order_form.shipping_address }}
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Notes</label>
+                {{ order_form.notes }}
+            </div>
+
+            <h3 class="mb-4 text-xl font-semibold">Products</h3>
+            {{ order_item_formset.management_form }}
+            <div id="order-items">
+                {% for form in order_item_formset %}
+                    <div class="p-4 mb-4 border rounded order-item">
+                        <div class="mb-2">
+                            <label class="block text-gray-700">Product</label>
+                            {{ form.product }}
+                        </div>
+                        <div class="mb-2">
+                            <label class="block text-gray-700">Quantity</label>
+                            {{ form.quantity }}
+                        </div>
+                        <div class="mb-2">
+                            <label class="block text-gray-700">Discount</label>
+                            {{ form.discount }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <button type="button" id="add-item" class="px-4 py-2 text-white bg-blue-500 rounded">Add Product</button>
+            <button type="submit" class="px-4 py-2 ml-2 text-white bg-green-500 rounded">Create Order</button>
+        </form>
+    </div>
+
+    <script>
+        // JavaScript to dynamically add more product fields
+        document.getElementById('add-item').addEventListener('click', function () {
+            const formCount = document.querySelector('#id_form-TOTAL_FORMS');
+            const container = document.getElementById('order-items');
+            const newForm = document.createElement('div');
+            newForm.classList.add('order-item', 'mb-4', 'p-4', 'border', 'rounded');
+            newForm.innerHTML = `
+                <div class="mb-2">
+                    <label class="block text-gray-700">Product</label>
+                    <select name="form-${formCount.value}-product" class="w-full p-2 border rounded">
+                        {% for product in products %}
+                            <option value="{{ product.id }}">{{ product.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label class="block text-gray-700">Quantity</label>
+                    <input type="number" name="form-${formCount.value}-quantity" class="w-full p-2 border rounded" min="1">
+                </div>
+                <div class="mb-2">
+                    <label class="block text-gray-700">Discount</label>
+                    <input type="number" name="form-${formCount.value}-discount" class="w-full p-2 border rounded" step="0.01">
+                </div>
+            `;
+            container.appendChild(newForm);
+            formCount.value = parseInt(formCount.value) + 1;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,295 @@
+{% load static %}
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>POS Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/animations/scale.css">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+        
+        document.body.addEventListener('htmx:configRequest', function(evt) {
+            evt.detail.headers['X-CSRFToken'] = csrfToken;
+        });
+    });
+    </script>
+    <style>
+      /* Existing styles... */
+      @media (min-width: 768px) {
+        .cart-container {
+          position: sticky;
+          top: 1rem;
+          height: calc(100vh - 2rem);
+          overflow-y: auto;
+        }
+      }
+      .add-to-cart-btn.added {
+        background-color: #10b981;
+      }
+      .quantity-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background-color: #ef4444;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        line-height: 1;
+        padding: 0;
+      }
+      @media print {
+        body * {
+          visibility: hidden;
+        }
+        #receipt, #receipt * {
+          visibility: visible;
+        }
+        #receipt {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 20px;
+        }
+      }
+  
+      /* NEW SCROLLING STYLES ADD HERE */
+      .w-full.md\:w-2\/3 {
+        height: calc(100vh - 2rem);
+        overflow-y: auto;
+        padding-right: 0.5rem;
+      }
+  
+      .w-full.md\:w-1\/3.cart-container {
+        height: calc(100vh - 2rem);
+        overflow-y: auto;
+        padding-right: 0.5rem;
+      }
+  
+      /* Optional scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+
+    {% block content %}
+    <!-- Content Section -->
+    {% if messages %}
+    <div class="fixed top-4 right-4 z-50">
+      {% for message in messages %}
+      <div class="p-4 mb-2 rounded-md {% if message.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-green-100 text-green-800{% endif %}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    
+
+
+    {% endblock %}
+  
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const cartItemsContainer = document.querySelector('.cart-items');
+        const emptyCartMessage = document.querySelector('.empty-cart-message');
+        const cartCount = document.querySelector('.cart-count');
+        const totalPriceElement = document.querySelector('.total-price');
+        const checkoutBtn = document.querySelector('.checkout-btn');
+        const printBtn = document.getElementById('print-btn');
+        const receipt = document.getElementById('receipt');
+        
+        let cart = [];
+        let invoiceCounter = 1;
+        
+        // Add to cart functionality
+        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+          button.addEventListener('click', addToCart);
+        });
+        
+        function addToCart() {
+          const productCard = this.closest('.product-card');
+          const name = this.getAttribute('data-name');
+          const price = parseFloat(this.getAttribute('data-price'));
+          const quantityBadge = productCard.querySelector('.quantity-badge');
+          
+          const existingItem = cart.find(item => item.name === name);
+          
+          if (existingItem) {
+            existingItem.quantity++;
+            existingItem.total = existingItem.quantity * price;
+          } else {
+            cart.push({
+              name,
+              price,
+              quantity: 1,
+              total: price
+            });
+          }
+          
+          // Update button appearance
+          this.classList.add('added');
+          this.querySelector('.button-text').textContent = 'Added';
+          quantityBadge.textContent = existingItem ? existingItem.quantity : 1;
+          quantityBadge.classList.remove('hidden');
+          
+          setTimeout(() => {
+            this.querySelector('.button-text').textContent = 'Add to Cart';
+            this.classList.remove('added');
+          }, 1000);
+          
+          updateCartDisplay();
+        }
+        
+        function updateCartDisplay() {
+          cartItemsContainer.innerHTML = '';
+          
+          if (cart.length === 0) {
+            cartItemsContainer.appendChild(emptyCartMessage);
+            checkoutBtn.disabled = true;
+            printBtn.classList.add('hidden');
+          } else {
+            emptyCartMessage.remove();
+            checkoutBtn.disabled = false;
+            printBtn.classList.remove('hidden');
+            
+            cart.forEach(item => {
+              const cartItem = document.createElement('div');
+              cartItem.classList.add('cart-item', 'flex', 'justify-between', 'items-center', 'border-b', 'pb-2');
+              
+              const controls = document.createElement('div');
+              controls.classList.add('flex', 'items-center', 'gap-2');
+              
+              const minusBtn = document.createElement('button');
+              minusBtn.innerHTML = '−';
+              minusBtn.classList.add('text-red-500', 'font-bold', 'w-5', 'h-5', 'flex', 'items-center', 'justify-center', 'rounded', 'hover:bg-red-100');
+              minusBtn.addEventListener('click', () => {
+                if (item.quantity > 1) {
+                  item.quantity--;
+                  item.total = item.quantity * item.price;
+                } else {
+                  cart = cart.filter(cartItem => cartItem.name !== item.name);
+                }
+                updateCartDisplay();
+              });
+              
+              const plusBtn = document.createElement('button');
+              plusBtn.innerHTML = '+';
+              plusBtn.classList.add('text-green-500', 'font-bold', 'w-5', 'h-5', 'flex', 'items-center', 'justify-center', 'rounded', 'hover:bg-green-100');
+              plusBtn.addEventListener('click', () => {
+                item.quantity++;
+                item.total = item.quantity * item.price;
+                updateCartDisplay();
+              });
+              
+              controls.appendChild(minusBtn);
+              controls.appendChild(document.createTextNode(item.quantity));
+              controls.appendChild(plusBtn);
+              
+              cartItem.innerHTML = `
+                <div>
+                  <span class="font-medium">${item.name}</span>
+                </div>
+                <div class="flex items-center gap-4">
+                  <span class="line-total">৳${item.total}</span>
+                  <button class="remove-item text-red-500 hover:text-red-700">
+                    ×
+                  </button>
+                </div>
+              `;
+              
+              cartItem.querySelector('div').prepend(controls);
+              
+              cartItem.querySelector('.remove-item').addEventListener('click', () => {
+                cart = cart.filter(cartItem => cartItem.name !== item.name);
+                updateCartDisplay();
+              });
+              
+              cartItemsContainer.appendChild(cartItem);
+            });
+          }
+          
+          const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+          const grandTotal = cart.reduce((sum, item) => sum + item.total, 0);
+          
+          cartCount.textContent = itemCount;
+          totalPriceElement.textContent = `৳${grandTotal}`;
+        }
+        
+        // Checkout button
+        checkoutBtn.addEventListener('click', generateReceipt);
+        
+        // Print button
+        printBtn.addEventListener('click', () => {
+          generateReceipt();
+          setTimeout(() => {
+            window.print();
+          }, 100);
+        });
+        
+        function generateReceipt() {
+          const now = new Date();
+          const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+          const grandTotal = cart.reduce((sum, item) => sum + item.total, 0);
+          const vat = grandTotal * 0.15; // Assuming 15% VAT
+          
+          // Update receipt information
+          document.getElementById('receipt-date').textContent = dateStr;
+          document.getElementById('receipt-invoice').textContent = 'INV-' + (invoiceCounter++).toString().padStart(4, '0');
+          document.getElementById('receipt-total').textContent = `৳${grandTotal.toFixed(2)}`;
+          document.getElementById('receipt-vat').textContent = `৳${vat.toFixed(2)}`;
+          document.getElementById('receipt-grand-total').textContent = `৳${(grandTotal + vat).toFixed(2)}`;
+          
+          // Add items to receipt
+          const receiptItems = document.getElementById('receipt-items');
+          receiptItems.innerHTML = '';
+          
+          cart.forEach(item => {
+            const itemRow = document.createElement('div');
+            itemRow.classList.add('flex', 'justify-between', 'mb-1');
+            itemRow.innerHTML = `
+              <span>${item.name} (${item.quantity}x ৳${item.price.toFixed(2)})</span>
+              <span>৳${item.total.toFixed(2)}</span>
+            `;
+            receiptItems.appendChild(itemRow);
+          });
+          
+          // Show receipt for printing
+          receipt.classList.remove('hidden');
+        }
+        
+        // Hide receipt after printing
+        window.addEventListener('afterprint', () => {
+          receipt.classList.add('hidden');
+        });
+      });
+    </script>
+  </body>
+  </html>

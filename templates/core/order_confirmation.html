@@ -1,0 +1,88 @@
+{% extends 'partials/base.html' %}
+{% block title %}Order Confirmation{% endblock %}
+
+{% block content %}
+<section class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">Order Confirmation</h1>
+
+    <div class="bg-white shadow-lg rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Thank you for your order!</h2>
+        <p class="text-gray-600">Your order has been placed successfully. Below are your order details.</p>
+
+        <!-- Order Summary -->
+        <div class="mt-6">
+            <h3 class="text-xl font-bold mb-4">Order Summary</h3>
+            <table class="table-auto w-full border-collapse border border-gray-300">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="border border-gray-300 px-4 py-2 text-left">Item</th>
+                        <th class="border border-gray-300 px-4 py-2 text-right">Quantity</th>
+                        <th class="border border-gray-300 px-4 py-2 text-right">Price</th>
+                        <th class="border border-gray-300 px-4 py-2 text-right">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order_items %}
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">{{ item.item }}</td>
+                        <td class="border border-gray-300 px-4 py-2 text-right">{{ item.qty }}</td>
+                        <td class="border border-gray-300 px-4 py-2 text-right">৳{{ item.price|floatformat:2 }}</td>
+                        <td class="border border-gray-300 px-4 py-2 text-right">৳{{ item.total|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="border border-gray-300 px-4 py-2 text-right">Shipping Fee</td>
+                        <td class="border border-gray-300 px-4 py-2 text-right">৳{{ shipping_fee|floatformat:2 }}</td>
+                    </tr>
+                    <tr class="bg-gray-200 font-bold">
+                        <td colspan="3" class="border border-gray-300 px-4 py-2 text-right">Grand Total</td>
+                        <td class="border border-gray-300 px-4 py-2 text-right">
+                            ৳{{ order.price|floatformat:2 }}
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="mt-6">
+            <h3 class="text-xl font-bold mb-4">Payment Method</h3>
+            <p>{{ payment_method }}</p>
+        </div>
+
+        <!-- Shipping Address -->
+        <div class="mt-6">
+            <h3 class="text-xl font-bold mb-4">Shipping Address</h3>
+            {% if order.user %}
+                <!-- For logged-in users -->
+                <p>{{ order.user.shippingaddress_set.last.name }}</p>
+                <p>{{ order.user.shippingaddress_set.last.address }}</p>
+                <p>{{ order.user.shippingaddress_set.last.city }}, {{ order.user.shippingaddress_set.last.area }}</p>
+                <p>Phone: {{ order.user.shippingaddress_set.last.phone }}</p>
+                <p>Email: {{ order.user.shippingaddress_set.last.email }}</p>
+            {% elif guest_shipping_address %}
+                <!-- For guest users -->
+                <p>{{ guest_shipping_address.name }}</p>
+                <p>{{ guest_shipping_address.address }}</p>
+                <p>{{ guest_shipping_address.city }}, {{ guest_shipping_address.area }}</p>
+                <p>Phone: {{ guest_shipping_address.phone }}</p>
+                <p>Email: {{ guest_shipping_address.email }}</p>
+            {% else %}
+                <p>No shipping address available.</p>
+            {% endif %}
+        </div>
+
+        <!-- Download or Print -->
+        <div class="mt-6 flex space-x-4">
+            <a href="{% url 'core:download_invoice' order.id %}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Download Invoice
+            </a>
+            <button onclick="window.print()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                Print
+            </button>
+        </div>
+    </div>
+</section>
+{% endblock %}

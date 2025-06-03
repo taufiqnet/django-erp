@@ -1,0 +1,668 @@
+{% extends 'partials/base.html' %}
+
+{% block title %}Multivendor - Home{% endblock %}
+{% block meta_description %}Welcome to Multivendor, your ultimate destination for beauty products, including skincare, haircare, and more!{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Dynamic Carousel -->
+<style>
+    .slow-swipe {
+        transition: opacity 2s ease-in-out; /* 2 seconds transition for opacity changes */
+    }
+</style>
+
+<section class="hero relative">
+    <div id="default-carousel" class="relative w-full" data-carousel="slide">
+        <!-- Carousel Wrapper -->
+        <div class="relative overflow-hidden rounded-lg" style="padding-bottom: 24.68%;"> <!-- 383 / 1552 * 100 -->
+            {% for banner in banners %}
+                <div class="{% if forloop.first %}block{% else %}hidden{% endif %} slow-swipe" 
+                     data-carousel-item 
+                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+                    <img src="{{ banner.image.url }}" 
+                         alt="{{ banner.title }}" 
+                         class="absolute block w-full h-full object-cover" 
+                         loading="lazy">
+                    {% if banner.title or banner.description %}
+                        <div class="absolute bottom-10 left-10 bg-black/50 text-white p-4 rounded">
+                            {% if banner.title %}
+                                <h5 class="text-xl font-bold">{{ banner.title }}</h5>
+                            {% endif %}
+                            {% if banner.description %}
+                                <p class="text-sm">{{ banner.description }}</p>
+                            {% endif %}
+                            {% if banner.link %}
+                                <a href="{{ banner.link }}" target="_blank" 
+                                   class="mt-2 inline-block bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium py-2 px-4 rounded">
+                                    Learn More
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Slider Indicators -->
+        <div class="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
+            {% for banner in banners %}
+                <button type="button" class="w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-500" 
+                        aria-current="{% if forloop.first %}true{% endif %}" 
+                        aria-label="Slide {{ forloop.counter }}" data-carousel-slide-to="{{ forloop.counter0 }}"></button>
+            {% endfor %}
+        </div>
+
+        <!-- Slider Controls -->
+        <button type="button" class="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" 
+                data-carousel-prev>
+            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60">
+                <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                </svg>
+                <span class="sr-only">Previous</span>
+            </span>
+        </button>
+        <button type="button" class="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" 
+                data-carousel-next>
+            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60">
+                <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                </svg>
+                <span class="sr-only">Next</span>
+            </span>
+        </button>
+    </div>
+</section>
+
+<!-- Categories Section -->
+{% comment %} <section class="my-6">
+    <h2 class="hidden md:block text-3xl font-bold text-center mb-6">
+        Shop by Category
+    </h2>
+    
+    <!-- Mobile Section -->
+    <h2 class="block md:hidden text-xl font-bold text-center mb-6">
+        Shop by Category
+    </h2>
+    <div class="relative">
+        <!-- Left Arrow -->
+        <button id="prevButton"
+            class="absolute top-1/2 left-0 -translate-y-1/2 bg-gray-200 text-gray-800 p-2 rounded-full shadow-md hover:bg-gray-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+
+        <!-- Carousel Wrapper -->
+        <div id="carousel" class="flex gap-1 container mx-auto px-2 justify-center overflow-x-auto scroll-smooth no-scrollbar">
+            <!-- Category 1 -->
+            {% for c in categories %}
+            <div class="category-item text-center min-w-[120px]">
+                <img src="{{ c.image.url }}" alt="{{ c.title }}" class="w-24 h-24 object-cover rounded-full mx-auto border-4 border-gray-200 shadow-md">
+                <h5 class="text-sm font-semibold mt-2">
+                    <a href="#" class="text-gray-500 hover:text-blue-600">{{ c.title }}</a>
+                </h5>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Right Arrow -->
+        <button id="nextButton"
+            class="absolute top-1/2 right-0 -translate-y-1/2 bg-gray-200 text-gray-800 p-2 rounded-full shadow-md hover:bg-gray-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- JavaScript for carousel scroll functionality -->
+    <script>
+        document.getElementById('prevButton').addEventListener('click', function() {
+            document.getElementById('carousel').scrollBy({
+                left: -200, // Scroll 200px to the left
+                behavior: 'smooth' // Smooth scrolling
+            });
+        });
+
+        document.getElementById('nextButton').addEventListener('click', function() {
+            document.getElementById('carousel').scrollBy({
+                left: 200, // Scroll 200px to the right
+                behavior: 'smooth' // Smooth scrolling
+            });
+        });
+    </script>
+</section> {% endcomment %}
+
+
+<!-- New Arrival Section for Mobile device view -->
+{% comment %} <section class="my-6 block md:hidden">
+    <h2 class="text-3xl font-bold text-center">New Arrival - Monthly Bazaar</h2>
+    <p class="text-lg font-medium text-center text-gray-600 mb-4">Get your grocery products for your monthly shopping needs.</p>
+    <!-- Grid Layout -->
+    <div class="grid grid-cols-1 sm:grid-cols-1 gap-2 container mx-auto px-4">
+        {% for p in products %}
+        <!-- Product Card -->
+        <div class="flex bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden relative">
+            <!-- Tags: Best Selling & Percentage Discount -->
+            {% if p.get_percentage is not None and p.get_percentage > 0 %}
+                <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                    {{ p.get_percentage|floatformat:0 }}% Off
+                </span>
+            {% endif %}
+            
+            {% if p.best_selling %}
+                <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                    Best Selling
+                </span>
+            {% endif %}
+
+            <!-- Product Image -->
+            <div class="w-1/3 p-2 flex items-center">
+                <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-32 object-contain">
+            </div>
+
+            <!-- Product Details -->
+            <div class="w-2/3 p-2 flex flex-col justify-between">
+                <!-- Product Title with Category -->
+                <div class="mb-1"> <!-- Reduced bottom margin -->
+                    <h3 class="text-sm font-semibold text-gray-800 line-clamp-1">
+                        <a href="{% url 'core:product-detail' p.slug %}" class="hover:text-blue-600">{{ p.title }}</a>
+                    </h3>
+                    {% if p.category %}
+                        <p class="text-gray-500 text-xs mt-1">
+                            Category: 
+                            <a href="{% url 'core:category-product-list' p.category.cid %}" class="hover:text-blue-500">
+                                {{ p.category.title }}
+                            </a>
+                        </p>
+                    {% else %}
+                        <p class="text-gray-500 text-xs">Category: Unspecified</p>
+                    {% endif %}
+                </div>
+
+                {% if p.brand %}
+                    <p class="text-gray-500 text-xs"> <!-- Removed extra block-level margin -->
+                        Brand: 
+                        <a href="#" class="hover:text-blue-500"> 
+                            {{ p.brand.title }}
+                        </a>
+                    </p>
+                {% endif %}
+
+                <!-- Ratings and Review Count -->
+                <div class="flex items-center mt-1">
+                    <!-- Star Ratings -->
+                    <div class="flex items-center">
+                        <span class="text-yellow-400 text-sm">★</span>
+                    </div>
+                    <!-- Review Count -->
+                    <span class="text-gray-500 text-xs ml-1">{{p.review_star}} ({{ p.review_count }})</span>  
+
+                    <span class="text-gray-500 text-xs ml-3">
+                        |
+                    </span>
+                    
+                    <!-- Sold Count -->
+                    {% if p.sold_count %}
+                    <span class="text-gray-500 text-xs ml-3">Sold ({{ p.sold_count }})</span>
+                {% endif %}
+                </div>
+                
+                <!-- Price Section -->
+                <div class="mt-1">
+                    <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                    {% if p.old_price %}
+                    <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Free Delivery -->
+                {% if p.free_delivery %}
+                    <p class="text-green-600 text-sm mt-1 font-semibold">Free Delivery</p>
+                {% endif %}
+
+                <!-- Add to Cart Button -->
+                <button
+                    class="bg-blue-400 hover:bg-blue-500 text-gray-900 font-semibold text-sm py-2 px-4 rounded-full mt-2 add-to-cart-btn"
+                    data-id="{{ p.id }}" 
+                    data-pid="{{ p.pid }}" 
+                    data-image="{{ p.image.url }}" 
+                    data-title="{{ p.title }}" 
+                    data-price="{{ p.price }}"
+                >
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section> {% endcomment %}
+
+
+<!-- New Arrival Product Section for Desktop view-->
+{% comment %} <section class="my-6 hidden md:block"> 
+    <h2 class="text-3xl font-bold text-center">New Arrival - Monthly Bazaar</h2>
+    <p class="text-lg font-medium text-center text-gray-600 mb-4">Get your grocery products for your monthly shopping needs.</p>
+    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 container mx-auto px-2">
+        {% for p in products %}
+        <!-- Product Card -->
+        <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+            
+            <!-- Product Image -->
+            <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+
+            <!-- Percentage Discount -->
+            {% if p.get_percentage is not None and p.get_percentage > 0 %}
+                <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                    {{ p.get_percentage|floatformat:0 }}% Off
+                </span>
+            {% endif %}
+
+            <!-- Best Selling Tag -->
+            {% if p.best_selling %}
+                <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                    Best Selling
+                </span>
+            {% endif %}
+
+            <!-- Product Details -->
+            <div class="p-2 text-center flex-grow">
+                <h5 class="text-sm font-semibold">
+                    <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                        {{ p.title }}
+                    </a>
+                </h5>
+
+                <!-- Category Tag -->
+                {% if p.category %}
+                    <p class="text-gray-500 text-xs mt-1">
+                        Category: 
+                        <a href="{% url 'core:category-product-list' p.category.cid %}" class="hover:text-blue-500">
+                            {{ p.category.title }}
+                        </a>
+                    </p>
+                {% else %}
+                    <p class="text-gray-500 text-xs mt-1">Category: Unspecified</p>
+                {% endif %}
+
+                <!-- Brand -->
+                {% if p.brand %}
+                    <span class="text-gray-500 text-xs mt-1">
+                        Brand: <a href="#" class="hover:text-blue-500">{{ p.brand.title }}</a>
+                    </span>
+                {% endif %}
+
+                <!-- Ratings and Sold Count -->
+                <div class="mt-1">
+                    <span class="text-yellow-400 text-sm">★</span>
+                    {% if p.review_star and p.review_count %}
+                        <!-- Review Star and Count -->
+                        <span class="text-gray-500 text-xs">{{ p.review_star }} ({{ p.review_count }})</span>
+                    {% endif %}
+                
+                    <span class="text-gray-500 text-xs ml-3">|</span>
+                    
+                    <!-- Sold Count -->
+                    {% if p.sold_count %}
+                        <span class="text-gray-500 text-xs ml-3">
+                            Sold ({{ p.sold_count }})
+                        </span>
+                    {% endif %}
+                </div>
+                              
+
+                <!-- Price Section -->
+                <div class="mt-2">
+                    <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                    {% if p.old_price %}
+                        <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Free Delivery -->
+                {% if p.free_delivery %}
+                    <p class="text-green-600 text-sm mt-1 font-semibold">Free Delivery</p>
+                {% endif %}
+            </div>
+
+            <!-- Fixed Button at Footer -->
+            <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                <button
+                    class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                    data-id="{{ p.id }}"
+                    data-pid="{{ p.pid }}"
+                    data-image="{{ p.image.url }}"
+                    data-title="{{ p.title }}"
+                    data-price="{{ p.price }}"
+                >
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section> {% endcomment %}
+
+
+
+
+
+<!-- Four-part Section with Left-Aligned Text and Images on the Right -->
+<!-- Section Visible Only on Desktop -->
+<section class="my-6 hidden md:block">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-4 gap-4">
+            {% for campaign in campaigns %}
+            <!-- Dynamic Campaign -->
+            <div class="p-4 bg-white shadow-md rounded-lg flex justify-between items-center">
+                <div class="text-left">
+                    <h3 class="text-lg font-bold">{{ campaign.title }}</h3>
+                    <p class="text-sm text-gray-600 mt-1">{{ campaign.slogan }}</p>
+                    <p class="text-sm text-red-500 font-semibold mt-1">{{ campaign.discount_info }}</p>
+                </div>
+                <img src="{{ campaign.image.url }}" alt="{{ campaign.title }}" class="w-16 h-16 rounded-full">
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Section Visible Only on Mobile -->
+<section class="my-6 block md:hidden">
+    <div class="container mx-auto px-4">
+        <!-- Grid Layout for Mobile -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {% for campaign in campaigns %}
+            <div class="p-4 bg-white shadow-md rounded-lg flex justify-between items-center">
+                <div class="text-left">
+                    <h3 class="text-lg font-bold">{{ campaign.title }}</h3>
+                    <p class="text-sm text-gray-600 mt-1">{{ campaign.slogan }}</p>
+                    <p class="text-sm text-red-500 font-semibold mt-1">{{ campaign.discount_info }}</p>
+                </div>
+                <img src="{{ campaign.image.url }}" alt="{{ campaign.title }}" class="w-16 h-16 rounded-full">
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+<!-- Featured Product Section with Swiper for Desktop view-->
+<!-- Add Swiper Styles -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+
+<section class="my-6 hidden md:block">
+    <div class="flex justify-between items-center my-6">
+        <!-- Featured Products Title -->
+        <h2 class="text-2xl font-bold">Best Selling Products</h2>
+    
+        <!-- See All Link -->
+        <a href="{% url 'core:multivendor-product-list' %}" class="text-blue-500 font-semibold hover:underline">See All</a>
+    </div>
+    
+    <div class="container mx-auto px-2">
+        <!-- Swiper -->
+        <div class="swiper">
+            <div class="swiper-wrapper">
+                {% for p in products %}
+                <!-- Swiper Slide -->
+                <div class="swiper-slide">
+                    <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+                        
+                        <!-- Product Image -->
+                        <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+
+                        <!-- Percentage Discount -->
+                        {% if p.get_percentage is not None and p.get_percentage > 0 %}
+                            <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                                {{ p.get_percentage|floatformat:0 }}% Off
+                            </span>
+                        {% endif %}
+
+                        <!-- Best Selling Tag -->
+                        {% if p.best_selling %}
+                            <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                                Best Selling
+                            </span>
+                        {% endif %}
+
+                        <!-- Product Details -->
+                        <div class="p-2 text-center flex-grow">
+                            <h5 class="text-sm font-semibold">
+                                <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                                    {{ p.title }}
+                                </a>
+                            </h5>
+
+                            <!-- Category Tag -->
+                            {% if p.category %}
+                                <p class="text-gray-500 text-xs mt-1">
+                                    Category: 
+                                    <a href="{% url 'core:category-product-list' p.category.cid %}" class="hover:text-blue-500">
+                                        {{ p.category.title }}
+                                    </a>
+                                </p>
+                            {% else %}
+                                <p class="text-gray-500 text-xs mt-1">Category: Unspecified</p>
+                            {% endif %}
+
+                            <!-- Brand -->
+                            {% if p.brand %}
+                                <span class="text-gray-500 text-xs mt-1">
+                                    Brand: <a href="#" class="hover:text-blue-500">{{ p.brand.title }}</a>
+                                </span>
+                            {% endif %}
+
+                            <!-- Ratings and Sold Count -->
+                            <div class="mt-1">
+                                <span class="text-yellow-400 text-sm">★</span>
+                                {% if p.review_star and p.review_count %}
+                                    <span class="text-gray-500 text-xs">{{ p.review_star }} ({{ p.review_count }})</span>
+                                {% endif %}
+                            
+                                <span class="text-gray-500 text-xs ml-3">|</span>
+                                
+                                {% if p.sold_count %}
+                                    <span class="text-gray-500 text-xs ml-3">
+                                        Sold ({{ p.sold_count }})
+                                    </span>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Price Section -->
+                            <div class="mt-2">
+                                <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                                {% if p.old_price %}
+                                    <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Free Delivery -->
+                            {% if p.free_delivery %}
+                                <p class="text-green-600 text-sm mt-1 font-semibold">Free Delivery</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Fixed Button at Footer -->
+                        <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                            <button
+                                class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                                data-id="{{ p.id }}"
+                                data-pid="{{ p.pid }}"
+                                data-image="{{ p.image.url }}"
+                                data-title="{{ p.title }}"
+                                data-price="{{ p.price }}"
+                            >
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <!-- Pagination -->
+            {% comment %} <div class="swiper-pagination"></div> {% endcomment %}
+        </div>
+    </div>
+</section>
+
+<!-- Add Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+<script>
+    const swiper = new Swiper('.swiper', {
+        slidesPerView: 5,
+        spaceBetween: 20,
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        loop: true,
+    });
+</script>
+
+
+
+
+
+<!-- Featured Product Section for Mobile device view -->
+<section class="my-6 block md:hidden">
+    <div class="flex justify-between items-center my-6 px-6">
+        <!-- Featured Products Title -->
+        <h2 class="text-2xl font-bold">Best Selling Products</h2>
+    
+        <!-- See All Link -->
+        <a href="{% url 'core:multivendor-product-list' %}" class="text-blue-500 font-semibold hover:underline">See All</a>
+    </div>
+    <!-- Grid Layout -->
+    <div class="grid grid-cols-1 sm:grid-cols-1 gap-2 container mx-auto px-4">
+        {% for p in products %}
+        <!-- Product Card -->
+        <div class="flex bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden relative">
+            <!-- Tags: Best Selling & Percentage Discount -->
+            {% if p.get_percentage is not None and p.get_percentage > 0 %}
+                <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                    {{ p.get_percentage|floatformat:0 }}% Off
+                </span>
+            {% endif %}
+            
+            {% if p.best_selling %}
+                <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                    Best Selling
+                </span>
+            {% endif %}
+
+            <!-- Product Image -->
+            <div class="w-1/3 p-2 flex items-center">
+                <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-32 object-contain">
+            </div>
+
+            <!-- Product Details -->
+            <div class="w-2/3 p-2 flex flex-col justify-between">
+                <!-- Product Title with Category -->
+                <div class="mb-1"> <!-- Reduced bottom margin -->
+                    <h3 class="text-sm font-semibold text-gray-800 line-clamp-1">
+                        <a href="{% url 'core:product-detail' p.slug %}" class="hover:text-blue-600">{{ p.title }}</a>
+                    </h3>
+                    {% if p.category %}
+                        <p class="text-gray-500 text-xs mt-1">
+                            Category: 
+                            <a href="{% url 'core:category-product-list' p.category.cid %}" class="hover:text-blue-500">
+                                {{ p.category.title }}
+                            </a>
+                        </p>
+                    {% else %}
+                        <p class="text-gray-500 text-xs">Category: Unspecified</p>
+                    {% endif %}
+                </div>
+
+                {% if p.brand %}
+                    <p class="text-gray-500 text-xs"> <!-- Removed extra block-level margin -->
+                        Brand: 
+                        <a href="#" class="hover:text-blue-500"> 
+                            {{ p.brand.title }}
+                        </a>
+                    </p>
+                {% endif %}
+
+                <!-- Ratings and Review Count -->
+                <div class="flex items-center mt-1">
+                    <!-- Star Ratings -->
+                    <div class="flex items-center">
+                        <span class="text-yellow-400 text-sm">★</span>
+                    </div>
+                    <!-- Review Count -->
+                    <span class="text-gray-500 text-xs ml-1">{{p.review_star}} ({{ p.review_count }})</span>  
+
+                    <span class="text-gray-500 text-xs ml-3">
+                        |
+                    </span>
+                    
+                    <!-- Sold Count -->
+                    {% if p.sold_count %}
+                    <span class="text-gray-500 text-xs ml-3">Sold ({{ p.sold_count }})</span>
+                {% endif %}
+                </div>
+                
+                <!-- Price Section -->
+                <div class="mt-1">
+                    <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                    {% if p.old_price %}
+                    <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Free Delivery -->
+                {% if p.free_delivery %}
+                    <p class="text-green-600 text-sm mt-1 font-semibold">Free Delivery</p>
+                {% endif %}
+
+                <!-- Add to Cart Button -->
+                <button
+                    class="bg-blue-400 hover:bg-blue-500 text-gray-900 font-semibold text-sm py-2 px-4 rounded-full mt-2 add-to-cart-btn"
+                    data-id="{{ p.id }}" 
+                    data-pid="{{ p.pid }}" 
+                    data-image="{{ p.image.url }}" 
+                    data-title="{{ p.title }}" 
+                    data-price="{{ p.price }}"
+                >
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+
+
+<!-- Advertisement Section -->
+<section class="my-6 block">
+    <!-- Advertisement Section -->
+    {% comment %} <h2 class="text-3xl font-bold text-center mt-6">Advertisements</h2> {% endcomment %}
+    <div class="grid grid-cols-2 gap-4 container mx-auto px-4 mt-4">
+        {% for ad in ads %}
+            {% if ad.is_active %}
+                <div class="relative">
+                    <a href="{{ ad.link }}" target="_blank" rel="noopener noreferrer">
+                        <img src="{{ ad.image.url }}" alt="{{ ad.title }}" class="w-full h-auto rounded-lg shadow-lg">
+                    </a>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</section>
+
+
+{% endblock %}

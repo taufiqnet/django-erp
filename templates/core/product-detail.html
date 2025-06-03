@@ -1,0 +1,138 @@
+{% extends 'partials/base.html' %}
+
+{% block title %}{{ p.title }} - Dreamlight{% endblock %}
+{% block meta_description %}{{ p.page_description|striptags|truncatechars:150 }}{% endblock %}
+
+{% block content %}
+
+<!-- Product Detail Section -->
+<section class="container mx-auto my-8 px-6">
+    <form id="add-to-cart-form" method="POST">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Product Image Gallery -->
+            <div class="flex justify-center items-center">
+                <div class="w-full max-w-sm">
+                    <!-- Main Image -->
+                    <img id="main-product-image" src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-auto object-contain bg-gray-100 rounded-lg shadow-md">
+                    
+                    <!-- Thumbnail Gallery -->
+                    <div class="mt-4 flex space-x-4 overflow-x-auto">
+                        <img id="" src="{{ p.image.url }}" alt="{{ p.title }}" class="w-20 h-20 object-contain cursor-pointer hover:border-2 hover:border-blue-600 rounded-lg" onclick="changeImage('{{ p.image.url }}')">
+                        {% for product_image in p.p_images.all %}
+                        <img src="{{ product_image.image.url }}" alt="{{ p.title }}" 
+                             class="w-20 h-20 object-contain cursor-pointer hover:border-2 hover:border-blue-600 rounded-lg"
+                             onclick="changeImage('{{ product_image.image.url }}')">
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Details -->
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">{{ p.title }}</h1>
+                {% if p.category %}
+                <p class="text-gray-600 mt-2">Category:                     
+                        {{ p.category.title }}                   
+                </p>
+                {% endif %}
+
+                {% if p.brand %}
+                <p class="text-gray-600 mt-2">Brand: 
+                    <a href="" class="hover:underline hover:text-blue-600">
+                        {{ p.brand.title }}
+                    </a>
+                </p>
+                {% endif %}
+
+
+                {% if p.get_percentage is not None and p.get_percentage > 0 %}
+                    <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                        {{ p.get_percentage|floatformat:0 }}% Off
+                    </span>
+                {% endif %}
+                <p id="current-product-price" class="text-green-600 text-2xl font-semibold mt-4">৳{{ p.price }}</p>
+                {% if p.old_price %}
+                <p class="text-gray-500 line-through text-sm mt-1">৳{{ p.old_price }}</p>
+                {% endif %}
+                <p class="text-gray-700 mt-4">{{ p.description|safe }}</p>
+                <p class="text-gray-600 mt-2">
+                    Tags: 
+                    {% for tag in p.tags.all %}
+                    <a href="{% url 'core:tags' tag.slug %}" class="text-blue-600 hover:underline">#{{ tag.name }}</a>
+                    {% endfor %}
+                </p>
+
+                <div class="mt-6 flex items-center space-x-4">
+                    <label for="quantity" class="text-gray-600">Quantity:</label>
+                    <input type="number" id="product-quantity" name="quantity" value="1" min="1" class="w-16 px-3 py-2 border border-gray-300 rounded">
+                </div>
+                
+                <!-- Add to Cart Button -->
+                <button 
+                    class="mt-6 bg-blue-600 text-white text-lg font-semibold py-2 px-6 rounded hover:bg-blue-700 add-to-cart-btn"
+                    data-id="{{ p.id }}" 
+                    data-image="{{ p.image.url }}" 
+                    data-title="{{ p.title }}" 
+                    data-price="{{ p.price }}" 
+                >
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+    </form> <!-- Moved form closing tag here -->
+
+    <!-- Product Reviews -->
+    <div class="mt-10">
+        <h4 class="text-xl font-bold text-gray-800">Product Reviews ({{ reviews.count }})</h4>
+        {% if reviews %}
+            {% for r in reviews %}
+            <div class="mt-4 p-4 border rounded-lg shadow-sm">
+                <p><strong>Rating:</strong> {{ r.get_rating_display }}</p>
+                <p><strong>Reviewer:</strong> {{ r.user.username|title }}</p>
+                <p><strong>Date:</strong> {{ r.created_at|date:"d M, Y" }}</p>
+                <p><strong>Review:</strong> {{ r.review }}</p>
+            </div>
+            {% endfor %}
+        {% else %}
+        <p class="text-gray-500 mt-2">No reviews available for this product yet.</p>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+    function changeImage(newImageUrl) {
+        // Change the main product image when a thumbnail is clicked
+        document.getElementById('main-product-image').src = newImageUrl;
+    }
+</script>
+
+
+
+<!-- Related Products Section -->
+<section class="container mx-auto my-8">
+    <h2 class="text-center text-2xl font-bold mb-6">Related Products</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 container mx-auto px-4">
+        {% for related in related_products %}
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <!-- Product Image -->
+            <div class="flex justify-center items-center bg-gray-100 h-36">
+                {% if related.image %}
+                <img src="{{ related.image.url }}" alt="{{ related.title }}" class="h-full object-contain">
+                {% endif %}
+            </div>
+            <!-- Card Body -->
+            <div class="p-4 text-center">
+                <h5 class="text-base font-semibold text-gray-800 truncate">{{ related.title }}</h5>
+                <!-- Price Format without Decimal -->
+                <p class="text-green-600 font-bold mt-2">{{ related.price|floatformat:0 }} TK</p>
+                <a href="{% url 'core:product-detail' related.slug %}" class="mt-4 inline-block bg-blue-600 text-white text-sm font-semibold py-2 px-4 rounded hover:bg-blue-700">
+                    View Details
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>    
+</section>
+
+{% endblock %}

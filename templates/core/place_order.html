@@ -1,0 +1,123 @@
+{% extends 'partials/base.html' %}
+
+{% block title %}ShopMate - Place Order{% endblock %}
+
+{% block content %}
+<section class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">Final Checkout</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Cart Details -->
+        <div class="lg:col-span-2 bg-white shadow-lg rounded-lg p-6">
+            {% if request.session.cart_data_obj %}
+            <div class="grid grid-cols-5 gap-4 border-b pb-4 mb-4">
+                <h2 class="font-bold">Product</h2>
+                <h2 class="font-bold">Quantity</h2>
+                <h2 class="font-bold">Price</h2>
+                <h2 class="font-bold">Total</h2>
+                <h2 class="font-bold">Action</h2>
+            </div>
+
+            {% for key, item in request.session.cart_data_obj.items %}
+            <div class="grid grid-cols-5 gap-4 items-center border-b pb-4 mb-4">
+                <!-- Product Details -->
+                <div class="flex items-center space-x-4">
+                    <img src="{{ item.image }}" alt="{{ item.title }}" class="w-16 h-16 object-contain">
+                    <div>
+                        <h3 class="font-semibold">{{ item.title }}</h3>
+                    </div>
+                </div>
+
+                <!-- Quantity Controls -->
+                <div class="flex items-center space-x-4">
+                    <button 
+                        class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold hover:bg-red-600 decrease-btn" 
+                        data-id="{{ key }}">-</button>
+                    <span class="font-semibold">{{ item.qty }}</span>
+                    <button 
+                        class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold hover:bg-green-600 increase-btn" 
+                        data-id="{{ key }}">+</button>
+                </div>
+
+                <!-- Price and Total -->
+                <div>${{ item.price }}</div>
+                <div>${{ item.total|floatformat:2 }}</div>
+
+                <!-- Remove Button -->
+                <div>
+                    <button 
+                        class="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold hover:bg-red-700 delete-btn" 
+                        data-id="{{ key }}">Remove</button>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Final Amount -->
+            <div class="text-right mt-6">
+                <h3 class="text-xl font-bold">Grand Total: ${{ final.total_price|floatformat:2 }}</h3>
+            </div>
+            {% else %}
+            <div class="text-center py-8">
+                <h3 class="text-lg font-semibold">Your cart is empty!</h3>
+                <a href="{% url 'core:product-list' %}" class="text-blue-500 hover:underline">Continue Shopping</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Billing Address Form -->
+        <form method="POST" action="{% url 'core:place-order' %}" class="p-6 bg-white rounded-lg shadow-md">
+            {% csrf_token %}
+            <h2 class="text-2xl font-bold mb-4">Billing Address</h2>
+
+            <!-- Display User Info (Username and Email) -->
+            <div class="mb-6">
+                <h3 class="font-semibold text-gray-800 mb-2">User Info</h3>
+                <p class="text-gray-700">Username: {{ user.username }}</p>
+                <p class="text-gray-700">Email: {{ user.email }}</p>
+            </div>
+
+            <!-- Error Message -->
+            {% if error %}
+                <div class="text-red-600 mb-4">
+                    <strong>{{ error }}</strong>
+                </div>
+            {% endif %}
+
+            <!-- Existing Addresses -->
+            <div class="mb-6">
+                <h3 class="font-semibold text-gray-800 mb-2">Select an Address</h3>
+                {% for address in user_addresses %}
+                <div class="flex items-center space-x-3">
+                    <input 
+                        type="radio" 
+                        name="address" 
+                        value="{{ address.id }}" 
+                        id="address-{{ address.id }}" 
+                        class="form-radio text-blue-600">
+                    <label for="address-{{ address.id }}" class="text-gray-700">{{ address.address }}</label>
+                </div>
+                {% empty %}
+                <p class="text-gray-500">No saved addresses found. Add a new one below.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Add New Address -->
+            <div class="mb-6">
+                <h3 class="font-semibold text-gray-800 mb-2">Add a New Address</h3>
+                <input 
+                    type="text" 
+                    name="new_address" 
+                    placeholder="Enter new address"
+                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <!-- Place Order Button -->
+            <button 
+                type="submit" 
+                class="bg-blue-600 text-white px-6 py-2 rounded shadow hover:bg-blue-700">
+                Finalize Order
+            </button>
+        </form>
+    </div>
+</section>
+{% endblock %}

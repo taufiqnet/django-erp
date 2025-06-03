@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HRM Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('w-64');
+            document.getElementById('sidebar').classList.toggle('w-20');
+            document.querySelectorAll('.sidebar-text').forEach(el => el.classList.toggle('hidden'));
+        }
+
+        function toggleDropdown(id) {
+            document.getElementById(id).classList.toggle('hidden');
+        }
+
+        // Google Charts
+        google.charts.load('current', { 'packages': ['corechart', 'line', 'bar'] });
+        google.charts.setOnLoadCallback(drawCharts);
+
+        function drawCharts() {
+            drawSalaryChart();
+            drawEmployeeGrowthGraph();
+        }
+
+        function drawSalaryChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Month', 'Salary'],
+                ['Jan', 5000],
+                ['Feb', 5200],
+                ['Mar', 5400],
+                ['Apr', 5500],
+                ['May', 5800],
+                ['Jun', 6000],
+                ['Jul', 6100]
+            ]);
+            var options = {
+                title: 'Salary Distribution',
+                curveType: 'function',
+                legend: { position: 'bottom' }
+            };
+            var chart = new google.visualization.LineChart(document.getElementById('salary_chart'));
+            chart.draw(data, options);
+        }
+
+        function drawEmployeeGrowthGraph() {
+            var data = google.visualization.arrayToDataTable([
+                ['Month', 'New Hires', 'Terminations'],
+                ['January', 10, 2],
+                ['February', 15, 1],
+                ['March', 12, 3],
+                ['April', 14, 2],
+                ['May', 18, 4]
+            ]);
+
+            var options = {
+                chart: {
+                    title: 'Employee Growth and Terminations',
+                    subtitle: 'Data in Number of Employees',
+                },
+                series: {
+                    0: { color: '#003366' },  // Deep Blue for Sales
+                    1: { color: '#87CEEB' }   // Sky Blue for Expenses
+                },
+                hAxis: {
+                    title: 'Month'
+                },
+                vAxis: {
+                    title: 'Number of Employees'
+                }
+            };
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('employee_growth_graph'));
+            chart.draw(data, options);
+        }
+    </script>
+</head>
+
+<body class="font-sans text-sm">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar"
+            class="w-64 bg-gradient-to-b from-blue-900 to-blue-800 text-white p-5 space-y-6 transition-all duration-300 ease-in-out flex flex-col shadow-lg">
+            <div class="flex items-center justify-between">
+                <h1 class="text-xl font-bold sidebar-text">WBSoft HRMS</h1>
+                <button onclick="toggleSidebar()" class="text-white text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <nav class="space-y-2">
+                <!-- Dashboard Menu -->
+                <a href="#" class="flex items-center py-3 px-4 rounded-lg hover:bg-blue-700 transition">
+                    <i class="fa-solid fa-gauge"></i>
+                    <span class="sidebar-text ml-2">Dashboard</span>
+                </a>
+
+                <!-- Employee Management -->
+                <div class="relative">
+                    <button onclick="toggleDropdown('employeeDropdown')"
+                        class="flex items-center py-3 px-4 w-full rounded-lg hover:bg-blue-700 transition">
+                        <i class="fa-solid fa-users"></i>
+                        <span class="sidebar-text ml-2">Employees</span>
+                        <i class="sidebar-text fas fa-chevron-down ml-auto text-xs"></i>
+                    </button>
+                    <div id="employeeDropdown" class="hidden bg-blue-800 mt-1 rounded-lg">
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Add Employee</a>
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Employee Directory</a>
+                    </div>
+                </div>
+
+                <!-- Payroll Management -->
+                <div class="relative">
+                    <button onclick="toggleDropdown('payrollDropdown')"
+                        class="flex items-center py-3 px-4 w-full rounded-lg hover:bg-blue-700 transition">
+                        <i class="fa-solid fa-money-check"></i>
+                        <span class="sidebar-text ml-2">Payroll</span>
+                        <i class="sidebar-text fas fa-chevron-down ml-auto text-xs"></i>
+                    </button>
+                    <div id="payrollDropdown" class="hidden bg-blue-800 mt-1 rounded-lg">
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Salary Distribution</a>
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Payroll Reports</a>
+                    </div>
+                </div>
+
+                <!-- Attendance -->
+                <div class="relative">
+                    <button onclick="toggleDropdown('attendanceDropdown')"
+                        class="flex items-center py-3 px-4 w-full rounded-lg hover:bg-blue-700 transition">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <span class="sidebar-text ml-2">Attendance</span>
+                        <i class="sidebar-text fas fa-chevron-down ml-auto text-xs"></i>
+                    </button>
+                    <div id="attendanceDropdown" class="hidden bg-blue-800 mt-1 rounded-lg">
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Employee Attendance</a>
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Attendance Reports</a>
+                    </div>
+                </div>
+
+                <!-- Leave Management -->
+                <div class="relative">
+                    <button onclick="toggleDropdown('leaveDropdown')"
+                        class="flex items-center py-3 px-4 w-full rounded-lg hover:bg-blue-700 transition">
+                        <i class="fa-solid fa-bed"></i>
+                        <span class="sidebar-text ml-2">Leave</span>
+                        <i class="sidebar-text fas fa-chevron-down ml-auto text-xs"></i>
+                    </button>
+                    <div id="leaveDropdown" class="hidden bg-blue-800 mt-1 rounded-lg">
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Leave Requests</a>
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Leave Reports</a>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div class="relative">
+                    <button onclick="toggleDropdown('settingsDropdown')"
+                        class="flex items-center py-3 px-4 w-full rounded-lg hover:bg-blue-700 transition">
+                        <i class="fa-solid fa-cog"></i>
+                        <span class="sidebar-text ml-2">Settings</span>
+                        <i class="sidebar-text fas fa-chevron-down ml-auto text-xs"></i>
+                    </button>
+                    <div id="settingsDropdown" class="hidden bg-blue-800 mt-1 rounded-lg">
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">General Settings</a>
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">System Preferences</a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <header class="bg-white shadow-md fixed w-full flex justify-between items-center px-6 py-3 z-10">
+                <nav class="flex space-x-6">
+                    <a href="#" class="text-gray-700 hover:text-blue-600">Home</a>
+                    <a href="#" class="text-gray-700 hover:text-blue-600">About</a>
+                    <a href="#" class="text-gray-700 hover:text-blue-600">Contact</a>
+                </nav>
+                <div class="flex items-center space-x-4">
+                    <input type="text" placeholder="Search..."
+                        class="px-3 py-1 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <div class="relative">
+                        <button onclick="toggleDropdown('userDropdown')" class="flex items-center space-x-2">
+                            <img src="https://via.placeholder.com/40" class="rounded-full border border-gray-300">
+                            <span class="text-gray-700">Thomas Arree</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div id="userDropdown"
+                            class="absolute hidden bg-white shadow-md rounded-lg mt-2 py-2 w-40 right-0">
+                            <a href="#"
+                                class="block px-4 py-2 text-gray-700 hover:bg-blue-600 hover:text-white">Profile</a>
+                            <a href="#"
+                                class="block px-4 py-2 text-gray-700 hover:bg-blue-600 hover:text-white">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="p-6 mt-10">
+                <h2 class="text-2xl font-semibold mb-6">HR Dashboard</h2>
+
+                <!-- HRM Dashboard Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3">
+                    <div class="bg-blue-100 border border-blue-300 p-4 rounded-lg shadow-lg flex justify-between">
+                        <div>
+                            <h5 class="text-lg font-bold">250</h5>
+                            <p class="text-gray-600">Total Employees</p>
+                        </div>
+                        <i class="fas fa-users text-blue-500 text-3xl"></i>
+                    </div>
+                    <div class="bg-green-100 border border-green-300 p-4 rounded-lg shadow-lg flex justify-between">
+                        <div>
+                            <h5 class="text-lg font-bold">12</h5>
+                            <p class="text-gray-600">New Hires (This Month)</p>
+                        </div>
+                        <i class="fas fa-user-plus text-green-500 text-3xl"></i>
+                    </div>
+                    <div class="bg-yellow-100 border border-yellow-300 p-4 rounded-lg shadow-lg flex justify-between">
+                        <div>
+                            <h5 class="text-lg font-bold">8</h5>
+                            <p class="text-gray-600">Pending Leave Requests</p>
+                        </div>
+                        <i class="fas fa-calendar-alt text-yellow-500 text-3xl"></i>
+                    </div>
+                    <div class="bg-red-100 border border-red-300 p-4 rounded-lg shadow-lg flex justify-between">
+                        <div>
+                            <h5 class="text-lg font-bold">3</h5>
+                            <p class="text-gray-600">Employees on Notice</p>
+                        </div>
+                        <i class="fas fa-exclamation-triangle text-red-500 text-3xl"></i>
+                    </div>
+                </div>
+
+
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h2 class="text-lg font-bold mb-3">Salary Chart</h2>
+                        <div id="salary_chart" class="w-full h-64"></div>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold mb-3">Employee Growth Graph</h2>
+                        <div id="employee_growth_graph" class="w-full h-64"></div>
+                    </div>
+                </div>
+
+                
+                <div class="flex justify-between items-center pb-4 border-b">
+                    <h2 class="text-lg font-semibold">Employee Performance</h2>
+                    <button
+                        class="px-4 py-2 text-sm text-blue-600 border border-blue-600 rounded hover:bg-blue-600 hover:text-white">Export</button>
+                </div>
+                <table id="employeeTable" class="display w-full mt-4 border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 text-left text-sm font-medium">
+                            <th class="p-3"><input type="checkbox"></th>
+                            <th class="p-3">ID</th>
+                            <th class="p-3">Name</th>
+                            <th class="p-3">Designation</th>
+                            <th class="p-3">Performance</th>
+                            <th class="p-3">Status</th>
+                            <th class="p-3">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="p-3"><input type="checkbox"></td>
+                            <td class="p-3">TW-1001</td>
+                            <td class="p-3 flex items-center gap-2"><img class="w-8 h-8 rounded-full"
+                                    src="https://i.pravatar.cc/40" alt=""> Kristen Redden</td>
+                            <td class="p-3">Designer</td>
+                            <td class="p-3 text-green-600">Good</td>
+                            <td class="p-3"><span class="px-2 py-1 text-xs bg-green-100 text-green-600 rounded">Active</span>
+                            </td>
+                            <td class="p-3 flex gap-2">
+                                <button class="p-1 text-gray-500 hover:text-gray-700">✏️</button>
+                                <button class="p-1 text-red-500 hover:text-red-700">🗑</button>
+                            </td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="p-3"><input type="checkbox"></td>
+                            <td class="p-3">TW-1002</td>
+                            <td class="p-3 flex items-center gap-2"><img class="w-8 h-8 rounded-full"
+                                    src="https://i.pravatar.cc/41" alt=""> Howard George</td>
+                            <td class="p-3">ASP.Net Developer</td>
+                            <td class="p-3 text-red-600">Low</td>
+                            <td class="p-3"><span class="px-2 py-1 text-xs bg-green-100 text-green-600 rounded">Active</span>
+                            </td>
+                            <td class="p-3 flex gap-2">
+                                <button class="p-1 text-gray-500 hover:text-gray-700">✏️</button>
+                                <button class="p-1 text-red-500 hover:text-red-700">🗑</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="flex justify-between items-center mt-4 text-sm">
+                    <span>Showing 10 of 19 Results</span>
+                    <div class="flex space-x-1">
+                        <button class="px-3 py-1 border rounded hover:bg-gray-200">Prev</button>
+                        <button class="px-3 py-1 border rounded bg-blue-600 text-white">1</button>
+                        <button class="px-3 py-1 border rounded hover:bg-gray-200">2</button>
+                        <button class="px-3 py-1 border rounded hover:bg-gray-200">3</button>
+                        <button class="px-3 py-1 border rounded hover:bg-gray-200">Next</button>
+                    </div>
+                </div>
+                
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#employeeTable').DataTable({
+                "ajax": "employee_data.json", // Change this URL to your actual data source
+                "columns": [
+                    { "data": "id" },
+                    {
+                        "data": "name", "render": function (data, type, row) {
+                            return `<div class='flex items-center gap-2'><img class='w-8 h-8 rounded-full' src='${row.avatar}' alt=''> ${data}</div>`;
+                        }
+                    },
+                    { "data": "designation" },
+                    {
+                        "data": "performance", "render": function (data) {
+                            return `<span class='${data === "Good" ? "text-green-600" : "text-red-600"}'>${data}</span>`;
+                        }
+                    },
+                    {
+                        "data": "status", "render": function (data) {
+                            return `<span class='px-2 py-1 text-xs ${data === "Active" ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-600"} rounded'>${data}</span>`;
+                        }
+                    },
+                    {
+                        "data": "id", "render": function () {
+                            return `<button class='p-1 text-gray-500 hover:text-gray-700'>✏️</button> <button class='p-1 text-red-500 hover:text-red-700'>🗑</button>`;
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+</body>
+
+</html>

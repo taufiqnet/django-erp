@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Receipt - {{ sale.invoice_number }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 14px; padding: 20px; }
+        .header { text-align: center; margin-bottom: 15px; }
+        .business-name { font-size: 18px; font-weight: bold; }
+        .business-info { margin-bottom: 10px; }
+        .receipt-details { display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        .items-table th { text-align: left; border-bottom: 1px solid #000; padding: 5px; }
+        .items-table td { padding: 5px; border-bottom: 1px solid #ddd; }
+        .totals { margin-top: 15px; text-align: right; }
+        .footer { margin-top: 20px; text-align: center; font-size: 12px; }
+        @media print {
+            body { padding: 10px; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="business-name">{{ business.name }}</div>
+        <div class="business-info">
+            {% if business.address %}<div>{{ business.address }}</div>{% endif %}
+            {% if business.phone %}<div>Phone: {{ business.phone }}</div>{% endif %}
+            {% if business.vat_number %}<div>VAT: {{ business.vat_number }}</div>{% endif %}
+        </div>
+    </div>
+
+    <div class="receipt-details">
+        <div>
+            <div><strong>Date:</strong> {{ now }}</div>
+            <div><strong>Invoice #:</strong> {{ sale.invoice_number }}</div>
+        </div>
+    </div>
+
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in sale.items.all %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>৳{{ item.price }}</td>
+                <td>৳{{ item.subtotal }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="totals">
+        <div><strong>Subtotal:</strong> ৳{{ sale.subtotal }}</div>
+        <div><strong>VAT (0%):</strong> ৳{{ sale.vat_amount }}</div>
+        <div><strong>Grand Total:</strong> ৳{{ sale.grand_total }}</div>
+    </div>
+
+    <div class="footer">
+        <div>Thank you for your business!</div>
+        <div>** No returns without receipt **</div>
+    </div>
+
+    <div class="no-print" style="margin-top: 20px; text-align: center;">
+        <button onclick="window.print()">Print Receipt</button>
+        <button onclick="window.close()">Close</button>
+    </div>
+
+    <script>
+        // Auto-print when page loads
+        window.onload = function() {
+            window.print();
+        };
+    </script>
+</body>
+</html>

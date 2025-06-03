@@ -1,0 +1,80 @@
+{% extends 'partials/base.html' %}
+
+{% block title %}Dreamlight - {{ category.title }}{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb Section -->
+<nav class="bg-gray-100 py-3 px-4 rounded mb-6" aria-label="Breadcrumb">
+    <ol class="list-reset flex text-gray-600">
+        <!-- Home -->
+        <li>
+            <a href="{% url 'core:food-products' %}" class="text-blue-600 hover:underline">Home</a>
+        </li>
+        <!-- Parent Category -->
+        {% if category.parent %}
+            <li>
+                <span class="mx-2">/</span>
+                <a href="{% url 'core:category-product-list' category.parent.slug %}" class="text-blue-600 hover:underline">
+                    {{ category.parent.title }}
+                </a>
+            </li>
+        {% endif %}
+        <!-- Current Category -->
+        <li>
+            <span class="mx-2">/</span>
+            <span class="text-gray-800 font-semibold">{{ category.title }}</span>
+        </li>
+    </ol>
+</nav>
+
+<!-- Category Product List Section -->
+<section class="my-6 hidden md:block">
+    <h2 class="text-2xl font-bold text-center mb-3">
+        Category: {{ category.parent.title }} - {{ category.title }}
+    </h2>
+    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 container mx-auto px-2">
+        {% for p in products %}
+            <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+                <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+                
+                {% if p.get_percentage and p.get_percentage > 0 %}
+                    <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                        {{ p.get_percentage|floatformat:0 }}% Off
+                    </span>
+                {% endif %}
+                
+                <div class="p-2 text-center flex-grow">
+                    <h5 class="text-sm font-semibold">
+                        {% comment %} <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                            {{ p.title }}
+                        </a> {% endcomment %}
+                        <p class="text-gray-800 line-clamp-1">{{ p.title }}</p>
+                    </h5>
+                    <div class="mt-2">
+                        <span class="text-lg font-bold text-gray-800">{{ p.price|floatformat:0 }} TK</span>
+                        {% if p.old_price %}
+                            <span class="text-gray-500 line-through text-sm ml-2">{{ p.old_price|floatformat:0 }} TK</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                    <button
+                        class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                        data-id="{{ p.id }}" 
+                        data-pid="{{ p.pid }}" 
+                        data-image="{{ p.image.url }}" 
+                        data-title="{{ p.title }}" 
+                        data-price="{{ p.price }}"
+                    >
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+
+{% endblock %}

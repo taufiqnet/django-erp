@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-4 bg-gray-100">
+<div class="container mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-4">New Sales Transaction</h1>
+
+    <!-- Business Selection -->
+    <div class="mb-4">
+        <label for="business" class="block text-sm font-medium text-gray-700">Select Business</label>
+        <select id="business" class="w-full p-2 border border-gray-300 rounded mt-1" required>
+            <option value="">-- Select Business --</option>
+            {% for business in businesses %}
+            <option value="{{ business.id }}">{{ business.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Customer Selection -->
+    <div class="mb-4">
+        <label for="customer" class="block text-sm font-medium text-gray-700">Select Customer</label>
+        <select id="customer" class="w-full p-2 border border-gray-300 rounded mt-1" required>
+            <option value="">-- Select Customer --</option>
+            {% for customer in customers %}
+            <option value="{{ customer.id }}">{{ customer.first_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Add Product Section -->
+    <div class="mb-4">
+        <h2 class="text-lg font-semibold mb-2">Add Products</h2>
+        <button id="addProduct" class="bg-blue-500 text-white px-4 py-2 rounded">Add Product</button>
+    </div>
+
+    <!-- Product List Table -->
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-300">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="px-4 py-2">Product</th>
+                    <th class="px-4 py-2">Quantity</th>
+                    <th class="px-4 py-2">Unit Price</th>
+                    <th class="px-4 py-2">Item Discount (Fixed)</th>
+                    <th class="px-4 py-2">Subtotal</th>
+                    <th class="px-4 py-2">Action</th>
+                </tr>
+            </thead>
+            <tbody id="productList"></tbody>
+        </table>
+    </div>
+
+    <!-- Transaction Summary -->
+    <div class="mt-6">
+        <label for="shipping_cost" class="block text-sm font-medium text-gray-700">Shipping Cost</label>
+        <input type="number" id="shipping_cost" class="w-full p-2 border border-gray-300 rounded mt-1" value="0" min="0" required>
+    </div>
+
+    <div class="mt-4">
+        <label for="order_discount" class="block text-sm font-medium text-gray-700">Order Discount (Fixed)</label>
+        <input type="number" id="order_discount" class="w-full p-2 border border-gray-300 rounded mt-1" value="0" min="0" required>
+    </div>
+
+    <div class="mt-4">
+        <label for="total" class="block text-sm font-medium text-gray-700">Total Amount</label>
+        <input type="text" id="total" class="w-full p-2 border border-gray-300 rounded mt-1" readonly>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="mt-6">
+        <button id="submitOrder" class="bg-green-500 text-white px-4 py-2 rounded w-full">Submit Order</button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const productList = document.getElementById('productList');
+        const selectedProducts = new Set(); // Track selected products to prevent duplicates
+    
+        // Add event listener to "Add Product" button
+        document.getElementById('addProduct').addEventListener('click', function() {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>
+                    <select class="product w-full p-2 border border-gray-300 rounded" required>
+                        <option value="">-- Select Product --</option>
+                        {% for product in products %}
+                        <option value="{{ product.id }}" data-price="{{ product.price }}">{{ product.name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td><input type="number" class="quantity w-full p-2 border border-gray-300 rounded" min="1" value="1" required></td>
+                <td><input type="text" class="unit_price w-full p-2 border border-gray-300 rounded" readonly></td>
+                <td><input type="number" class="item_discount w-full p-2 border border-gray-300 rounded" min="0" value="0" required></td>
+                <td><input type="text" class="total_price w-full p-2 border border-gray-300 rounded" readonly></td>
+                <td><button class="removeProduct bg-red-500 text-white px-3 py-1 rounded">X</button></td>
+            `;
+            productList.appendChild(row);
+    
+            // Add event listener to the new product select
+            row.querySelector('.product').addEventListener('change', function() {
+                const productId = this.value;
+                if (selectedProducts.has(productId)) {
+                    alert('This product is already added. Please select another product.');
+                    this.value = ''; // Reset the selection
+                } else {
+                    selectedProducts.add(productId);
+                    updateRowTotal(row);
+                }
+            });
+        });
+    
+        // Event listener for product selection and calculations
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('product') || e.target.classList.contains('quantity') || e.target.classList.contains('item_discount')) {
+                updateRowTotal(e.target.closest('tr'));
+            }
+        });
+    
+        // Add event listeners for shipping cost and order discount
+        document.getElementById('shipping_cost').addEventListener('input', updateTotalAmount);
+        document.getElementById('order_discount').addEventListener('input', updateTotalAmount);
+    
+        // Update row total for each product
+        function updateRowTotal(row) {
+            const product = row.querySelector('.product');
+            const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+            const itemDiscount = parseFloat(row.querySelector('.item_discount').value) || 0; // Fixed item discount
+            const unitPrice = parseFloat(product.selectedOptions[0]?.getAttribute('data-price')) || 0;
+    
+            // Calculate total price for the product after item discount
+            const totalPrice = (quantity * unitPrice) - itemDiscount;
+            row.querySelector('.unit_price').value = unitPrice.toFixed(2);
+            row.querySelector('.total_price').value = totalPrice.toFixed(2);
+    
+            updateTotalAmount();
+        }
+    
+        // Update the overall total amount
+        function updateTotalAmount() {
+            let subtotal = 0;
+            document.querySelectorAll('.total_price').forEach(el => {
+                subtotal += parseFloat(el.value) || 0;
+            });
+    
+            const shippingCost = parseFloat(document.getElementById('shipping_cost').value) || 0;
+            const orderDiscount = parseFloat(document.getElementById('order_discount').value) || 0; // Fixed order discount
+    
+            // Calculate total amount after applying order discount
+            const totalAmount = subtotal + shippingCost - orderDiscount;
+            document.getElementById('total').value = totalAmount.toFixed(2);
+        }
+    
+        // Remove Product Row
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('removeProduct')) {
+                const row = e.target.closest('tr');
+                const productId = row.querySelector('.product').value;
+                selectedProducts.delete(productId); // Remove product from selected set
+                row.remove();
+                updateTotalAmount();
+            }
+        });
+    
+        // Submit Order
+        document.getElementById('submitOrder').addEventListener('click', function() {
+            const business_id = document.getElementById('business').value;
+            const customer_id = document.getElementById('customer').value;
+            const shipping_cost = document.getElementById('shipping_cost').value || 0;
+            const order_discount = document.getElementById('order_discount').value || 0;
+            const total_amount = document.getElementById('total').value || 0;
+    
+            if (!business_id) {
+                alert('Please select a business');
+                return;
+            }
+    
+            if (!customer_id) {
+                alert('Please select a customer');
+                return;
+            }
+    
+            const products = [];
+            document.querySelectorAll('#productList tr').forEach(row => {
+                const product_id = row.querySelector('.product').value;
+                const quantity = row.querySelector('.quantity').value;
+                const item_discount = row.querySelector('.item_discount').value || 0;
+                const total_price = row.querySelector('.total_price').value || 0;
+    
+                if (product_id) {
+                    products.push({
+                        product_id: product_id,
+                        quantity: quantity,
+                        item_discount: item_discount,
+                        total_price: total_price
+                    });
+                }
+            });
+    
+            if (products.length === 0) {
+                alert('Please add at least one product');
+                return;
+            }
+    
+            fetch('{% url "sales:create_order" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    business_id: business_id,
+                    customer_id: customer_id,
+                    shipping_cost: shipping_cost,
+                    order_discount: order_discount,
+                    total_amount: total_amount,
+                    products: products
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.order_id) {
+                    alert('Order created successfully');
+                    window.location.href = '{% url "sales:sales_list" %}'; // Redirect to sales list
+                } else {
+                    alert(data.error || 'Error creating order');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+</body>
+</html>

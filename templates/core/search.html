@@ -1,0 +1,229 @@
+{% extends 'partials/base.html' %}
+
+{% block title %}Dreamlight - Discover Beauty{% endblock %}
+{% block meta_description %}Explore Dreamlight, your ultimate destination for Korean and Thai beauty products. From premium skincare to haircare, uncover the best K-beauty and Thai beauty essentials tailored for flawless skin and vibrant hair. Shop now for exclusive deals!{% endblock %}
+
+{% block content %}
+
+<!-- Show all Subcategories -->
+
+<div class="bg-gray-100 py-2">
+    <div class="container mx-auto px-4 flex gap-2 justify-center flex-wrap">
+        <!-- Dynamically render subcategory buttons -->
+        {% for subcategory in subcategories %}
+        <button 
+            type="button" 
+            class="bg-gray-200 hover:bg-gray-300 text-sm text-gray-800 font-semibold py-1 px-2 rounded-full border-2 border-gray-300"
+            onclick="submitSearch('{{ subcategory.title }}')"
+        >
+            {{ subcategory.title }}
+        </button>
+        {% endfor %}
+    </div>
+</div>
+
+
+<!-- Search Results Section -->
+
+<!-- Product Section for Mobile device view-->
+<section class="my-4 block md:hidden">
+    <h2 class="px-4 text-sm font-bold mb-4">Search Results for "{{ query }}"</h2>
+    
+    {% if products %}
+    <!-- Grid Layout -->
+    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 container mx-auto px-2">
+        {% for p in products %}
+            <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+                <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+                <!-- Percentage Discount -->
+                {% if p.get_percentage is not None and p.get_percentage > 0 %}
+                    <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                        {{ p.get_percentage|floatformat:0 }}% Off
+                    </span>
+                {% endif %}
+
+                <!-- Best Selling Tag -->
+                {% if p.best_selling %}
+                    <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                        Best Selling
+                    </span>
+                {% endif %}
+
+                <!-- Product Details -->
+                <div class="p-2 text-center flex-grow">
+                    <h5 class="text-sm font-semibold">
+                        <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                            {{ p.title }}
+                        </a>
+                    </h5>
+
+                    <!-- Category Tag -->
+                    {% if p.category %}
+                        <p class="text-gray-500 text-xs mt-1">
+                            Category: 
+                            <a href="{% url 'core:category-product-list' p.category.cid %}" class="hover:text-blue-500">
+                                {{ p.category.title }}
+                            </a>
+                        </p>
+                    {% else %}
+                        <p class="text-gray-500 text-xs mt-1">Category: Unspecified</p>
+                    {% endif %}
+
+                    <!-- Brand -->
+                    {% if p.brand %}
+                        <span class="text-gray-500 text-xs mt-1">
+                            Brand: <a href="#" class="hover:text-blue-500">{{ p.brand.title }}</a>
+                        </span>
+                    {% endif %}
+
+                    <!-- Ratings and Sold Count -->
+                    <div class="mt-1">
+                        <span class="text-yellow-400 text-sm">★</span>
+                        {% if p.review_star and p.review_count %}
+                            <span class="text-gray-500 text-xs">{{ p.review_star }} ({{ p.review_count }})</span>
+                        {% endif %}
+                    
+                        <span class="text-gray-500 text-xs ml-3">|</span>
+                        
+                        {% if p.sold_count %}
+                            <span class="text-gray-500 text-xs ml-3">
+                                Sold ({{ p.sold_count }})
+                            </span>
+                        {% endif %}
+                </div>
+                
+                <!-- Price Section -->
+                <div class="mt-2">
+                    <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                    {% if p.old_price %}
+                        <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Free Delivery -->
+                {% if p.free_delivery %}
+                    <p class="text-green-600 text-sm mt-1 font-semibold">Free Delivery</p>
+                {% endif %}
+                </div>
+                <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                    <button class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                            data-id="{{ p.id }}" data-pid="{{ p.pid }}" data-image="{{ p.image.url }}" data-title="{{ p.title }}" data-price="{{ p.price }}">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- No Products Found -->
+    <div class="alert alert-warning text-center bg-yellow-200 text-yellow-800 p-4 rounded-md">
+        <p>No products found matching your query: "<strong>{{ query }}</strong>"</p>
+        <a href="{% url 'core:product-list' 'beauty' %}" class="mt-4 inline-block bg-blue-500 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-blue-600">
+            Browse All Products
+        </a>
+    </div>
+    {% endif %}
+</section>
+
+<!-- Product Section for Desktop view-->
+<section class="my-4 hidden md:block">
+    {% if products.exists %}
+        <h2 class="text-xl font-bold text-center mb-10">Search Results for "{{ query }}"</h2>
+        
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 container mx-auto px-2">
+            {% for p in products %}
+                <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+                    <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+                    <!-- Percentage Discount -->
+                    {% if p.get_percentage is not None and p.get_percentage > 0 %}
+                        <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                            {{ p.get_percentage|floatformat:0 }}% Off
+                        </span>
+                    {% endif %}
+
+                    <!-- Best Selling Tag -->
+                    {% if p.best_selling %}
+                        <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                            Best Selling
+                        </span>
+                    {% endif %}
+
+                    <!-- Product Details -->
+                    <div class="p-2 text-center flex-grow">
+                        <h5 class="text-sm font-semibold">
+                            <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                                {{ p.title }}
+                            </a>
+                        </h5>
+
+                        <!-- Category Tag -->
+                        {% if p.category %}
+                            <p class="text-gray-500 text-xs mt-1">
+                                Category: 
+                                <a href="{% url 'core:category-product-list' p.category.cid %}" class="hover:text-blue-500">
+                                    {{ p.category.title }}
+                                </a>
+                            </p>
+                        {% else %}
+                            <p class="text-gray-500 text-xs mt-1">Category: Unspecified</p>
+                        {% endif %}
+
+                        <!-- Brand -->
+                        {% if p.brand %}
+                            <span class="text-gray-500 text-xs mt-1">
+                                Brand: <a href="#" class="hover:text-blue-500">{{ p.brand.title }}</a>
+                            </span>
+                        {% endif %}
+
+                        <!-- Ratings and Sold Count -->
+                        <div class="mt-1">
+                            <span class="text-yellow-400 text-sm">★</span>
+                            {% if p.review_star and p.review_count %}
+                                <span class="text-gray-500 text-xs">{{ p.review_star }} ({{ p.review_count }})</span>
+                            {% endif %}
+                        
+                            <span class="text-gray-500 text-xs ml-3">|</span>
+                            
+                            {% if p.sold_count %}
+                                <span class="text-gray-500 text-xs ml-3">
+                                    Sold ({{ p.sold_count }})
+                                </span>
+                            {% endif %}
+                    </div>
+                    
+                    <!-- Price Section -->
+                    <div class="mt-2">
+                        <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                        {% if p.old_price %}
+                            <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Free Delivery -->
+                    {% if p.free_delivery %}
+                        <p class="text-green-600 text-sm mt-1 font-semibold">Free Delivery</p>
+                    {% endif %}
+                    </div>
+                    <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                        <button class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                                data-id="{{ p.id }}" data-pid="{{ p.pid }}" data-image="{{ p.image.url }}" data-title="{{ p.title }}" data-price="{{ p.price }}">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- No Results Found -->
+        <div class="alert alert-warning text-center bg-yellow-200 text-yellow-800 p-4 rounded-md">
+            <p>No products found matching your query: "<strong>{{ query }}</strong>"</p>
+            <a href="{% url 'core:product-list' 'beauty' %}" class="mt-4 inline-block bg-blue-500 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-blue-600">
+                Browse All Products
+            </a>
+        </div>
+    {% endif %}
+</section>
+
+
+
+{% endblock %}

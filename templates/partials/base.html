@@ -1,0 +1,596 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Dynamic Title -->
+    <title>{% block title %}Default Title{% endblock %}</title>
+
+    <!-- Dynamic Meta Description -->
+    <meta name="description" content="{% block meta_description %}Default meta description for the site.{% endblock %}">
+
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
+
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.js" defer></script>
+
+</head>
+
+<body class="font-sans bg-gray-50 lg:px-24">
+
+<!-- Navbar -->
+<nav class="bg-blue-900 text-white">
+    <div class="container mx-auto px-4 flex items-center justify-between">
+        <!-- Hamburger Menu (Mobile Only) -->
+        <button id="mobile-menu-button" class="lg:hidden text-white focus:outline-none" aria-label="Toggle navigation">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+        </button>
+
+        <!-- Logo -->
+        {% comment %} <a href="{% url 'core:index' %}" class="text-xl font-bold">Dreamlight</a> {% endcomment %}
+        <a href="{% url 'core:index' %}" class="flex items-center">
+            {% if company and company.company_logo %}
+                <img src="{{ company.company_logo.url }}" alt="{{ company.name }}" class="h-8 w-auto">
+            {% else %}
+                <span class="text-lg font-bold">Dreamlight</span>
+            {% endif %}
+            {% comment %} <span class="text-lg font-bold px-2">Dreamlight</span> {% endcomment %}
+        </a>
+        
+
+        <!-- Cart Icon (Mobile Only) -->
+        <a href="{% url 'core:checkout' %}" class="relative text-white hover:text-gray-400 lg:hidden">
+            <span class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center cart-items-count {% if not request.session.cart_data_obj %}hidden{% endif %}">
+                {% if request.session.cart_data_obj %}
+                    {{ request.session.cart_data_obj|length }}
+                {% else %}
+                    0
+                {% endif %}
+            </span>
+            <!-- Hero Icon for Cart -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+            </svg>
+        </a>
+
+        <!-- Desktop Menu -->
+        {% comment %} <div class="hidden lg:flex items-center space-x-6">
+            <a href="{% url 'core:index' %}" class="hover:text-gray-400">Home</a>
+            <a href="{% url 'core:product-list' 'beauty' %}" class="hover:text-gray-400">Beauty & Skincare</a>
+            <a href="{% url 'core:food-products' %}" class="hover:text-gray-400">Food & Beverage</a>            
+            <a href="" class="hover:text-gray-400">Baby & Mom</a>
+
+            <div class="px-4 py-2">
+                <form class="flex items-center space-x-2" id="search-form" method="get" action="{% url 'core:search' %}">
+                    <div class="relative w-full">
+                        <input type="search" name="q" id="search-input" placeholder="Search products" class="border border-gray-300 rounded text-black px-4 py-2 focus:outline-none focus:ring focus:ring-blue-300 w-full" value="{{ request.GET.q }}" required>
+                        <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-600 focus:outline-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 3a7.5 7.5 0 11-7.5 7.5 7.5 7.5 0 017.5-7.5zm0 2.25a5.25 5.25 0 100 10.5 5.25 5.25 0 000-10.5z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.25-4.25" />
+                            </svg>
+                        </button>
+                    </div>
+                </form>                
+            </div>
+
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'userauths:logout' %}" class="bg-blue-600 px-4 py-2 rounded text-white hover:bg-blue-500">Sign Out</a>
+            {% else %}
+            <a href="{% url 'userauths:login' %}" class="bg-blue-600 px-4 py-2 rounded text-white hover:bg-blue-500">Sign In</a>
+            {% endif %}
+
+            <!-- Cart Icon (Desktop Only) -->
+            <a href="{% url 'core:checkout' %}" class="relative text-white hover:text-gray-400">
+                <span class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center cart-items-count {% if not request.session.cart_data_obj %}hidden{% endif %}">
+                    {% if request.session.cart_data_obj %}
+                        {{ request.session.cart_data_obj|length }}
+                    {% else %}
+                        0
+                    {% endif %}
+                </span>
+                <!-- Hero Icon for Cart -->
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                </svg>
+            </a>
+        </div> {% endcomment %}
+
+        <div class="hidden lg:flex items-center space-x-6">
+            <a href="{% url 'core:index' %}" class="hover:text-gray-400">Home</a>
+            <a href="{% url 'core:product-list' 'beauty' %}" class="hover:text-gray-400">Beauty & Skincare</a>
+            <a href="{% url 'core:food-products' %}" class="hover:text-gray-400">Food & Beverage</a>
+            <a href="" class="hover:text-gray-400">Baby & Mom</a>
+        
+            <!-- Dynamic Subcategories Menu -->
+            {% comment %} <div class="relative group">
+                <button class="hover:text-gray-400">Categories</button>
+                <div
+                    class="absolute left-0 mt-2 w-64 bg-white text-black rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                    <ul class="py-2">
+                        {% for parent in parent_categories %}
+                            <li class="relative group">
+                                <!-- Parent Category -->
+                                <button class="block px-4 py-2 hover:bg-gray-100 w-full text-left">
+                                    {{ parent.title }}
+                                </button>
+                                <!-- Subcategories Dropdown -->
+                                <div
+                                    class="absolute left-full top-0 mt-0 ml-2 w-48 bg-white text-black rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                                    <ul class="py-2">
+                                        {% for subcategory in subcategories %}
+                                            {% if subcategory.parent.id == parent.id %}
+                                                <li>
+                                                    <a href="" class="block px-4 py-2 hover:bg-gray-100">
+                                                        {{ subcategory.title }}
+                                                    </a>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div> {% endcomment %}
+            
+        
+            <div class="px-4 py-2">
+                <form class="flex items-center space-x-2" id="search-form" method="get" action="{% url 'core:search' %}">
+                    <div class="relative w-full">
+                        <input type="search" name="q" id="search-input" placeholder="Search products"
+                            class="border border-gray-300 rounded text-black px-4 py-2 focus:outline-none focus:ring focus:ring-blue-300 w-full"
+                            value="{{ request.GET.q }}" required>
+                        <button type="submit"
+                            class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-600 focus:outline-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="h-6 w-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M10.5 3a7.5 7.5 0 11-7.5 7.5 7.5 7.5 0 017.5-7.5zm0 2.25a5.25 5.25 0 100 10.5 5.25 5.25 0 000-10.5z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.25-4.25" />
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'userauths:logout' %}" class="bg-blue-600 px-4 py-2 rounded text-white hover:bg-blue-500">Sign Out</a>
+            {% else %}
+                <a href="{% url 'userauths:login' %}" class="bg-blue-600 px-4 py-2 rounded text-white hover:bg-blue-500">Sign In</a>
+            {% endif %}
+        
+            <!-- Cart Icon -->
+            <a href="{% url 'core:checkout' %}" class="relative text-white hover:text-gray-400">
+                <span class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center cart-items-count {% if not request.session.cart_data_obj %}hidden{% endif %}">
+                    {% if request.session.cart_data_obj %}
+                        {{ request.session.cart_data_obj|length }}
+                    {% else %}
+                        0
+                    {% endif %}
+                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                </svg>
+            </a>
+        </div>
+        
+    </div>
+
+    <!-- Mobile Search Input -->
+    <div class="lg:hidden px-4 py-2">
+        <form class="flex items-center space-x-2" id="search-form" method="get" action="{% url 'core:search' %}">
+            <input type="search" name="q" id="search-input" placeholder="Search products" class="border border-gray-300 rounded text-black px-4 py-2 focus:outline-none focus:ring focus:ring-blue-300 w-full" value="{{ request.GET.q }}" required>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500">Search</button>
+        </form>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden bg-gray-800 lg:hidden">
+        <a href="{% url 'core:index' %}" class="block px-4 py-2 hover:bg-gray-700">Home</a>
+        <a href="{% url 'core:product-list' 'beauty' %}" class="block px-4 py-2 hover:bg-gray-700">Beauty & Skincare</a>
+        <a href="{% url 'core:food-products' %}" class="block px-4 py-2 hover:bg-gray-700">Food & Beverage</a>            
+        <a href="" class="block px-4 py-2 hover:bg-gray-700">Baby & Mom</a>
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'userauths:logout' %}" class="block px-4 py-2 hover:bg-blue-500">Sign Out</a>
+        {% else %}
+        <a href="{% url 'userauths:login' %}" class="block px-4 py-2 hover:bg-blue-500">Sign In</a>
+        {% endif %}
+    </div>
+
+    {% comment %} <ol class="flex space-x-2">
+        {% for crumb in breadcrumbs %} 
+            {% if crumb.url %} 
+                <li> 
+                    <a href="{{ crumb.url }}" class="text-blue-600 hover:underline">{{ crumb.name }}</a> 
+                </li> 
+                <li class="text-gray-500">/</li> 
+            {% else %} 
+                <li class="text-gray-700 font-bold">{{ crumb.name }}</li> 
+            {% endif %} 
+        {% endfor %} 
+    </ol> {% endcomment %}
+</nav>
+
+
+
+<script>
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+</script>
+
+
+
+
+{% block content %}
+
+<!-- Content Section -->
+<div class="container mx-auto px-4 py-6 pb-16 md:pb-0">
+    <!-- Dynamic content will be injected here -->
+</div>
+
+{% endblock %}
+
+<!-- Footer -->
+{% comment %} <footer class="bg-gray-800 text-white py-6">
+    <div class="container mx-auto text-center">
+        <p class="mb-4">&copy; 2024 Dreamlight. All Rights Reserved.</p>
+        <div class="flex justify-center space-x-4">
+            <a href="#" class="hover:text-gray-400"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="hover:text-gray-400"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="hover:text-gray-400"><i class="fab fa-instagram"></i></a>
+        </div>
+    </div>
+</footer> {% endcomment %}
+
+<footer class="fixed bottom-0 left-0 w-full bg-gray-800 text-white py-4 md:hidden z-50">
+    <div class="container mx-auto flex justify-around items-center">
+        
+        <!-- Chat Icon -->
+        <a href="#" class="text-gray-400 hover:text-gray-600 flex flex-col items-center">
+            <i class="fas fa-comment-alt text-2xl mb-1"></i>
+            <span class="text-xs mt-1">Chat</span>
+        </a>
+
+        <!-- Cart Icon -->
+        <a href="{% url 'core:checkout' %}" class="relative text-gray-400 hover:text-gray-600 flex flex-col items-center">
+            <i class="fas fa-shopping-cart text-2xl mb-1"></i>
+
+            {% if request.session.cart_data_obj %}
+                <span class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center cart-items-count ">
+                    {{ request.session.cart_data_obj|length }}
+                </span>
+            {% else %}
+                <span class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    0
+                </span>
+            {% endif %}
+
+            <span class="text-xs mt-1">Cart</span>
+        </a>
+
+        <!-- Account/Profile Icon -->
+        <a href="" class="text-gray-400 hover:text-gray-600 flex flex-col items-center">
+            <i class="fas fa-user text-2xl mb-1"></i>
+            <span class="text-xs mt-1">Account</span>
+        </a>
+        
+    </div>
+
+    {% comment %} <p class="text-center mt-2 text-gray-500 text-sm">
+        &copy; 2024 Dreamlight. All Rights Reserved.
+    </p> {% endcomment %}
+</footer>
+
+
+<!-- Desktop Footer -->
+{% comment %} <footer class="bg-gray-800 text-white py-6 hidden md:block">
+    <div class="container mx-auto text-center">
+        <!-- Copyright -->
+        <p class="text-center mt-4 text-gray-500 text-sm">
+            &copy; 2024 Dreamlight. All Rights Reserved.
+        </p>
+    </div>
+</footer> {% endcomment %}
+
+<footer class="bg-gray-100 text-gray-800 py-10 hidden md:block">
+    <div class="container mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 px-4">
+        <!-- Logo and Contact Information -->
+        <div>
+            
+            <a href="{% url 'core:index' %}" class="flex items-center">
+                {% if company and company.company_logo %}
+                    <img src="{{ company.company_logo.url }}" alt="{{ company.name }}" class="h-16 mb-4">
+                {% else %}
+                    <span class="text-lg font-bold">Dreamlight</span>
+                {% endif %}
+            </a>
+            <p class="text-sm font-semibold mb-2">Always Here for You</p>
+            <p class="text-sm">
+                Call Us: <span class="font-semibold">+8801857309699</span> (9am-9pm, Everyday)
+            </p>
+            <p class="text-sm">
+                Email Us: <a href="mailto:business.dreamlight@gmail.com" class="font-semibold hover:underline">business.dreamlight@gmail.com</a>
+            </p>
+        </div>
+
+        <!-- Information Section -->
+        <div>
+            <h3 class="text-lg font-semibold mb-3">Information</h3>
+            <ul class="space-y-2 text-sm">
+                <li><a href="#" class="hover:text-blue-600">About Us</a></li>
+                <li><a href="#" class="hover:text-blue-600">Office Address</a></li>
+                <li><a href="#" class="hover:text-blue-600">Shipping & Returns</a></li>                
+                <li><a href="#" class="hover:text-blue-600">Privacy Policy</a></li>
+                <li><a href="#" class="hover:text-blue-600">Terms & Condition</a></li>
+            </ul>
+        </div>
+
+        <!-- Customer Service Section -->
+        <div>
+            <h3 class="text-lg font-semibold mb-3">Customer Service</h3>
+            <ul class="space-y-2 text-sm">
+                <li><a href="#" class="hover:text-blue-600">Contact Us</a></li>
+                <li><a href="#" class="hover:text-blue-600">My Account</a></li>
+                <li><a href="#" class="hover:text-blue-600">Membership Plan</a></li>
+            </ul>
+        </div>
+
+        <!-- Payment Methods and Social Media Section -->
+        <div>
+            <h3 class="text-lg font-semibold mb-3">Pay With</h3>
+            <div class="flex items-center space-x-2">
+                <img src="path-to-mastercard.png" alt="MasterCard" class="h-6">
+                <img src="path-to-visa.png" alt="Visa" class="h-6">
+                {% comment %} <img src="path-to-discover.png" alt="Discover" class="h-6">
+                <img src="path-to-amex.png" alt="American Express" class="h-6"> {% endcomment %}
+                <img src="path-to-bkash.png" alt="Bkash" class="h-6">
+            </div>
+            <h3 class="text-lg font-semibold mt-5">Follow Us</h3>
+            <div class="flex items-center space-x-3 mt-2">
+                <a href="#" class="hover:text-blue-600">
+                    <img src="path-to-facebook.png" alt="Facebook" class="h-6">
+                </a>
+                <a href="#" class="hover:text-red-600">
+                    <img src="path-to-youtube.png" alt="YouTube" class="h-6">
+                </a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $(document).on("click", ".add-to-cart-btn", function (event) {
+            event.preventDefault();
+
+            // Retrieve product details from data attributes
+            const productId = $(this).data("id");
+            const productPid = $(this).data("pid");
+            const productImage = $(this).data("image");
+            const productTitle = $(this).data("title");
+            const productPrice = $(this).data("price");
+
+            // AJAX call to add the product to the cart
+            $.ajax({
+                url: '/add-to-cart',
+                method: 'GET',
+                data: {
+                    id: productId,
+                    pid: productPid,
+                    image: productImage,
+                    title: productTitle,
+                    price: productPrice
+                },
+                dataType: 'json',
+                success: function (res) {
+                    if (res.success) {
+                        console.log("Cart updated successfully:", res);
+
+                        // Dynamically update the cart count
+                        $(".cart-items-count").text(res.totalcartitems).removeClass('hidden');
+                    } else {
+                        alert("Failed to add product to cart. Please try again.");
+                    }
+                },
+                error: function (err) {
+                    console.error("Error updating cart:", err);
+                    alert("An error occurred while updating the cart.");
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+<script>
+    $(document).ready(function () {
+        // Increase Quantity
+        $(document).on('click', '.increase-btn', function () {
+            let productId = $(this).data('id');
+
+            $.ajax({
+                url: "{% url 'core:update-cart' %}",
+                method: "POST",
+                data: {
+                    product_id: productId,
+                    action: "increase",
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    location.reload(); // Reload the page to update the cart
+                },
+                error: function (err) {
+                    console.error("Error increasing quantity:", err);
+                }
+            });
+        });
+
+        // Decrease Quantity
+        $(document).on('click', '.decrease-btn', function () {
+            let productId = $(this).data('id');
+
+            $.ajax({
+                url: "{% url 'core:update-cart' %}",
+                method: "POST",
+                data: {
+                    product_id: productId,
+                    action: "decrease",
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    location.reload(); // Reload the page to update the cart
+                },
+                error: function (err) {
+                    console.error("Error decreasing quantity:", err);
+                }
+            });
+        });
+
+        // Delete Item
+        $(document).on('click', '.delete-btn', function () {
+            let productId = $(this).data('id');
+
+            $.ajax({
+                url: "{% url 'core:update-cart' %}",
+                method: "POST",
+                data: {
+                    product_id: productId,
+                    action: "delete",
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    location.reload(); // Reload the page to update the cart
+                },
+                error: function (err) {
+                    console.error("Error deleting item:", err);
+                }
+            });
+        });
+    });
+</script>
+
+{% comment %} Category Scrollbar {% endcomment %}
+<script>
+    const carousel = document.getElementById('carousel');
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
+
+    // Scroll left
+    prevButton.addEventListener('click', () => {
+        carousel.scrollBy({
+            left: -150, // Adjust scroll amount
+            behavior: 'smooth'
+        });
+    });
+
+    // Scroll right
+    nextButton.addEventListener('click', () => {
+        carousel.scrollBy({
+            left: 150, // Adjust scroll amount
+            behavior: 'smooth'
+        });
+    });
+
+</script>
+
+{% comment %} Search Script for Shop Page {% endcomment %}
+<script>
+    // Function to auto-fill search input and submit the form
+    function submitSearch(category) {
+        const searchInput = document.getElementById('search-input');
+        const searchForm = document.getElementById('search-form');
+
+        // Fill the input with the category and submit
+        searchInput.value = category;
+        searchForm.submit();
+    }
+</script>
+
+<script>
+    document.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+    });
+</script>
+
+<script>
+    document.addEventListener("keydown", (event) => {
+        // Disable Ctrl+U or Cmd+U
+        if (event.ctrlKey && event.key === "u") {
+            event.preventDefault();
+        }
+        // Disable Ctrl+Shift+I or Cmd+Option+I
+        if ((event.ctrlKey && event.shiftKey && event.key === "I") || 
+            (event.metaKey && event.altKey && event.key === "I")) {
+            event.preventDefault();
+        }
+        // Disable F12
+        if (event.key === "F12") {
+            event.preventDefault();
+        }
+    });
+</script>
+
+<script>
+    (function() {
+        const devtools = {
+            isOpen: false,
+            orientation: undefined,
+        };
+
+        const threshold = 160;
+        const emitEvent = (isOpen, orientation) => {
+            devtools.isOpen = isOpen;
+            devtools.orientation = orientation;
+        };
+
+        const check = () => {
+            const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+            const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+            const orientation = widthThreshold ? "vertical" : "horizontal";
+
+            if (
+                (window.Firebug && window.Firebug.chrome && window.Firebug.chrome.isInitialized) ||
+                widthThreshold ||
+                heightThreshold
+            ) {
+                emitEvent(true, orientation);
+            } else {
+                emitEvent(false, undefined);
+            }
+        };
+
+        setInterval(check, 500);
+
+        if (devtools.isOpen) {
+            alert("Please close developer tools to access this website.");
+        }
+    })();
+</script>
+
+
+</body>
+</html>

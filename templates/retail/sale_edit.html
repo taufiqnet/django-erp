@@ -1,0 +1,453 @@
+{% extends 'partials/base_retail.html' %}
+{% block title %}Retail - Edit Sale{% endblock %}
+{% block content %}
+{% load static %}
+{% csrf_token %}
+
+<div class="container mx-auto px-4 py-6">
+  <div class="bg-white p-6 rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold">Edit Sale #{{ sale.invoice_number }}</h1>
+      <a href="{% url 'retail:sale_list' %}" class="text-blue-600 hover:text-blue-800">
+        Back to Sales
+      </a>
+    </div>
+
+    <form method="post" id="edit-sale-form" action="{% url 'retail:sale_edit' sale.id %}">
+      {% csrf_token %}
+      
+      <!-- Customer Section -->
+      <div class="mb-6">
+        <h2 class="text-lg font-semibold mb-3 border-b pb-2">Customer Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">Customer</label>
+            <select name="customer" class="w-full p-2 border rounded-md">
+              <option value="">Walk-in Customer</option>
+              {% for customer in customers %}
+                <option value="{{ customer.id }}" {% if sale.customer.id == customer.id %}selected{% endif %}>
+                  {{ customer.contact_id }} - {{ customer.first_name }} {{ customer.last_name }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Date</label>
+            <input type="datetime-local" name="date" value="{{ sale.date|date:'Y-m-d\TH:i:s' }}" class="w-full p-2 border rounded-md">
+          </div>
+        </div>
+      </div>
+
+      <!-- Items Section -->
+      <div class="mb-6">
+        <h2 class="text-lg font-semibold mb-3 border-b pb-2">Items</h2>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Qty</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tax</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="items-container" class="bg-white divide-y divide-gray-200">
+              {% for item in sale.items.all %}
+              <tr>
+                <td class="px-4 py-2">
+                  <select name="product" class="w-full p-1 border rounded text-sm" required>
+                    {% for product in products %}
+                      <option value="{{ product.id }}" 
+                              data-price="{{ product.price }}"
+                              data-tax-type="{{ product.tax_type }}"
+                              data-tax-rate="{{ product.tax_rate }}"
+                              {% if item.product.id == product.id %}selected{% endif %}>
+                        {{ product.name }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </td>
+                <td class="px-4 py-2">
+                  <input type="number" name="price" value="{{ item.price }}" step="0.01" min="0" class="w-20 p-1 border rounded text-sm" required>
+                </td>
+                <td class="px-4 py-2">
+                  <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="w-16 p-1 border rounded text-sm" required>
+                </td>
+                <td class="px-4 py-2 text-sm">
+                  {{ item.tax_type|title }} ({{ item.tax_rate }}%)
+                </td>
+                <td class="px-4 py-2 text-sm">
+                  ৳{{ item.subtotal|floatformat:2 }}
+                </td>
+                <td class="px-4 py-2">
+                  <button type="button" class="remove-item text-red-600 hover:text-red-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <button type="button" id="add-item" class="mt-2 text-blue-600 hover:text-blue-800 text-sm flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Add Item
+          </button>
+        </div>
+      </div>
+
+      <!-- Payment Section -->
+      <div class="mb-6">
+        <h2 class="text-lg font-semibold mb-3 border-b pb-2">Payment Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">Payment Method</label>
+            <select name="payment_method" class="w-full p-2 border rounded-md">
+              {% for method in payment_methods %}
+                <option value="{{ method.0 }}" {% if sale.payment_method == method.0 %}selected{% endif %}>{{ method.1 }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Discount (%)</label>
+            <input type="number" name="discount" value="{{ sale.discount_percent|default:0 }}" min="0" max="100" class="w-full p-2 border rounded-md">
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Amount Paid</label>
+            <input type="number" name="amount_paid" value="{{ sale.amount_paid|floatformat:2 }}" min="0" step="0.01" class="w-full p-2 border rounded-md">
+          </div>
+        </div>
+      </div>
+
+      <!-- Totals Section -->
+      <div class="bg-gray-50 p-4 rounded-md mb-6">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="font-medium">Subtotal:</span>
+              <span id="subtotal">৳{{ sale.subtotal|floatformat:2 }}</span>
+            </div>
+            <div class="flex justify-between mb-1">
+              <span class="font-medium">Discount:</span>
+              <span id="discount-amount">-৳{{ sale.discount_amount|floatformat:2 }}</span>
+            </div>
+            <div class="flex justify-between mb-1">
+              <span class="font-medium">Tax:</span>
+              <span id="tax-amount">৳{{ sale.tax_amount|floatformat:2 }}</span>
+            </div>
+            <div class="flex justify-between font-bold text-lg mt-2">
+              <span>Grand Total:</span>
+              <span id="grand-total">৳{{ sale.grand_total|floatformat:2 }}</span>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="font-medium">Amount Paid:</span>
+              <span id="paid-amount">৳{{ sale.amount_paid|floatformat:2 }}</span>
+            </div>
+            <div class="flex justify-between font-bold {% if sale.balance_due > 0 %}text-red-600{% else %}text-green-600{% endif %}">
+              <span>Balance Due:</span>
+              <span id="due-amount">৳{{ sale.balance_due|floatformat:2 }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex justify-end space-x-3">
+        <a href="{% url 'retail:sale_detail' sale.id %}" class="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50">
+          Cancel
+        </a>
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+          Save Changes
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Template for new item row -->
+<template id="item-template">
+  <tr>
+    <td class="px-4 py-2">
+      <select name="product" class="w-full p-1 border rounded text-sm" required>
+        <option value="">Select Product</option>
+        {% for product in products %}
+          <option value="{{ product.id }}" 
+                  data-price="{{ product.price }}"
+                  data-tax-type="{{ product.tax_type }}"
+                  data-tax-rate="{{ product.tax_rate }}">
+            {{ product.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </td>
+    <td class="px-4 py-2">
+      <input type="number" name="price" step="0.01" min="0" class="w-20 p-1 border rounded text-sm" required>
+    </td>
+    <td class="px-4 py-2">
+      <input type="number" name="quantity" value="1" min="1" class="w-16 p-1 border rounded text-sm" required>
+    </td>
+    <td class="px-4 py-2 text-sm tax-display"></td>
+    <td class="px-4 py-2 text-sm item-total">৳0.00</td>
+    <td class="px-4 py-2">
+      <button type="button" class="remove-item text-red-600 hover:text-red-800">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      </button>
+    </td>
+  </tr>
+</template>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // DOM Elements
+    const itemsContainer = document.getElementById('items-container');
+    const addItemBtn = document.getElementById('add-item');
+    const itemTemplate = document.getElementById('item-template');
+    const editSaleForm = document.getElementById('edit-sale-form');
+    
+    // Add new item
+    addItemBtn.addEventListener('click', function() {
+      const newRow = itemTemplate.content.cloneNode(true);
+      const newRowElement = newRow.querySelector('tr');
+      itemsContainer.appendChild(newRow);
+      attachItemEventListeners(newRowElement);
+      
+      // Trigger change event to calculate initial values
+      const productSelect = newRowElement.querySelector('select[name="product"]');
+      if (productSelect) {
+        productSelect.dispatchEvent(new Event('change'));
+      }
+    });
+    
+    // Remove item
+    itemsContainer.addEventListener('click', function(e) {
+      if (e.target.closest('.remove-item')) {
+        e.preventDefault();
+        const row = e.target.closest('tr');
+        row.remove();
+        calculateTotals();
+      }
+    });
+    
+    // Calculate totals when item details change
+    itemsContainer.addEventListener('change', function(e) {
+      const input = e.target;
+      const row = input.closest('tr');
+      if (row) {
+        if (input.name === 'product') {
+          updateItemRow(row);
+        }
+        calculateItemTotal(row);
+        calculateTotals();
+      }
+    });
+    
+    // Handle input events for immediate feedback
+    itemsContainer.addEventListener('input', function(e) {
+      const input = e.target;
+      if (input.name === 'price' || input.name === 'quantity') {
+        const row = input.closest('tr');
+        if (row) {
+          calculateItemTotal(row);
+          calculateTotals();
+        }
+      }
+    });
+    
+    // Payment/discount changes
+    document.querySelector('input[name="discount"]').addEventListener('input', calculateTotals);
+    document.querySelector('input[name="amount_paid"]').addEventListener('input', calculateTotals);
+    document.querySelector('select[name="payment_method"]').addEventListener('change', calculateTotals);
+    document.querySelector('select[name="is_paid"]').addEventListener('change', calculateTotals);
+    
+    // Form submission
+    editSaleForm.addEventListener('submit', function(e) {
+      // Validate form before submission
+      if (!validateForm()) {
+        e.preventDefault();
+        return;
+      }
+      
+      // Ensure all calculations are up to date
+      calculateTotals();
+      
+      // You can add additional pre-submission logic here if needed
+    });
+    
+    // Initialize event listeners for existing rows
+    document.querySelectorAll('#items-container tr').forEach(row => {
+      attachItemEventListeners(row);
+    });
+    
+    // Initial calculation
+    calculateTotals();
+    
+    // Helper Functions
+    
+    function attachItemEventListeners(row) {
+      const productSelect = row.querySelector('select[name="product"]');
+      const priceInput = row.querySelector('input[name="price"]');
+      const quantityInput = row.querySelector('input[name="quantity"]');
+      
+      if (productSelect) {
+        productSelect.addEventListener('change', function() {
+          const selectedOption = this.options[this.selectedIndex];
+          if (selectedOption && selectedOption.value) {
+            priceInput.value = selectedOption.dataset.price;
+            updateTaxDisplay(row, selectedOption.dataset.taxType, selectedOption.dataset.taxRate);
+            calculateItemTotal(row);
+          }
+        });
+        
+        // Trigger change if product is already selected
+        if (productSelect.value) {
+          productSelect.dispatchEvent(new Event('change'));
+        }
+      }
+      
+      if (priceInput) {
+        priceInput.addEventListener('input', function() {
+          calculateItemTotal(row);
+        });
+      }
+      
+      if (quantityInput) {
+        quantityInput.addEventListener('input', function() {
+          calculateItemTotal(row);
+        });
+      }
+    }
+    
+    function updateItemRow(row) {
+      const productSelect = row.querySelector('select[name="product"]');
+      if (productSelect && productSelect.value) {
+        const selectedOption = productSelect.options[productSelect.selectedIndex];
+        updateTaxDisplay(row, selectedOption.dataset.taxType, selectedOption.dataset.taxRate);
+      }
+      calculateItemTotal(row);
+    }
+    
+    function updateTaxDisplay(row, taxType, taxRate) {
+      const taxDisplay = row.querySelector('.tax-display');
+      if (taxDisplay) {
+        taxDisplay.textContent = `${taxType.charAt(0).toUpperCase() + taxType.slice(1)} (${taxRate}%)`;
+      }
+    }
+    
+    function calculateItemTotal(row) {
+      const priceInput = row.querySelector('input[name="price"]');
+      const quantityInput = row.querySelector('input[name="quantity"]');
+      const itemTotal = row.querySelector('.item-total');
+      const productSelect = row.querySelector('select[name="product"]');
+      
+      if (priceInput && quantityInput && itemTotal) {
+        const price = parseFloat(priceInput.value) || 0;
+        const quantity = parseInt(quantityInput.value) || 0;
+        let total = price * quantity;
+        
+        // Calculate tax if product is selected
+        if (productSelect && productSelect.value) {
+          const selectedOption = productSelect.options[productSelect.selectedIndex];
+          const taxRate = parseFloat(selectedOption.dataset.taxRate) || 0;
+          const taxAmount = total * (taxRate / 100);
+          total += taxAmount;
+        }
+        
+        itemTotal.textContent = `৳${total.toFixed(2)}`;
+      }
+    }
+    
+    function calculateTotals() {
+      // Calculate subtotal from all items
+      let subtotal = 0;
+      let totalTax = 0;
+      
+      document.querySelectorAll('#items-container tr').forEach(row => {
+        const priceInput = row.querySelector('input[name="price"]');
+        const quantityInput = row.querySelector('input[name="quantity"]');
+        const productSelect = row.querySelector('select[name="product"]');
+        
+        if (priceInput && quantityInput) {
+          const price = parseFloat(priceInput.value) || 0;
+          const quantity = parseInt(quantityInput.value) || 0;
+          const itemSubtotal = price * quantity;
+          subtotal += itemSubtotal;
+          
+          // Calculate tax for item if product is selected
+          if (productSelect && productSelect.value) {
+            const selectedOption = productSelect.options[productSelect.selectedIndex];
+            const taxRate = parseFloat(selectedOption.dataset.taxRate) || 0;
+            totalTax += itemSubtotal * (taxRate / 100);
+          }
+        }
+      });
+      
+      // Calculate discount
+      const discountPercent = parseFloat(document.querySelector('input[name="discount"]').value) || 0;
+      const discountAmount = subtotal * (discountPercent / 100);
+      
+      // Calculate grand total
+      const grandTotal = subtotal - discountAmount + totalTax;
+      
+      // Get payment details
+      const amountPaid = parseFloat(document.querySelector('input[name="amount_paid"]').value) || 0;
+      const dueAmount = Math.max(0, grandTotal - amountPaid);
+      
+      // Update display
+      document.getElementById('subtotal').textContent = `৳${subtotal.toFixed(2)}`;
+      document.getElementById('discount-amount').textContent = `-৳${discountAmount.toFixed(2)}`;
+      document.getElementById('tax-amount').textContent = `৳${totalTax.toFixed(2)}`;
+      document.getElementById('grand-total').textContent = `৳${grandTotal.toFixed(2)}`;
+      document.getElementById('paid-amount').textContent = `৳${amountPaid.toFixed(2)}`;
+      document.getElementById('due-amount').textContent = `৳${dueAmount.toFixed(2)}`;
+      
+      // Update due amount color
+      const dueAmountElement = document.getElementById('due-amount');
+      if (dueAmount > 0) {
+        dueAmountElement.classList.remove('text-green-600');
+        dueAmountElement.classList.add('text-red-600');
+      } else {
+        dueAmountElement.classList.remove('text-red-600');
+        dueAmountElement.classList.add('text-green-600');
+      }
+    }
+    
+    function validateForm() {
+      let isValid = true;
+      
+      // Check at least one item exists
+      const items = document.querySelectorAll('#items-container tr');
+      if (items.length === 0) {
+        alert('Please add at least one item to the sale');
+        isValid = false;
+      }
+      
+      // Check all items have products selected
+      items.forEach(row => {
+        const productSelect = row.querySelector('select[name="product"]');
+        if (!productSelect.value) {
+          productSelect.classList.add('border-red-500');
+          isValid = false;
+        } else {
+          productSelect.classList.remove('border-red-500');
+        }
+      });
+      
+      if (!isValid) {
+        alert('Please select a product for all items');
+      }
+      
+      return isValid;
+    }
+  });
+  </script>
+
+{% endblock %}

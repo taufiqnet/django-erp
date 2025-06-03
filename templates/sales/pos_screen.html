@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-4 bg-gray-100">
+    <div class="flex p-6 mx-auto bg-white rounded-lg shadow-md max-w-7xl">
+        
+        <!-- Left Section: Cart -->
+        <div class="w-2/3 pr-4">
+            <!-- Header -->
+            <div class="flex items-center justify-between p-4 text-white bg-blue-900 rounded-md">
+                <h1 class="text-lg font-bold">iTech POS</h1>
+                <nav>
+                    <a href="#" class="mx-2">Sales List</a>
+                    <a href="#" class="mx-2">Customers List</a>
+                    <a href="#" class="mx-2">Items List</a>
+                    <a href="#" class="mx-2">New Invoice</a>
+                </nav>
+            </div>
+            
+            <!-- Search & Customer Selection -->
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block font-medium">Customer</label>
+                    <input type="text" placeholder="Walk-in customer" class="w-full p-2 border rounded-md">
+                </div>
+                <div>
+                    <label class="block font-medium">Search Product</label>
+                    <input type="text" id="search" placeholder="Item name/Barcode/Itemcode" class="w-full p-2 border rounded-md">
+                </div>
+            </div>
+            
+            <!-- Cart -->
+            <table class="w-full mt-4 border border-collapse">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="p-2 border">Item Name</th>
+                        <th class="p-2 border">Stock</th>
+                        <th class="p-2 border">Quantity</th>
+                        <th class="p-2 border">Price</th>
+                        <th class="p-2 border">Discount</th>
+                        <th class="p-2 border">Subtotal</th>
+                        <th class="p-2 border">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="cart-items"></tbody>
+            </table>
+            
+            <!-- Summary -->
+            <div class="flex items-center justify-between mt-4">
+                <p>Quantity: <span id="total-qty">0</span></p>
+                <p>Total Amount: Rs <span id="total-amount">0.00</span></p>
+                <p>Total Discount: Rs <span id="total-discount">0.00</span></p>
+                <p>Grand Total: Rs <span id="grand-total">0.00</span></p>
+            </div>
+            
+            <!-- Buttons -->
+            <div class="flex justify-between mt-4">
+                <button class="p-2 text-white bg-red-500 rounded">Hold</button>
+                <button class="p-2 text-white bg-blue-500 rounded">Multiple</button>
+                <button class="p-2 text-white bg-green-500 rounded">Cash</button>
+                <button class="p-2 text-white bg-purple-500 rounded">Pay All</button>
+            </div>
+        </div>
+
+        <!-- Right Section: Product List -->
+        <div class="w-1/3 p-4 bg-gray-100 rounded-lg">
+            <h2 class="mb-4 text-lg font-semibold">Product List</h2>
+            <div id="product-list" class="grid grid-cols-2 gap-4">
+                <!-- Product Items -->
+                <div class="p-2 text-center bg-white border rounded">
+                    <img src="https://via.placeholder.com/100" alt="Product" class="mx-auto mb-2">
+                    <p class="font-medium">Gold Bracelet</p>
+                    <p class="font-bold text-green-600">Rs 1,000</p>
+                </div>
+                <div class="p-2 text-center bg-white border rounded">
+                    <img src="https://via.placeholder.com/100" alt="Product" class="mx-auto mb-2">
+                    <p class="font-medium">Silver Necklace</p>
+                    <p class="font-bold text-green-600">Rs 5,000</p>
+                </div>
+                <div class="p-2 text-center bg-white border rounded">
+                    <img src="https://via.placeholder.com/100" alt="Product" class="mx-auto mb-2">
+                    <p class="font-medium">Diamond Ring</p>
+                    <p class="font-bold text-green-600">Rs 10,000</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('search').addEventListener('input', function() {
+            console.log("Search: ", this.value);
+        });
+    </script>
+</body>
+</html>

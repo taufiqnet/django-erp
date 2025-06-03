@@ -1,0 +1,417 @@
+{% extends 'partials/base.html' %}
+
+{% block title %}ShopMate - Checkout{% endblock %}
+
+{% block content %}
+{% comment %} <section class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">Checkout</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Cart Details -->
+        <div class="lg:col-span-2 bg-white shadow-lg rounded-lg p-6">
+            {% if request.session.cart_data_obj %}
+        <div class="grid grid-cols-5 gap-4 border-b pb-4 mb-4">
+            <h2 class="font-bold">Product</h2>
+            <h2 class="font-bold">Quantity</h2>
+            <h2 class="font-bold">Price</h2>
+            <h2 class="font-bold">Total</h2>
+            <h2 class="font-bold">Action</h2>
+        </div>
+
+        {% for key, item in request.session.cart_data_obj.items %}
+        <div class="grid grid-cols-5 gap-4 items-center border-b pb-4 mb-4">
+            <!-- Product Details -->
+            <div class="flex items-center space-x-4">
+                <img src="{{ item.image }}" alt="{{ item.title }}" class="w-16 h-16 object-contain">
+                <div>
+                    <h3 class="font-semibold">{{ item.title }}</h3>
+                </div>
+            </div>
+
+            <!-- Quantity Controls -->
+            <div class="flex items-center space-x-4">
+                <button 
+                    class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold hover:bg-red-600 decrease-btn" 
+                    data-id="{{ key }}">-</button>
+                <span class="font-semibold">{{ item.qty }}</span>
+                <button 
+                    class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold hover:bg-green-600 increase-btn" 
+                    data-id="{{ key }}">+</button>
+            </div>
+
+            <!-- Price and Total -->
+            <div>${{ item.price }}</div>
+            <div>${{ item.total|floatformat:2 }}</div>
+
+            <!-- Remove Button -->
+            <div>
+                <button 
+                    class="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold hover:bg-red-700 delete-btn" 
+                    data-id="{{ key }}">Remove</button>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Final Amount -->
+        <div class="text-right mt-6">
+            <h3 class="text-xl font-bold">Grand Total: ${{ final.total_price|floatformat:2 }}</h3>
+        </div>
+        {% else %}
+        <div class="text-center py-8">
+            <h3 class="text-lg font-semibold">Your cart is empty!</h3>
+            <a href="{% url 'core:product-list' %}" class="text-blue-500 hover:underline">Continue Shopping</a>
+        </div>
+        {% endif %}
+        </div>
+
+        <!-- Billing & Shipping Address -->
+        <div class="p-6 bg-white rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold mb-4">Billing & Shipping Address</h2>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <!-- Name -->
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <input type="text" id="name" name="name" 
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm" 
+                        required>
+                </div>
+
+                <!-- Phone -->
+                <div class="mb-4">
+                    <label for="phone" class="block text-sm font-medium text-gray-700">Phone</label>
+                    <input type="text" id="phone" name="phone" 
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm" 
+                        required>
+                </div>
+
+                <!-- City and Area -->
+                <div class="mb-4 grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="city" class="block text-sm font-medium text-gray-700">City</label>
+                        <input type="text" id="city" name="city" 
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm" 
+                            required>
+                    </div>
+                    <div>
+                        <label for="area" class="block text-sm font-medium text-gray-700">Area</label>
+                        <input type="text" id="area" name="area" 
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm" 
+                            required>
+                    </div>
+                </div>
+
+                <!-- Address -->
+                <div class="mb-4">
+                    <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+                    <textarea id="address" name="address" 
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm" 
+                        rows="3" required></textarea>
+                </div>
+
+                <!-- Email (Optional) -->
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email (Optional)</label>
+                    <input type="email" id="email" name="email" 
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm">
+                </div>
+
+                <!-- Order Note -->
+                <div class="mb-4">
+                    <label for="order_note" class="block text-sm font-medium text-gray-700">Order Note (Optional)</label>
+                    <textarea id="order_note" name="order_note" 
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm" 
+                        rows="3"></textarea>
+                </div>
+
+                <!-- Shipping Method -->
+                <div class="mb-4">
+                    <h3 class="text-lg font-bold">Choose Shipping Method</h3>
+                    <label><input type="radio" name="shipping_method" value="inside" checked> Delivery Inside Dhaka - ৳70.00</label><br>
+                    <label><input type="radio" name="shipping_method" value="outside"> Delivery Outside Dhaka - ৳120.00</label>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="mb-4">
+                    <h3 class="text-lg font-bold">Choose Payment Method</h3>
+                    <label><input type="radio" name="payment_method" value="cod" checked> Cash on Delivery</label><br>
+                    <label><input type="radio" name="payment_method" value="bkash" disabled> bKash</label><br>
+                    <label><input type="radio" name="payment_method" value="card" disabled> Pay with Card/Mobile Wallet</label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded shadow mt-6 hover:bg-blue-600">
+                    Place Order
+                </button>
+            </form>
+        </div>
+    </div>
+</section> {% endcomment %}
+
+<section class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">Checkout</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Cart Details -->
+        {% comment %} <div class="lg:col-span-2 bg-white shadow-lg rounded-lg p-6">
+            {% if request.session.cart_data_obj %}
+            <div class="grid grid-cols-5 gap-4 border-b pb-4 mb-4">
+                <h2 class="font-bold">Product</h2>
+                <h2 class="font-bold">Quantity</h2>
+                <h2 class="font-bold">Price</h2>
+                <h2 class="font-bold">Total</h2>
+                <h2 class="font-bold">Action</h2>
+            </div>
+
+            {% for key, item in request.session.cart_data_obj.items %}
+            <div class="grid grid-cols-5 gap-4 items-center border-b pb-4 mb-4">
+                <!-- Product Details -->
+                <div class="flex items-center space-x-4">
+                    <img src="{{ item.image }}" alt="{{ item.title }}" class="w-16 h-16 object-contain">
+                    <div>
+                        <h3 class="font-semibold">{{ item.title }}</h3>
+                    </div>
+                </div>
+
+                <!-- Quantity Controls -->
+                <div class="flex items-center space-x-4">
+                    <button 
+                        class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold hover:bg-red-600 decrease-btn" 
+                        data-id="{{ key }}">-</button>
+                    <span class="font-semibold">{{ item.qty }}</span>
+                    <button 
+                        class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold hover:bg-green-600 increase-btn" 
+                        data-id="{{ key }}">+</button>
+                </div>
+
+                <!-- Price and Total -->
+                <div>৳{{ item.price }}</div>
+                <div>৳{{ item.total|floatformat:2 }}</div>
+
+                <!-- Remove Button -->
+                <div>
+                    <button 
+                        class="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold hover:bg-red-700 delete-btn" 
+                        data-id="{{ key }}">Remove</button>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Final Amount -->
+            <div class="text-right mt-6">
+                <h3 class="text-xl font-bold">Grand Total: ৳<span id="grand-total">{{ final.total_price|floatformat:2 }}</span></h3>
+                <h3 class="text-xl font-bold">Shipping Fee: ৳<span id="shipping-fee">0.00</span></h3>
+            </div>
+            {% else %}
+            <div class="text-center py-8">
+                <h3 class="text-lg font-semibold">Your cart is empty!</h3>
+                <a href="{% url 'core:product-list' %}" class="text-blue-500 hover:underline">Continue Shopping</a>
+            </div>
+            {% endif %}
+        </div> {% endcomment %}
+
+        <div class="lg:col-span-2 bg-white shadow-lg rounded-lg p-6">
+            {% if request.session.cart_data_obj %}
+            <!-- Header Row -->
+            <div class="hidden md:grid grid-cols-6 gap-4 border-b pb-4 mb-4">
+                <h2 class="font-bold">Image</h2>
+                <h2 class="font-bold">Product</h2>
+                <h2 class="font-bold">Quantity</h2>
+                <h2 class="font-bold">Price</h2>
+                <h2 class="font-bold">Total</h2>
+                <h2 class="font-bold">Action</h2>
+            </div>
+        
+            <!-- Cart Items -->
+            {% for key, item in request.session.cart_data_obj.items %}
+            <div class="grid grid-cols-1 md:grid-cols-6 gap-1 items-center border-b pb-4 mb-4">
+                <!-- Product Details -->
+                <div class="flex items-center space-x-4">
+                    <img src="{{ item.image }}" alt="{{ item.title }}" class="w-16 h-16 object-contain">
+                    
+                </div>
+                <div class="flex items-center space-x-4">                    
+                    
+                        <h3 class="font-semibold">{{ item.title }}</h3>
+                    
+                </div>
+        
+                <!-- Quantity Controls -->
+                <div class="flex items-center justify-between md:justify-start space-x-4">
+                    <button 
+                        class="bg-red-500 text-white px-2 py-1 rounded-full text-sm font-semibold hover:bg-red-600 decrease-btn" 
+                        data-id="{{ key }}">-</button>
+                    <span class="font-semibold">{{ item.qty }}</span>
+                    <button 
+                        class="bg-green-500 text-white px-2 py-1 rounded-full text-sm font-semibold hover:bg-green-600 increase-btn" 
+                        data-id="{{ key }}">+</button>
+                </div>
+        
+                <!-- Price and Total (Stacked on Mobile) -->
+                <div class="md:text-center">
+                    <div>৳{{ item.price }}</div>
+                    <div class="md:hidden">Total: ৳{{ item.total|floatformat:2 }}</div>
+                </div>
+                <div class="hidden md:block">৳{{ item.total|floatformat:2 }}</div>
+        
+                <!-- Remove Button -->
+                <div class="text-center md:text-left">
+                    <button 
+                        class="bg-red-600 text-white px-2 py-1 rounded-full text-sm font-semibold hover:bg-red-700 delete-btn" 
+                        data-id="{{ key }}">Remove</button>
+                </div>
+            </div>
+            {% endfor %}
+        
+            <!-- Final Amount -->
+            <div class="text-right mt-6">
+                <h3 class="text-xl font-bold">Grand Total: ৳<span id="grand-total">{{ final.total_price|floatformat:2 }}</span></h3>
+                <h3 class="text-xl font-bold">Shipping Fee: ৳<span id="shipping-fee">0.00</span></h3>
+            </div>
+            {% else %}
+            <!-- Empty Cart -->
+            <div class="text-center py-8">
+                <h3 class="text-lg font-semibold">Your cart is empty!</h3>
+                <a href="{% url 'core:product-list' %}" class="text-blue-500 hover:underline">Continue Shopping</a>
+            </div>
+            {% endif %}
+        </div>
+        
+
+        <!-- Billing & Shipping Address -->
+        <div class="p-6 bg-white rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold mb-4">Billing & Shipping Address</h2>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <!-- Form Fields for Name, Phone, etc. -->
+                 <!-- Name -->
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <input type="text" id="name" name="name" 
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm" 
+                        required>
+                </div>
+
+                <!-- Phone -->
+                <div class="mb-4">
+                    <label for="phone" class="block text-sm font-medium text-gray-700">Phone</label>
+                    <input type="text" id="phone" name="phone" 
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm" 
+                        required>
+                </div>
+
+                <!-- City and Area -->
+                <div class="mb-4 grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="city" class="block text-sm font-medium text-gray-700">City</label>
+                        <input type="text" id="city" name="city" 
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm" 
+                            required>
+                    </div>
+                    <div>
+                        <label for="area" class="block text-sm font-medium text-gray-700">Area</label>
+                        <input type="text" id="area" name="area" 
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm" 
+                            required>
+                    </div>
+                </div>
+
+                <!-- Address -->
+                <div class="mb-4">
+                    <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+                    <textarea id="address" name="address" 
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm" 
+                        rows="3" required></textarea>
+                </div>
+
+                <!-- Email (Optional) -->
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email (Optional)</label>
+                    <input type="email" id="email" name="email" 
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm">
+                </div>
+
+                <!-- Order Note -->
+                <div class="mb-4">
+                    <label for="order_note" class="block text-sm font-medium text-gray-700">Order Note (Optional)</label>
+                    <textarea id="order_note" name="order_note" 
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm" 
+                        rows="3"></textarea>
+                </div>
+
+                <!-- Shipping Method -->
+                <div class="mb-4">
+                    <h3 class="text-lg font-bold">Choose Shipping Method</h3>
+                    <label><input type="radio" name="shipping_method" value="inside" checked> Delivery Inside Dhaka - ৳70.00</label><br>
+                    <label><input type="radio" name="shipping_method" value="outside"> Delivery Outside Dhaka - ৳150.00</label>
+                </div>
+
+                <h3 class="text-lg font-bold mt-6">Choose Payment Method</h3>
+                <div class="flex flex-col space-y-2">
+                    {% for payment in payment_methods %}
+                        <label>
+                            <input 
+                                type="radio" 
+                                name="payment_method" 
+                                value="{{ payment.name }}" 
+                                {% if not payment.is_enabled %}disabled{% endif %}
+                                {% if forloop.first %}checked{% endif %}
+                            > 
+                            {{ payment }}
+                        </label>
+                    {% endfor %}
+                </div>
+
+
+                <!-- Submit Button -->
+                <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded shadow mt-6 hover:bg-blue-600">
+                    Place Order
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+    // JavaScript to update shipping fee and grand total
+    document.addEventListener("DOMContentLoaded", function() {
+        const shippingRadios = document.querySelectorAll('input[name="shipping_method"]');
+        const grandTotalElem = document.getElementById("grand-total");
+        const shippingFeeElem = document.getElementById("shipping-fee");
+
+        // Get the initial grand total from the page
+        let grandTotal = parseFloat(grandTotalElem.textContent.trim());
+
+        // Initialize the shipping fee based on the default selected shipping method
+        let shippingFee = 70.00;  // Default to Inside Dhaka
+
+        // Update shipping fee and grand total based on the selected shipping method
+        shippingRadios.forEach(radio => {
+            if (radio.checked && radio.value === "outside") {
+                shippingFee = 150.00;  // Update shipping fee if Outside Dhaka is selected
+            }
+            // Add event listener to update shipping fee and grand total on change
+            radio.addEventListener('change', function() {
+                if (this.value === "inside") {
+                    shippingFee = 70.00;
+                } else if (this.value === "outside") {
+                    shippingFee = 150.00;
+                }
+
+                // Update the shipping fee display
+                shippingFeeElem.textContent = shippingFee.toFixed(2);
+
+                // Update the grand total
+                const newGrandTotal = grandTotal + shippingFee;
+                grandTotalElem.textContent = newGrandTotal.toFixed(2);
+            });
+        });
+
+        // Set the initial shipping fee and grand total based on the default selection
+        shippingFeeElem.textContent = shippingFee.toFixed(2);
+        const newGrandTotal = grandTotal + shippingFee;
+        grandTotalElem.textContent = newGrandTotal.toFixed(2);
+    });
+</script>
+{% endblock %}
+

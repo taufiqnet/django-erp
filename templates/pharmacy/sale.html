@@ -1,0 +1,300 @@
+{% extends "partials/base_retail.html" %}
+
+{% block content %}
+<div class="container mx-auto px-2 sm:px-4 py-4">
+    <div class="flex flex-col lg:flex-row gap-4">
+        <!-- Left Side - Product Listing -->
+        <div class="w-full lg:w-2/3">
+            <!-- Compact Search and Filter Bar -->
+            <div class="bg-white rounded-lg shadow-sm mb-4 p-3">
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <div class="flex-1">
+                        <input type="text" 
+                               class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               hx-get="{% url 'pharmacy:search_products' %}" 
+                               hx-trigger="keyup changed delay:300ms" 
+                               hx-target="#product-list" 
+                               name="search" 
+                               placeholder="Search products...">
+                    </div>
+                    <div class="w-full sm:w-48">
+                        <select class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                hx-get="{% url 'pharmacy:filter_products' %}" 
+                                hx-trigger="change" 
+                                hx-target="#product-list" 
+                                name="category">
+                            <option value="">All Categories</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Grid Container -->
+            <div id="product-list">
+                {% include 'pharmacy/partials/product_list.html' %}
+            </div>
+        </div>
+
+        <!-- Right Side - Shopping Cart -->
+        <div class="w-full lg:w-1/3">
+            <div class="bg-white rounded-lg shadow-sm sticky top-4">
+                <div class="bg-blue-600 text-white px-4 py-2 rounded-t-lg">
+                    <div class="flex justify-between items-center">
+                        <h5 class="font-medium text-base">Current Sale</h5>
+                        <span class="bg-white text-blue-800 text-xs font-bold px-2 py-1 rounded-full" 
+                              id="cart-count">
+                            {{ request.session.sale_items_count|default:0 }} items
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Cart Items -->
+                <div id="cart-items" class="p-0 max-h-[65vh] overflow-y-auto">
+                    {% include 'pharmacy/partials/cart_items.html' %}
+                </div>
+                
+                <!-- Cart Summary -->
+                <div class="p-3 border-t">
+                    <div id="cart-summary">
+                        {% include 'pharmacy/partials/cart_summary.html' %}
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="mt-3 space-y-2">
+                        <button class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded text-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                hx-post="{% url 'pharmacy:complete_sale' %}" 
+                                hx-target="#sale-result"
+                                hx-indicator=".progress"
+                                {% if not request.session.sale_items_count %}disabled{% endif %}>
+                            Complete Sale
+                        </button>
+                        <button class="w-full border border-red-500 text-red-500 hover:bg-red-50 font-medium py-2 px-4 rounded text-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                hx-post="{% url 'pharmacy:clear_cart' %}" 
+                                hx-target="#cart-items"
+                                hx-confirm="Clear cart?"
+                                {% if not request.session.sale_items_count %}disabled{% endif %}>
+                            Clear Cart
+                        </button>
+                    </div>
+                    
+                    <!-- Loading Indicator -->
+                    <div class="progress mt-2 h-1 hidden">
+                        <div class="h-full bg-blue-500 rounded animate-pulse"></div>
+                    </div>
+                    
+                    <!-- Sale Result Message -->
+                    <div id="sale-result" class="mt-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add HTMX configuration for better debugging -->
+<script>
+document.body.addEventListener('htmx:configRequest', function(evt) {
+    // Add CSRF token to all HTMX requests
+    evt.detail.headers['X-CSRFToken'] = document.querySelector('[name=csrfmiddlewaretoken]').value;
+});
+
+document.body.addEventListener('htmx:responseError', function(evt) {
+    console.error('HTMX Error:', evt.detail);
+    // Show user-friendly error message
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded text-sm mt-2';
+    errorDiv.textContent = 'An error occurred. Please try again.';
+    evt.target.appendChild(errorDiv);
+    setTimeout(() => errorDiv.remove(), 3000);
+});
+
+document.body.addEventListener('htmx:afterSwap', function(evt) {
+    // Update cart count after cart operations
+    if (evt.target.id === 'cart-items') {
+        const cartCount = document.querySelectorAll('#cart-items .border-b').length;
+        const countElement = document.getElementById('cart-count');
+        if (countElement) {
+            countElement.textContent = cartCount + ' items';
+        }
+    }
+});
+</script>
+
+{% comment %} <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize any required elements
+        initializeCartBadge();
+    });
+    
+    // Add CSRF token to all HTMX requests
+    document.body.addEventListener('htmx:configRequest', function(evt) {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        if (csrfToken) {
+            evt.detail.headers['X-CSRFToken'] = csrfToken;
+        }
+        
+        // Add loading indicator for buttons
+        const triggeringElement = evt.detail.elt;
+        if (triggeringElement && triggeringElement.classList.contains('htmx-request-button')) {
+            triggeringElement.classList.add('htmx-request');
+        }
+    });
+    
+    // Handle HTMX errors globally
+    document.body.addEventListener('htmx:responseError', function(evt) {
+        console.error('HTMX Error:', evt.detail);
+        
+        // Skip if the target is the cart (we'll handle cart errors separately)
+        if (evt.target.id === 'cart-items') return;
+        
+        showToast({
+            message: 'Operation failed. Please try again.',
+            type: 'error',
+            duration: 3000
+        });
+    });
+    
+    // Handle successful HTMX swaps
+    document.body.addEventListener('htmx:afterSwap', function(evt) {
+        // Update cart count after cart operations
+        if (evt.target.id === 'cart-items') {
+            updateCartCount();
+            initializeCartTooltips();
+        }
+        
+        // Show success message for cart operations
+        if (evt.detail.requestConfig.path.includes('/cart/')) {
+            showToast({
+                message: 'Cart updated successfully',
+                type: 'success',
+                duration: 2000
+            });
+        }
+        
+        // Initialize any new elements with tooltips
+        initializeTooltips();
+    });
+    
+    // Handle HTMX requests that trigger validation errors
+    document.body.addEventListener('htmx:validation:validate', function(evt) {
+        // Clear previous errors
+        const errorElements = evt.target.querySelectorAll('.error-message');
+        errorElements.forEach(el => el.remove());
+    });
+    
+    document.body.addEventListener('htmx:validation:failed', function(evt) {
+        const errors = evt.detail.errors;
+        for (const field in errors) {
+            const input = evt.target.querySelector(`[name="${field}"]`);
+            if (input) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message text-red-500 text-xs mt-1';
+                errorDiv.textContent = errors[field].join(', ');
+                input.parentNode.appendChild(errorDiv);
+            }
+        }
+    });
+    
+    // Cart specific functions
+    function updateCartCount() {
+        const cartItems = document.querySelectorAll('#cart-items .cart-item');
+        const countElement = document.getElementById('cart-count');
+        const emptyCartElements = document.querySelectorAll('.empty-cart-state');
+        const nonEmptyCartElements = document.querySelectorAll('.non-empty-cart-state');
+        
+        if (countElement) {
+            countElement.textContent = cartItems.length + (cartItems.length === 1 ? ' item' : ' items');
+        }
+        
+        // Toggle empty cart states
+        if (cartItems.length === 0) {
+            emptyCartElements.forEach(el => el.classList.remove('hidden'));
+            nonEmptyCartElements.forEach(el => el.classList.add('hidden'));
+        } else {
+            emptyCartElements.forEach(el => el.classList.add('hidden'));
+            nonEmptyCartElements.forEach(el => el.classList.remove('hidden'));
+        }
+    }
+    
+    function initializeCartBadge() {
+        // Initialize cart badge on page load
+        updateCartCount();
+    }
+    
+    function initializeCartTooltips() {
+        // Initialize tooltips for cart items
+        tippy('[data-tippy-content]', {
+            arrow: true,
+            placement: 'bottom',
+            theme: 'light-border',
+        });
+    }
+    
+    function initializeTooltips() {
+        // Initialize tooltips for new elements
+        tippy('[data-tippy-content]', {
+            arrow: true,
+            placement: 'auto',
+            theme: 'light-border',
+        });
+    }
+    
+    // Toast notification system
+    function showToast({message, type = 'info', duration = 3000}) {
+        const toastContainer = document.getElementById('toast-container') || createToastContainer();
+        const toast = document.createElement('div');
+        
+        const typeClasses = {
+            success: 'bg-green-100 border-green-500 text-green-700',
+            error: 'bg-red-100 border-red-500 text-red-700',
+            warning: 'bg-yellow-100 border-yellow-500 text-yellow-700',
+            info: 'bg-blue-100 border-blue-500 text-blue-700'
+        };
+        
+        toast.className = `border-l-4 p-4 mb-2 rounded shadow-md ${typeClasses[type]}`;
+        toast.innerHTML = `
+            <div class="flex items-center">
+                <span class="mr-2">${message}</span>
+                <button class="ml-auto text-${type}-700 hover:text-${type}-900" onclick="this.parentElement.remove()">
+                    &times;
+                </button>
+            </div>
+        `;
+        
+        toastContainer.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, duration);
+    }
+    
+    function createToastContainer() {
+        const container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'fixed top-4 right-4 z-50 w-80';
+        document.body.appendChild(container);
+        return container;
+    }
+    
+    // Keyboard shortcuts for pharmacy POS
+    document.addEventListener('keydown', function(e) {
+        // Focus search on Ctrl+K
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            const searchInput = document.querySelector('[name="search"]');
+            if (searchInput) searchInput.focus();
+        }
+        
+        // Focus barcode scanner input on /
+        if (e.key === '/') {
+            e.preventDefault();
+            const barcodeInput = document.querySelector('[name="barcode"]');
+            if (barcodeInput) barcodeInput.focus();
+        }
+    });
+</script> {% endcomment %}
+
+{% endblock %}

@@ -1,0 +1,943 @@
+{% extends 'partials/base.html' %}
+
+{% block title %}Dreamlight - Shop{% endblock %}
+{% block meta_description %}Welcome to Dreamlight, your ultimate destination for beauty products, including skincare, haircare, and more!{% endblock %}
+
+{% block content %}
+
+<!-- Search Category Buttons Section -->
+<!-- Category Search Buttons -->
+{% comment %} {% if business_type == 'beauty' %}
+<div class="bg-gray-100 py-2">
+    <div class="container mx-auto px-4 flex gap-2 justify-center flex-wrap">
+        <!-- Buttons for Categories -->
+        <button 
+            type="button" 
+            class="bg-gray-200 hover:bg-gray-300 text-sm text-gray-800 font-semibold py-1 px-2 rounded-full border-2 border-gray-300"
+            onclick="submitSearch('Night Cream')"
+        >
+            Night Cream
+        </button>
+        <button 
+            type="button" 
+            class="bg-gray-200 hover:bg-gray-300 text-sm text-gray-800 font-semibold py-1 px-2 rounded-full border-2 border-gray-300"
+            onclick="submitSearch('Serum')"
+        >
+            Serum
+        </button>
+        <button 
+            type="button" 
+            class="bg-gray-200 hover:bg-gray-300 text-sm text-gray-800 font-semibold py-1 px-2 rounded-full border-2 border-gray-300"
+            onclick="submitSearch('Korea')"
+        >
+            Korea
+        </button>
+        <button 
+            type="button" 
+            class="bg-gray-200 hover:bg-gray-300 text-sm text-gray-800 font-semibold py-1 px-2 rounded-full border-2 border-gray-300"
+            onclick="submitSearch('Argan Oil')"
+        >
+            Argan Oil
+        </button>
+        <button 
+            type="button" 
+            class="bg-gray-200 hover:bg-gray-300 text-sm text-gray-800 font-semibold py-1 px-2 rounded-full border-2 border-gray-300"
+            onclick="submitSearch('Shampoo')"
+        >
+            Shampoo
+        </button>
+        <button 
+            type="button" 
+            class="bg-gray-200 hover:bg-gray-300 text-sm text-gray-800 font-semibold py-1 px-2 rounded-full border-2 border-gray-300"
+            onclick="submitSearch('Mosturizer')"
+        >
+            Moisturizer
+        </button>
+        <button 
+            type="button" 
+            class="bg-gray-200 hover:bg-gray-300 text-sm text-gray-800 font-semibold py-1 px-2 rounded-full border-2 border-gray-300"
+            onclick="submitSearch('Cleanser')"
+        >
+            Cleanser
+        </button>
+    </div>
+</div>
+{% endif %} {% endcomment %}
+
+
+<!-- Show all Subcategories -->
+{% if business_type == 'beauty' %}
+<div class="bg-gray-100 py-2">
+    <div class="container mx-auto px-4 flex gap-2 justify-center flex-wrap">
+        <!-- Dynamically render subcategory buttons -->
+        {% for subcategory in subcategories %}
+        <button 
+            type="button" 
+            class="bg-gray-200 hover:bg-gray-300 text-sm text-gray-800 font-semibold py-1 px-2 rounded-full border-2 border-gray-300"
+            onclick="submitSearch('{{ subcategory.title }}')"
+        >
+            {{ subcategory.title }}
+        </button>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+
+
+
+<!-- Desktop view of Korean Products from home page -->
+
+{% if business_type == 'beauty' %}
+{% if category == 'beauty' %}
+    <!-- Grocery Products Section -->
+    <section class="my-6 hidden md:block">
+        <h3 class="text-2xl font-semibold text-center mb-3">Korean Products</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 container mx-auto px-2">
+            {% for p in korean_products %}
+                <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+                    <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+                    <!-- Percentage Discount -->
+                    {% if p.get_percentage is not None and p.get_percentage > 0 %}
+                        <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                            {{ p.get_percentage|floatformat:0 }}% Off
+                        </span>
+                    {% endif %}
+
+                    <!-- Best Selling Tag -->
+                    {% if p.best_selling %}
+                        <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                            Best Selling
+                        </span>
+                    {% endif %}
+
+                    <!-- Product Details -->
+                    <div class="p-2 text-center flex-grow">
+                        <h5 class="text-sm font-semibold">
+                            <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                                {{ p.title }}
+                            </a>
+                        </h5>
+
+                        <!-- Category Tag -->
+                        {% if p.category %}
+                            <p class="text-gray-500 text-xs mt-1">
+                                Category: 
+                                <a href="{% url 'core:category-product-list' p.category.cid %}" class="hover:text-blue-500">
+                                    {{ p.category.title }}
+                                </a>
+                            </p>
+                        {% else %}
+                            <p class="text-gray-500 text-xs mt-1">Category: Unspecified</p>
+                        {% endif %}
+
+                        <!-- Brand -->
+                        {% if p.brand %}
+                            <span class="text-gray-500 text-xs mt-1">
+                                Brand: <a href="#" class="hover:text-blue-500">{{ p.brand.title }}</a>
+                            </span>
+                        {% endif %}
+
+                        <!-- Ratings and Sold Count -->
+                        <div class="mt-1">
+                            <span class="text-yellow-400 text-sm">★</span>
+                            {% if p.review_star and p.review_count %}
+                                <span class="text-gray-500 text-xs">{{ p.review_star }} ({{ p.review_count }})</span>
+                            {% endif %}
+                        
+                            <span class="text-gray-500 text-xs ml-3">|</span>
+                            
+                            {% if p.sold_count %}
+                                <span class="text-gray-500 text-xs ml-3">
+                                    Sold ({{ p.sold_count }})
+                                </span>
+                            {% endif %}
+                    </div>
+                    
+                    <!-- Price Section -->
+                    <div class="mt-2">
+                        <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                        {% if p.old_price %}
+                            <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Free Delivery -->
+                    {% if p.free_delivery %}
+                        <p class="text-green-600 text-sm mt-1 font-semibold">Free Delivery</p>
+                    {% endif %}
+                    </div>
+                    <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                        <button class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                                data-id="{{ p.id }}" data-pid="{{ p.pid }}" data-image="{{ p.image.url }}" data-title="{{ p.title }}" data-price="{{ p.price }}">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+{% endif %}
+
+
+<!-- Mobile Device view of Korean Products from home page -->
+
+{% if business_type == 'beauty' %}
+{% if category == 'beauty' %}
+    <!-- Grocery Products Section -->
+    <section class="my-6 block md:hidden">
+        <h3 class="text-2xl font-semibold text-center mb-3">Korean Products</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 container mx-auto px-2">
+            {% for p in korean_products %}
+                <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+                    <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+                    <!-- Percentage Discount -->
+                    {% if p.get_percentage is not None and p.get_percentage > 0 %}
+                        <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                            {{ p.get_percentage|floatformat:0 }}% Off
+                        </span>
+                    {% endif %}
+
+                    <!-- Best Selling Tag -->
+                    {% if p.best_selling %}
+                        <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                            Best Selling
+                        </span>
+                    {% endif %}
+
+                    <!-- Product Details -->
+                    <div class="p-2 text-center flex-grow">
+                        <h5 class="text-sm font-semibold">
+                            <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                                {{ p.title }}
+                            </a>
+                        </h5>
+
+                        <!-- Category Tag -->
+                        {% if p.category %}
+                            <p class="text-gray-500 text-xs mt-1">
+                                Category: 
+                                <a href="{% url 'core:category-product-list' p.category.cid %}" class="hover:text-blue-500">
+                                    {{ p.category.title }}
+                                </a>
+                            </p>
+                        {% else %}
+                            <p class="text-gray-500 text-xs mt-1">Category: Unspecified</p>
+                        {% endif %}
+
+                        <!-- Brand -->
+                        {% if p.brand %}
+                            <span class="text-gray-500 text-xs mt-1">
+                                Brand: <a href="#" class="hover:text-blue-500">{{ p.brand.title }}</a>
+                            </span>
+                        {% endif %}
+
+                        <!-- Ratings and Sold Count -->
+                        <div class="mt-1">
+                            <span class="text-yellow-400 text-sm">★</span>
+                            {% if p.review_star and p.review_count %}
+                                <span class="text-gray-500 text-xs">{{ p.review_star }} ({{ p.review_count }})</span>
+                            {% endif %}
+                        
+                            <span class="text-gray-500 text-xs ml-3">|</span>
+                            
+                            {% if p.sold_count %}
+                                <span class="text-gray-500 text-xs ml-3">
+                                    Sold ({{ p.sold_count }})
+                                </span>
+                            {% endif %}
+                    </div>
+                    
+                    <!-- Price Section -->
+                    <div class="mt-2">
+                        <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                        {% if p.old_price %}
+                            <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Free Delivery -->
+                    {% if p.free_delivery %}
+                        <p class="text-green-600 text-sm mt-1 font-semibold">Free Delivery</p>
+                    {% endif %}
+                    </div>
+                    <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                        <button class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                                data-id="{{ p.id }}" data-pid="{{ p.pid }}" data-image="{{ p.image.url }}" data-title="{{ p.title }}" data-price="{{ p.price }}">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+{% endif %}
+
+
+<!-- Beauty Product Section for Desktop view-->
+{% if business_type == 'beauty' %}
+<section class="my-6 hidden md:block"> 
+    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 container mx-auto px-2">
+        {% for p in products %}
+        <!-- Product Card -->
+        <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+            
+            <!-- Product Image -->
+            <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+
+            <!-- Percentage Discount -->
+            {% if p.get_percentage is not None and p.get_percentage > 0 %}
+                <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                    {{ p.get_percentage|floatformat:0 }}% Off
+                </span>
+            {% endif %}
+
+            <!-- Best Selling Tag -->
+            {% if p.best_selling %}
+                <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                    Best Selling
+                </span>
+            {% endif %}
+
+            <!-- Product Details -->
+            <div class="p-2 text-center flex-grow">
+                <h5 class="text-sm font-semibold">
+                    <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                        {{ p.title }}
+                    </a>
+                </h5>
+
+                <!-- Category Tag -->
+                {% if p.category %}
+                    <p class="text-gray-500 text-xs mt-1">
+                        Category: 
+                        <a href="{% url 'core:category-product-list' p.category.cid %}" class="hover:text-blue-500">
+                            {{ p.category.title }}
+                        </a>
+                    </p>
+                {% else %}
+                    <p class="text-gray-500 text-xs mt-1">Category: Unspecified</p>
+                {% endif %}
+
+                <!-- Brand -->
+                {% if p.brand %}
+                    <span class="text-gray-500 text-xs mt-1">
+                        Brand: <a href="#" class="hover:text-blue-500">{{ p.brand.title }}</a>
+                    </span>
+                {% endif %}
+
+                <!-- Ratings and Sold Count -->
+                <div class="mt-1">
+                    <span class="text-yellow-400 text-sm">★</span>
+                    {% if p.review_star and p.review_count %}
+                        <!-- Review Star and Count -->
+                        <span class="text-gray-500 text-xs">{{ p.review_star }} ({{ p.review_count }})</span>
+                    {% endif %}
+                
+                    <span class="text-gray-500 text-xs ml-3">|</span>
+                    
+                    <!-- Sold Count -->
+                    {% if p.sold_count %}
+                        <span class="text-gray-500 text-xs ml-3">
+                            Sold ({{ p.sold_count }})
+                        </span>
+                    {% endif %}
+                </div>
+
+                <!-- Price Section -->
+                <div class="mt-2">
+                    <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                    {% if p.old_price %}
+                        <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Free Delivery -->
+                {% if p.free_delivery %}
+                    <p class="text-green-600 text-sm mt-1 font-semibold">Free Delivery</p>
+                {% endif %}
+            </div>
+
+            <!-- Fixed Button at Footer -->
+            <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                <button
+                    class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                    data-id="{{ p.id }}"
+                    data-pid="{{ p.pid }}"
+                    data-image="{{ p.image.url }}"
+                    data-title="{{ p.title }}"
+                    data-price="{{ p.price }}"
+                >
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section> 
+{% endif %}
+
+
+<!-- Beauty Product Section for Mobile view-->
+{% if business_type == 'beauty' %}
+<section class="my-6 block md:hidden"> 
+    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 container mx-auto px-2">
+        {% for p in products %}
+        <!-- Product Card -->
+        <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+            
+            <!-- Product Image -->
+            <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+
+            <!-- Percentage Discount -->
+            {% if p.get_percentage is not None and p.get_percentage > 0 %}
+                <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                    {{ p.get_percentage|floatformat:0 }}% Off
+                </span>
+            {% endif %}
+
+            <!-- Best Selling Tag -->
+            {% if p.best_selling %}
+                <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                    Best Selling
+                </span>
+            {% endif %}
+
+            <!-- Product Details -->
+            <div class="p-2 text-center flex-grow">
+                <h5 class="text-sm font-semibold">
+                    <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                        {{ p.title }}
+                    </a>
+                </h5>
+
+                <!-- Category Tag -->
+                {% if p.category %}
+                    <p class="text-gray-500 text-xs mt-1">
+                        Category: 
+                        <a href="{% url 'core:category-product-list' p.category.cid %}" class="hover:text-blue-500">
+                            {{ p.category.title }}
+                        </a>
+                    </p>
+                {% else %}
+                    <p class="text-gray-500 text-xs mt-1">Category: Unspecified</p>
+                {% endif %}
+
+                <!-- Brand -->
+                {% if p.brand %}
+                    <span class="text-gray-500 text-xs mt-1">
+                        Brand: <a href="#" class="hover:text-blue-500">{{ p.brand.title }}</a>
+                    </span>
+                {% endif %}
+
+                <!-- Ratings and Sold Count -->
+                <div class="mt-1">
+                    <span class="text-yellow-400 text-sm">★</span>
+                    {% if p.review_star and p.review_count %}
+                        <!-- Review Star and Count -->
+                        <span class="text-gray-500 text-xs">{{ p.review_star }} ({{ p.review_count }})</span>
+                    {% endif %}
+                
+                    <span class="text-gray-500 text-xs ml-3">|</span>
+                    
+                    <!-- Sold Count -->
+                    {% if p.sold_count %}
+                        <span class="text-gray-500 text-xs ml-3">
+                            Sold ({{ p.sold_count }})
+                        </span>
+                    {% endif %}
+                </div>
+
+                <!-- Price Section -->
+                <div class="mt-2">
+                    <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                    {% if p.old_price %}
+                        <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Free Delivery -->
+                {% if p.free_delivery %}
+                    <p class="text-green-600 text-sm mt-1 font-semibold">Free Delivery</p>
+                {% endif %}
+            </div>
+
+            <!-- Fixed Button at Footer -->
+            <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                <button
+                    class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                    data-id="{{ p.id }}"
+                    data-pid="{{ p.pid }}"
+                    data-image="{{ p.image.url }}"
+                    data-title="{{ p.title }}"
+                    data-price="{{ p.price }}"
+                >
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section> 
+{% endif %}
+
+
+<!--Food Product Section for Desktop View -->
+{% if business_type == 'food' %}
+    
+    {% if category == 'rice_dal_oil' %}
+    <!-- Grocery Products Section -->
+    <section class="my-6 hidden md:block">
+        <h3 class="text-2xl font-semibold text-center mb-3">Grocery Products</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 container mx-auto px-2">
+            {% for p in rice_dal_oil_products %}
+                <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+                    <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+                    {% if p.get_percentage and p.get_percentage > 0 %}
+                        <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                            {{ p.get_percentage|floatformat:0 }}% Off
+                        </span>
+                    {% endif %}
+                    {% if p.best_selling %}
+                        <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                            Best Selling
+                        </span>
+                    {% endif %}
+                    <div class="p-2 text-center flex-grow">
+                        <h5 class="text-sm font-semibold">
+                            {% comment %} <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                                {{ p.title }}
+                            </a> {% endcomment %}
+                            <p class="text-gray-800 line-clamp-1">{{ p.title }}</p>
+                        </h5>
+                        <div class="mt-2">
+                            <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                            {% if p.old_price %}
+                                <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                        <button class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                                data-id="{{ p.id }}" data-pid="{{ p.pid }}" data-image="{{ p.image.url }}" data-title="{{ p.title }}" data-price="{{ p.price }}">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if category == 'fish_meat_veg' %}
+        <!-- Fish, Meat, and Vegetable Products Section -->
+        <section class="my-6 hidden md:block">
+            <h3 class="text-2xl font-semibold text-center mb-3">Fish, Meat, and Vegetable Products</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 container mx-auto px-2">
+                {% for p in fish_meat_veg_products %}
+                    <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+                        <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+                        {% if p.get_percentage and p.get_percentage > 0 %}
+                            <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                                {{ p.get_percentage|floatformat:0 }}% Off
+                            </span>
+                        {% endif %}
+                        {% if p.best_selling %}
+                            <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                                Best Selling
+                            </span>
+                        {% endif %}
+                        <div class="p-2 text-center flex-grow">
+                            <h5 class="text-sm font-semibold">
+                                {% comment %} <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                                {{ p.title }}
+                            </a> {% endcomment %}
+                            <p class="text-gray-800 line-clamp-1">{{ p.title }}</p>
+                            </h5>
+                            <div class="mt-2">
+                                <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                                {% if p.old_price %}
+                                    <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                            <button class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                                    data-id="{{ p.id }}" data-pid="{{ p.pid }}" data-image="{{ p.image.url }}" data-title="{{ p.title }}" data-price="{{ p.price }}">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    {% if category == 'dairy' %}
+        <!-- Dairy Products Section -->
+        <section class="my-6 hidden md:block">
+            <h3 class="text-2xl font-semibold text-center mb-3">Dairy Products</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 container mx-auto px-2">
+                {% for p in dairy_products %}
+                    <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+                        <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+                        {% if p.get_percentage and p.get_percentage > 0 %}
+                            <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                                {{ p.get_percentage|floatformat:0 }}% Off
+                            </span>
+                        {% endif %}
+                        {% if p.best_selling %}
+                            <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                                Best Selling
+                            </span>
+                        {% endif %}
+                        <div class="p-2 text-center flex-grow">
+                            <h5 class="text-sm font-semibold">
+                                <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                                    {{ p.title }}
+                                </a>
+                            </h5>
+                            <div class="mt-2">
+                                <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                                {% if p.old_price %}
+                                    <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                            <button class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                                    data-id="{{ p.id }}" data-pid="{{ p.pid }}" data-image="{{ p.image.url }}" data-title="{{ p.title }}" data-price="{{ p.price }}">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+
+    {% if category == 'snacks' %}
+        <!-- Snacks Products Section -->
+        <section class="my-6 hidden md:block">
+            <h3 class="text-2xl font-semibold text-center mb-3">Breakfast & Snacks Products</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 container mx-auto px-2">
+                {% for p in snacks_products %}
+                    <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+                        <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+                        {% if p.get_percentage and p.get_percentage > 0 %}
+                            <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                                {{ p.get_percentage|floatformat:0 }}% Off
+                            </span>
+                        {% endif %}
+                        {% if p.best_selling %}
+                            <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                                Best Selling
+                            </span>
+                        {% endif %}
+                        <div class="p-2 text-center flex-grow">
+                            <h5 class="text-sm font-semibold">
+                                {% comment %} <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                                {{ p.title }}
+                            </a> {% endcomment %}
+                            <p class="text-gray-800 line-clamp-1">{{ p.title }}</p>
+                            </h5>
+                            <div class="mt-2">
+                                <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                                {% if p.old_price %}
+                                    <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                            <button class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                                    data-id="{{ p.id }}" data-pid="{{ p.pid }}" data-image="{{ p.image.url }}" data-title="{{ p.title }}" data-price="{{ p.price }}">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+
+    {% if category == 'cleaning' %}
+        <!-- Dairy Products Section -->
+        <section class="my-6 hidden md:block">
+            <h3 class="text-2xl font-semibold text-center mb-3">Cleaning Products</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 container mx-auto px-2">
+                {% for p in cleaning_products %}
+                    <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+                        <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+                        {% if p.get_percentage and p.get_percentage > 0 %}
+                            <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                                {{ p.get_percentage|floatformat:0 }}% Off
+                            </span>
+                        {% endif %}
+                        {% if p.best_selling %}
+                            <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                                Best Selling
+                            </span>
+                        {% endif %}
+                        <div class="p-2 text-center flex-grow">
+                            <h5 class="text-sm font-semibold">
+                                {% comment %} <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                                {{ p.title }}
+                            </a> {% endcomment %}
+                            <p class="text-gray-800 line-clamp-1">{{ p.title }}</p>
+                            </h5>
+                            <div class="mt-2">
+                                <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                                {% if p.old_price %}
+                                    <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                            <button class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                                    data-id="{{ p.id }}" data-pid="{{ p.pid }}" data-image="{{ p.image.url }}" data-title="{{ p.title }}" data-price="{{ p.price }}">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+{% endif %}
+
+
+<!--Mobile View of Food Product Section -->
+{% if business_type == 'food' %}
+    {% if category == 'rice_dal_oil' %}
+    <!-- Grocery Products Section -->
+    <section class="my-4 block md:hidden">
+        <h3 class="text-2xl font-semibold text-center mb-3">Grocery Products</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 container mx-auto px-2">
+            {% for p in rice_dal_oil_products %}
+                <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+                    <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+                    {% if p.get_percentage and p.get_percentage > 0 %}
+                        <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                            {{ p.get_percentage|floatformat:0 }}% Off
+                        </span>
+                    {% endif %}
+                    {% if p.best_selling %}
+                        <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                            Best Selling
+                        </span>
+                    {% endif %}
+                    <div class="p-2 text-center flex-grow">
+                        <h5 class="text-sm font-semibold">
+                            {% comment %} <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                                {{ p.title }}
+                            </a> {% endcomment %}
+                            <p class="text-gray-800 line-clamp-1">{{ p.title }}</p>
+                        </h5>
+                        <div class="mt-2">
+                            <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                            {% if p.old_price %}
+                                <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                        <button class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                                data-id="{{ p.id }}" data-pid="{{ p.pid }}" data-image="{{ p.image.url }}" data-title="{{ p.title }}" data-price="{{ p.price }}">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if category == 'fish_meat_veg' %}
+        <!-- Fish, Meat, and Vegetable Products Section -->
+        <section class="my-4 block md:hidden">
+            <h3 class="text-2xl font-semibold text-center mb-3">Fish, Meat, and Vegetable Products</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 container mx-auto px-2">
+                {% for p in fish_meat_veg_products %}
+                    <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+                        <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+                        {% if p.get_percentage and p.get_percentage > 0 %}
+                            <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                                {{ p.get_percentage|floatformat:0 }}% Off
+                            </span>
+                        {% endif %}
+                        {% if p.best_selling %}
+                            <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                                Best Selling
+                            </span>
+                        {% endif %}
+                        <div class="p-2 text-center flex-grow">
+                            <h5 class="text-sm font-semibold">
+                                {% comment %} <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                                {{ p.title }}
+                            </a> {% endcomment %}
+                            <p class="text-gray-800 line-clamp-1">{{ p.title }}</p>
+                            </h5>
+                            <div class="mt-2">
+                                <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                                {% if p.old_price %}
+                                    <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                            <button class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                                    data-id="{{ p.id }}" data-pid="{{ p.pid }}" data-image="{{ p.image.url }}" data-title="{{ p.title }}" data-price="{{ p.price }}">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    {% if category == 'dairy' %}
+        <!-- Dairy Products Section -->
+        <section class="my-4 block md:hidden">
+            <h3 class="text-2xl font-semibold text-center mb-3">Dairy Products</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 container mx-auto px-2">
+                {% for p in dairy_products %}
+                    <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+                        <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+                        {% if p.get_percentage and p.get_percentage > 0 %}
+                            <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                                {{ p.get_percentage|floatformat:0 }}% Off
+                            </span>
+                        {% endif %}
+                        {% if p.best_selling %}
+                            <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                                Best Selling
+                            </span>
+                        {% endif %}
+                        <div class="p-2 text-center flex-grow">
+                            <h5 class="text-sm font-semibold">
+                                {% comment %} <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                                {{ p.title }}
+                            </a> {% endcomment %}
+                            <p class="text-gray-800 line-clamp-1">{{ p.title }}</p>
+                            </h5>
+                            <div class="mt-2">
+                                <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                                {% if p.old_price %}
+                                    <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                            <button class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                                    data-id="{{ p.id }}" data-pid="{{ p.pid }}" data-image="{{ p.image.url }}" data-title="{{ p.title }}" data-price="{{ p.price }}">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+
+    {% if category == 'snacks' %}
+        <!-- Snacks Products Section -->
+        <section class="my-4 block md:hidden">
+            <h3 class="text-2xl font-semibold text-center mb-3">Breakfast & Snacks Products</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 container mx-auto px-2">
+                {% for p in snacks_products %}
+                    <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+                        <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+                        {% if p.get_percentage and p.get_percentage > 0 %}
+                            <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                                {{ p.get_percentage|floatformat:0 }}% Off
+                            </span>
+                        {% endif %}
+                        {% if p.best_selling %}
+                            <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                                Best Selling
+                            </span>
+                        {% endif %}
+                        <div class="p-2 text-center flex-grow">
+                            <h5 class="text-sm font-semibold">
+                                {% comment %} <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                                {{ p.title }}
+                            </a> {% endcomment %}
+                            <p class="text-gray-800 line-clamp-1">{{ p.title }}</p>
+                            </h5>
+                            <div class="mt-2">
+                                <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                                {% if p.old_price %}
+                                    <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                            <button class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                                    data-id="{{ p.id }}" data-pid="{{ p.pid }}" data-image="{{ p.image.url }}" data-title="{{ p.title }}" data-price="{{ p.price }}">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+
+    {% if category == 'cleaning' %}
+        <!-- Dairy Products Section -->
+        <section class="my-4 block md:hidden">
+            <h3 class="text-2xl font-semibold text-center mb-3">Cleaning Products</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 container mx-auto px-2">
+                {% for p in cleaning_products %}
+                    <div class="product-card bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col relative h-full">
+                        <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-48 object-contain p-2">
+                        {% if p.get_percentage and p.get_percentage > 0 %}
+                            <span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                                {{ p.get_percentage|floatformat:0 }}% Off
+                            </span>
+                        {% endif %}
+                        {% if p.best_selling %}
+                            <span class="absolute top-8 left-2 bg-yellow-400 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10">
+                                Best Selling
+                            </span>
+                        {% endif %}
+                        <div class="p-2 text-center flex-grow">
+                            <h5 class="text-sm font-semibold">
+                                {% comment %} <a href="{% url 'core:product-detail' p.slug %}" class="text-gray-800 hover:text-blue-600 line-clamp-1">
+                                {{ p.title }}
+                            </a> {% endcomment %}
+                            <p class="text-gray-800 line-clamp-1">{{ p.title }}</p>
+                            </h5>
+                            <div class="mt-2">
+                                <span class="text-lg font-bold text-gray-800">৳{{ p.price|floatformat:2 }}</span>
+                                {% if p.old_price %}
+                                    <span class="text-gray-500 line-through text-sm ml-2">৳{{ p.old_price|floatformat:2 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="bottom-0 left-0 w-full bg-white p-2 shadow-inner">
+                            <button class="w-full bg-blue-400 hover:bg-blue-600 font-semibold text-sm px-6 py-2 shadow-lg transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 add-to-cart-btn"
+                                    data-id="{{ p.id }}" data-pid="{{ p.pid }}" data-image="{{ p.image.url }}" data-title="{{ p.title }}" data-price="{{ p.price }}">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+{% endif %}
+
+
+
+
+{% endblock %}

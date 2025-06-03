@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('w-64');
+            document.getElementById('sidebar').classList.toggle('w-20');
+            document.querySelectorAll('.sidebar-text').forEach(el => el.classList.toggle('hidden'));
+        }
+
+        function changeSidebarColor() {
+            const sidebar = document.getElementById('sidebar');
+            const selectedColor = document.getElementById('sidebarColor').value;
+            sidebar.className = `w-64 p-5 space-y-6 transition-all duration-300 ease-in-out shadow-lg ${selectedColor}`;
+        }
+
+        function toggleDropdown(id) {
+            document.getElementById(id).classList.toggle('hidden');
+        }
+
+        // Google Charts
+        google.charts.load('current', { 'packages': ['corechart', 'line', 'bar'] });
+        google.charts.setOnLoadCallback(drawCharts);
+
+        function drawCharts() {
+            drawSalesChart();
+            drawSalesGraph();
+        }
+
+        function drawSalesChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Day', 'Sales'],
+                ['1', 1000],
+                ['2', 1170],
+                ['3', 660],
+                ['4', 1030],
+                ['5', 1200],
+                ['6', 800],
+                ['7', 950]
+            ]);
+            var options = {
+                title: 'Sales Performance',
+                curveType: 'function',
+                legend: { position: 'bottom' }
+            };
+            var chart = new google.visualization.LineChart(document.getElementById('sales_chart'));
+            chart.draw(data, options);
+        }
+
+        function drawSalesGraph() {
+            var data = google.visualization.arrayToDataTable([
+                ['Month', 'Sales', 'Expenses'],
+                ['January', 1000, 400],
+                ['February', 1170, 460],
+                ['March', 660, 1120],
+                ['April', 1030, 540],
+                ['May', 1250, 670]
+            ]);
+
+            var options = {
+                chart: {
+                    title: 'Monthly Sales and Expenses',
+                    subtitle: 'in USD',
+                },
+                series: {
+                    0: { color: '#003366' },  // Deep Blue for Sales
+                    1: { color: '#87CEEB' }   // Sky Blue for Expenses
+                },
+                hAxis: {
+                    title: 'Month'
+                },
+                vAxis: {
+                    title: 'Amount in USD'
+                }
+            };
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('sales_graph'));
+            chart.draw(data, options);
+        }
+    </script>
+</head>
+
+<body class="font-sans text-sm">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar"
+            class="w-64 bg-gradient-to-b from-blue-900 to-blue-800 text-white p-5 space-y-6 transition-all duration-300 ease-in-out flex flex-col shadow-lg">
+            <div class="flex items-center justify-between">
+                <h1 class="text-xl font-bold sidebar-text">WBSoft</h1>
+                <button onclick="toggleSidebar()" class="text-white text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <nav class="space-y-2">
+                <!-- Dashboard Menu -->
+                <a href="#" class="flex items-center py-3 px-4 rounded-lg hover:bg-blue-700 transition">
+                    <i class="fa-solid fa-gauge"></i>
+                    <span class="sidebar-text ml-2">Dashboard</span>
+                </a>
+
+                <!-- Sales Menu with Dropdown -->
+                <div class="relative">
+                    <button onclick="toggleDropdown('salesDropdown')"
+                        class="flex items-center py-3 px-4 w-full rounded-lg hover:bg-blue-700 transition">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="sidebar-text ml-2">Sales</span>
+                        <i class="sidebar-text fas fa-chevron-down ml-auto text-xs"></i>
+                    </button>
+                    <div id="salesDropdown" class="hidden bg-blue-800 mt-1 rounded-lg">
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">New Sale</a>
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Sales History</a>
+                    </div>
+                </div>
+
+                <!-- Purchase Menu with Dropdown -->
+                <div class="relative">
+                    <button onclick="toggleDropdown('purchaseDropdown')"
+                        class="flex items-center py-3 px-4 w-full rounded-lg hover:bg-blue-700 transition">
+                        <i class="fa-solid fa-truck"></i>
+                        <span class="sidebar-text ml-2">Purchase</span>
+                        <i class="sidebar-text fas fa-chevron-down ml-auto text-xs"></i>
+                    </button>
+                    <div id="purchaseDropdown" class="hidden bg-blue-800 mt-1 rounded-lg">
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">New Purchase</a>
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Purchase Orders</a>
+                    </div>
+                </div>
+
+                <!-- Inventory Menu with Dropdown -->
+                <div class="relative">
+                    <button onclick="toggleDropdown('inventoryDropdown')"
+                        class="flex items-center py-3 px-4 w-full rounded-lg hover:bg-blue-700 transition">
+                        <i class="fa-solid fa-cogs"></i>
+                        <span class="sidebar-text ml-2">Inventory</span>
+                        <i class="sidebar-text fas fa-chevron-down ml-auto text-xs"></i>
+                    </button>
+                    <div id="inventoryDropdown" class="hidden bg-blue-800 mt-1 rounded-lg">
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Stock Management</a>
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Inventory Reports</a>
+                    </div>
+                </div>
+
+                <!-- Reports Menu with Dropdown -->
+                <div class="relative">
+                    <button onclick="toggleDropdown('reportsDropdown')"
+                        class="flex items-center py-3 px-4 w-full rounded-lg hover:bg-blue-700 transition">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span class="sidebar-text ml-2">Reports</span>
+                        <i class="sidebar-text fas fa-chevron-down ml-auto text-xs"></i>
+                    </button>
+                    <div id="reportsDropdown" class="hidden bg-blue-800 mt-1 rounded-lg">
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Sales Reports</a>
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Purchase Reports</a>
+                    </div>
+                </div>
+
+                <!-- Users Menu with Dropdown -->
+                <div class="relative">
+                    <button onclick="toggleDropdown('usersDropdown')"
+                        class="flex items-center py-3 px-4 w-full rounded-lg hover:bg-blue-700 transition">
+                        <i class="fa-solid fa-users"></i>
+                        <span class="sidebar-text ml-2">Users</span>
+                        <i class="sidebar-text fas fa-chevron-down ml-auto text-xs"></i>
+                    </button>
+                    <div id="usersDropdown" class="hidden bg-blue-800 mt-1 rounded-lg">
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">User Management</a>
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Permissions</a>
+                    </div>
+                </div>
+
+                <!-- Expense Menu with Dropdown -->
+                <div class="relative">
+                    <button onclick="toggleDropdown('expenseDropdown')"
+                        class="flex items-center py-3 px-4 w-full rounded-lg hover:bg-blue-700 transition">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                        <span class="sidebar-text ml-2">Expense</span>
+                        <i class="sidebar-text fas fa-chevron-down ml-auto text-xs"></i>
+                    </button>
+                    <div id="expenseDropdown" class="hidden bg-blue-800 mt-1 rounded-lg">
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Add Expense</a>
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Expense History</a>
+                    </div>
+                </div>
+
+                <!-- Accounts Menu with Dropdown -->
+                <div class="relative">
+                    <button onclick="toggleDropdown('accountsDropdown')"
+                        class="flex items-center py-3 px-4 w-full rounded-lg hover:bg-blue-700 transition">
+                        <i class="fa-solid fa-wallet"></i>
+                        <span class="sidebar-text ml-2">Accounts</span>
+                        <i class="sidebar-text fas fa-chevron-down ml-auto text-xs"></i>
+                    </button>
+                    <div id="accountsDropdown" class="hidden bg-blue-800 mt-1 rounded-lg">
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Account Balances</a>
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">Transaction History</a>
+                    </div>
+                </div>
+
+                <!-- Settings Menu with Dropdown -->
+                <div class="relative">
+                    <button onclick="toggleDropdown('settingsDropdown')"
+                        class="flex items-center py-3 px-4 w-full rounded-lg hover:bg-blue-700 transition">
+                        <i class="fa-solid fa-cog"></i>
+                        <span class="sidebar-text ml-2">Settings</span>
+                        <i class="sidebar-text fas fa-chevron-down ml-auto text-xs"></i>
+                    </button>
+                    <div id="settingsDropdown" class="hidden bg-blue-800 mt-1 rounded-lg">
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">General Settings</a>
+                        <a href="#" class="block py-2 px-6 hover:bg-blue-700">System Preferences</a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+
+
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <header class="bg-white shadow-md fixed w-full flex justify-between items-center px-6 py-3 z-10">
+                <nav class="flex space-x-6">
+                    <a href="#" class="text-gray-700 hover:text-blue-600">Home</a>
+                    <a href="#" class="text-gray-700 hover:text-blue-600">About</a>
+                    <a href="#" class="text-gray-700 hover:text-blue-600">Contact</a>
+
+                    <select id="sidebarColor" class="border rounded" onchange="changeSidebarColor()">
+                        <option value="bg-blue-900 text-white">Blue</option>
+                        <option value="bg-gray-800 text-white">Gray</option>
+                        <option value="bg-white text-black border">White</option>
+                    </select>
+                </nav>
+                <div class="flex items-center space-x-4">
+                    <input type="text" placeholder="Search..."
+                        class="w-40 sm:w-60 md:w-80 px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    <div class="relative">
+                        <button onclick="toggleDropdown('userDropdown')" class="flex items-center space-x-2">
+                            <img src="https://via.placeholder.com/40" class="rounded-full border border-gray-300">
+                            <span class="text-gray-700">Thomas Arree</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div id="userDropdown"
+                            class="absolute hidden bg-white shadow-md rounded-lg mt-2 py-2 w-40 right-0">
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-200">Sign In</a>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-200">Sign Out</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="pt-20 p-6">
+                <!-- Sales Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3">
+                    <div class="bg-blue-100 border border-blue-300 p-4 rounded-lg shadow-lg flex justify-between">
+                        <div>
+                            <h5 class="text-lg font-bold">$50K</h5>
+                            <p class="text-gray-600">Total Sales (This Month)</p>
+                        </div>
+                        <i class="fas fa-dollar-sign text-blue-500 text-3xl"></i>
+                    </div>
+                    <div class="bg-green-100 border border-green-300 p-4 rounded-lg shadow-lg flex justify-between">
+                        <div>
+                            <h5 class="text-lg font-bold">150</h5>
+                            <p class="text-gray-600">Today's Orders</p>
+                        </div>
+                        <i class="fas fa-shopping-cart text-green-500 text-3xl"></i>
+                    </div>
+                    <div class="bg-yellow-100 border border-yellow-300 p-4 rounded-lg shadow-lg flex justify-between">
+                        <div>
+                            <h5 class="text-lg font-bold">30</h5>
+                            <p class="text-gray-600">Pending Orders</p>
+                        </div>
+                        <i class="fas fa-clock text-yellow-500 text-3xl"></i>
+                    </div>
+                    <div class="bg-purple-100 border border-purple-300 p-4 rounded-lg shadow-lg flex justify-between">
+                        <div>
+                            <h5 class="text-lg font-bold">120</h5>
+                            <p class="text-gray-600">Delivered Orders</p>
+                        </div>
+                        <i class="fas fa-truck text-purple-500 text-3xl"></i>
+                    </div>
+                </div>
+
+                <!-- Orders Table -->
+                <div class="mt-6">
+                    <h2 class="text-lg font-bold mb-3">Today's Orders</h2>
+                    <table class="w-full text-sm border-collapse border border-gray-300">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="border border-gray-300 px-4 py-2">Order ID</th>
+                                <th class="border border-gray-300 px-4 py-2">Customer</th>
+                                <th class="border border-gray-300 px-4 py-2">Amount</th>
+                                <th class="border border-gray-300 px-4 py-2">Status</th>
+                                <th class="border border-gray-300 px-4 py-2">Payment Method</th>
+                                <th class="border border-gray-300 px-4 py-2">Shipping Address</th>
+                                <th class="border border-gray-300 px-4 py-2">Order Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-2">#12345</td>
+                                <td class="border border-gray-300 px-4 py-2">John Doe</td>
+                                <td class="border border-gray-300 px-4 py-2">$120</td>
+                                <td class="border border-gray-300 px-4 py-2 text-yellow-600">Pending</td>
+                                <td class="border border-gray-300 px-4 py-2">Credit Card</td>
+                                <td class="border border-gray-300 px-4 py-2">1234 Elm St</td>
+                                <td class="border border-gray-300 px-4 py-2">2025-02-09</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-2">#12346</td>
+                                <td class="border border-gray-300 px-4 py-2">Jane Smith</td>
+                                <td class="border border-gray-300 px-4 py-2">$80</td>
+                                <td class="border border-gray-300 px-4 py-2 text-green-600">Completed</td>
+                                <td class="border border-gray-300 px-4 py-2">PayPal</td>
+                                <td class="border border-gray-300 px-4 py-2">5678 Oak Ave</td>
+                                <td class="border border-gray-300 px-4 py-2">2025-02-09</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-2">#12347</td>
+                                <td class="border border-gray-300 px-4 py-2">Mike Johnson</td>
+                                <td class="border border-gray-300 px-4 py-2">$200</td>
+                                <td class="border border-gray-300 px-4 py-2 text-yellow-600">Pending</td>
+                                <td class="border border-gray-300 px-4 py-2">Bank Transfer</td>
+                                <td class="border border-gray-300 px-4 py-2">2345 Pine Blvd</td>
+                                <td class="border border-gray-300 px-4 py-2">2025-02-09</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-2">#12348</td>
+                                <td class="border border-gray-300 px-4 py-2">Lisa Brown</td>
+                                <td class="border border-gray-300 px-4 py-2">$150</td>
+                                <td class="border border-gray-300 px-4 py-2 text-green-600">Completed</td>
+                                <td class="border border-gray-300 px-4 py-2">Credit Card</td>
+                                <td class="border border-gray-300 px-4 py-2">6789 Maple Dr</td>
+                                <td class="border border-gray-300 px-4 py-2">2025-02-09</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+                <!-- Sales Charts and Graphs -->
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h2 class="text-lg font-bold mb-3">Sales Chart</h2>
+                        <div id="sales_chart" class="w-full h-64"></div>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold mb-3">Sales Graph</h2>
+                        <div id="sales_graph" class="w-full h-64"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

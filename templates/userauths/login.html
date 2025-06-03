@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #6d5bcb, #c56cf0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 350px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            color: #4a4a4a;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: #6b6b6b;
+            margin-bottom: 0.3rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.7rem;
+            font-size: 0.9rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: #6d5bcb;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1rem;
+            background-color: #6d5bcb;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #5a48b2;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .footer-text a {
+            color: #6d5bcb;
+            text-decoration: none;
+        }
+
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Log In</h1>
+
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+
+        <form method="POST" action="{% url 'userauths:login' %}">
+            {% csrf_token %}
+            {% comment %} <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Email" required>
+            </div> {% endcomment %}
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="username" id="username" name="username" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Password" required>
+            </div>
+            <button type="submit">Log In</button>
+        </form>
+        <div class="footer-text">
+            Don't have an account? <a href="{% url 'userauths:register' %}">Sign Up</a>
+        </div>
+    </div>
+</body>
+</html>

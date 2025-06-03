@@ -1,0 +1,89 @@
+<!-- pharmacy/partials/product_list.html -->
+<div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+    {% for product in products %}
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+        <div class="p-3">
+            <div class="flex justify-between items-start mb-2">
+                <h6 class="font-medium text-sm text-gray-900 leading-tight flex-1 pr-2">
+                    {{ product.name }}
+                    {% if product.strength %}
+                        <span class="text-xs text-gray-500">({{ product.strength }})</span>
+                    {% endif %}
+                </h6>
+                {% if product.category %}
+                <span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full whitespace-nowrap">
+                    {{ product.category.name }}
+                </span>
+                {% endif %}
+            </div>
+            
+            <div class="flex justify-between items-center mb-3">
+                <div class="text-left">
+                    {% with available_batch=product.batches.all|first %}
+                        {% if available_batch.quantity > 0 %}
+                            <p class="text-lg font-bold text-green-600">
+                                ${{ available_batch.selling_price|floatformat:2 }}
+                            </p>
+                            <p class="text-xs text-gray-500">
+                                Stock: {{ available_batch.quantity }}
+                                <span class="text-gray-400">(Batch: {{ available_batch.batch_number }})</span>
+                            </p>
+                            {% if available_batch.expiry_date %}
+                            <p class="text-xs text-gray-400">
+                                Exp: {{ available_batch.expiry_date|date:"M d, Y" }}
+                            </p>
+                            {% endif %}
+                        {% else %}
+                            <p class="text-sm text-red-500 font-medium">No Stock Available</p>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+            
+            <div class="flex gap-2">
+                {% with available_batch=product.batches.all|first %}
+                    {% if available_batch.quantity > 0 %}
+                    <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded text-xs transition"
+                            hx-get="{% url 'pharmacy:add_to_cart' product.id %}"
+                            hx-target="#cart-items"
+                            hx-indicator=".progress"
+                            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                            hx-swap="outerHTML"
+                            onclick="console.log('Adding product {{ product.id }} to cart')">
+                        Add to Cart
+                    </button>
+                    {% else %}
+                        <button class="flex-1 bg-gray-300 text-gray-500 font-medium py-2 px-3 rounded text-xs cursor-not-allowed" 
+                                disabled>
+                            Out of Stock
+                        </button>
+                    {% endif %}
+                {% endwith %}
+                
+                <button class="bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 rounded transition"
+                        title="View Details"
+                        onclick="console.log('Product details:', {{ product.id }})">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-span-full text-center py-8">
+        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+        </svg>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No products found</h3>
+        <p class="text-gray-500">
+            {% if search_query %}
+                No products match "{{ search_query }}". Try a different search term.
+            {% else %}
+                No products available. Check your inventory or add some products.
+            {% endif %}
+        </p>
+    </div>
+    {% endfor %}
+</div>

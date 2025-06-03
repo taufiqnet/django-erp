@@ -1,0 +1,48 @@
+{% extends 'partials/base.html' %}
+
+{% block title %}ShopMate - Tag{% endblock %}
+
+{% block content %}
+
+<!-- Featured Products -->
+<section class="container mx-auto my-8">
+    <h2 class="text-center text-2xl font-bold mb-6">{{ tag.name }}</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for p in products %}
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <!-- Product Image -->
+            <div class="relative">
+                <a href="{% url 'core:product-detail' p.pid %}">
+                    <img src="{{ p.image.url }}" alt="{{ p.title }}" class="h-48 w-full object-cover">
+                </a>
+                {% if p.get_percentage %}
+                <span class="absolute top-2 left-2 bg-red-500 text-white text-sm font-semibold px-2 py-1 rounded">
+                    {{ p.get_percentage|floatformat:0 }}% Off
+                </span>
+                {% endif %}
+            </div>
+            <!-- Card Body -->
+            <div class="p-4 text-center">
+                <h5 class="text-lg font-semibold text-gray-800 truncate">
+                    <a href="{% url 'core:product-detail' p.pid %}" class="text-blue-600 hover:underline">
+                        {{ p.title }}
+                    </a>
+                </h5>
+                <p class="text-green-600 font-bold mt-2">${{ p.price }}</p>
+                {% if p.old_price %}
+                <p class="text-gray-500 text-sm">
+                    <del>${{ p.old_price }}</del>
+                </p>
+                {% endif %}
+                <p class="text-gray-600 text-sm mt-2">Category: {{ p.category.title }}</p>
+                <p class="text-gray-600 text-sm">Rating: {{ p.rating }}</p>
+                <a href="#" class="mt-4 inline-block bg-blue-500 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-blue-600">
+                    Add to Cart
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}
