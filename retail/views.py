@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from business.models import Business
-from retail.models import Product, Sale, SaleItem
+from retail.models import Product, Sale, SaleItem, Payment
 from .models import Contact
 import json
 from django.http import JsonResponse
@@ -84,7 +84,6 @@ def process_sale(request): # Removed duplicate @csrf_exempt
                 created_by=request.user,
                 updated_by=request.user, # Should be request.user initially
                 payment_method=data.get('payment_method', 'cash'),
-                amount_paid=Decimal(data.get('amount_paid', 0)),
                 discount_amount=Decimal(data.get('discount_amount', 0)) # This is a fixed amount for new sales via API
             )
             # discount_percent might be more suitable if items are also posted to calculate from subtotal
@@ -127,6 +126,18 @@ def process_sale(request): # Removed duplicate @csrf_exempt
 
             sale.calculate_totals() # Recalculate totals for the Sale based on all SaleItems
             # sale.save() is called within calculate_totals()
+
+            amount_paid_from_request = Decimal(data.get('amount_paid', 0))
+            if amount_paid_from_request > 0:
+                Payment.objects.create(
+                    sale=sale,
+                    amount=amount_paid_from_request,
+                    payment_method=sale.payment_method, # Or data.get('payment_method') from payload
+                    created_by=request.user,
+                    status='completed'
+                )
+            # The Payment.save() method updates sale.amount_paid and sale.payment_status
+            # and then saves the sale object.
 
             return JsonResponse({
                 'success': True,
