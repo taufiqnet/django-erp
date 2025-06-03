@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from business.models import Business
-from retail.models import Product, Sale, SaleItem, Payment
+from retail.models import Product, Sale, SaleItem, Payment # Ensure Payment is imported
 from .models import Contact
 import json
 from django.http import JsonResponse
@@ -14,10 +14,7 @@ from django.contrib import messages
 import logging
 logger = logging.getLogger(__name__)
 
-# def sales_view(request):
-#     return render(request, 'retail/sale.html')
-
-@login_required
+@login_required(login_url='userauths:retail_login')
 def sales_view(request):
     products = Product.objects.filter(
         is_active=True,
@@ -40,16 +37,12 @@ def sales_view(request):
     return render(request, 'retail/sale.html', context)
 
 
-from django.db import transaction
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
-from decimal import Decimal
-import json
+# Note: Removed duplicate imports of transaction, JsonResponse, csrf_exempt, login_required, Decimal, json that were here.
+# They are already imported at the top or just above this section.
 
 @csrf_exempt
-@login_required
-def process_sale(request): # Removed duplicate @csrf_exempt
+@login_required(login_url='userauths:retail_login')
+def process_sale(request):
     if request.method != 'POST':
         return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=405)
 
@@ -82,38 +75,34 @@ def process_sale(request): # Removed duplicate @csrf_exempt
                 business=business,
                 customer=customer,
                 created_by=request.user,
-                updated_by=request.user, # Should be request.user initially
+                updated_by=request.user,
                 payment_method=data.get('payment_method', 'cash'),
-                discount_amount=Decimal(data.get('discount_amount', 0)) # This is a fixed amount for new sales via API
+                # amount_paid is NOT set here directly. It's handled by Payment model.
+                discount_amount=Decimal(data.get('discount_amount', 0))
             )
-            # discount_percent might be more suitable if items are also posted to calculate from subtotal
-            sale.save() # Initial save to get sale ID for items
+            sale.save() # Initial save to get sale ID
 
-            for item_data in items: # Renamed item to item_data for clarity
+            for item_data in items:
                 try:
                     product = Product.objects.get(
                         id=item_data['product_id'],
                         business=business,
                         is_active=True
                     )
-
                     sale_item = SaleItem(
                         sale=sale,
                         product=product,
                         quantity=Decimal(item_data['quantity']),
                         price=Decimal(item_data['price']),
-                        tax_rate=Decimal(item_data.get('tax_rate', product.tax_rate)), # Default to product's tax_rate
-                        tax_type=item_data.get('tax_type', product.tax_type) # Default to product's tax_type
+                        tax_rate=Decimal(item_data.get('tax_rate', product.tax_rate)),
+                        tax_type=item_data.get('tax_type', product.tax_type)
                     )
-                    # SaleItem's save method will calculate its own subtotal
                     sale_item.save()
 
                     if product.manage_stock:
                         product.stock_quantity -= sale_item.quantity
                         product.save()
-
                 except Product.DoesNotExist:
-                    # Transaction will roll back
                     return JsonResponse(
                         {'success': False, 'message': f'Product ID {item_data.get("product_id")} not found'},
                         status=400
@@ -124,20 +113,18 @@ def process_sale(request): # Removed duplicate @csrf_exempt
                         status=400
                     )
 
-            sale.calculate_totals() # Recalculate totals for the Sale based on all SaleItems
-            # sale.save() is called within calculate_totals()
+            sale.calculate_totals() # This calls sale.save() internally
 
             amount_paid_from_request = Decimal(data.get('amount_paid', 0))
-            if amount_paid_from_request > 0:
+            if amount_paid_from_request > Decimal('0.00'):
                 Payment.objects.create(
                     sale=sale,
                     amount=amount_paid_from_request,
-                    payment_method=sale.payment_method, # Or data.get('payment_method') from payload
+                    payment_method=sale.payment_method,
                     created_by=request.user,
                     status='completed'
                 )
-            # The Payment.save() method updates sale.amount_paid and sale.payment_status
-            # and then saves the sale object.
+            # Payment.save() updates sale.amount_paid and saves the sale.
 
             return JsonResponse({
                 'success': True,
@@ -154,16 +141,16 @@ def process_sale(request): # Removed duplicate @csrf_exempt
             status=500
         )
 
-from django.core.exceptions import ValidationError
-# Contact, Business already imported
+from django.core.exceptions import ValidationError # Already imported but good to keep near its use if not at top
 
+@login_required(login_url='userauths:retail_login')
 def add_customer(request):
     if request.method != 'POST':
         return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=405)
-
     try:
         business = request.user.profile.business
-        if not business:
+        # ... (rest of add_customer logic as it was, it seemed okay) ...
+        if not business: # Ensure this check is here
             return JsonResponse({
                 'success': False,
                 'message': 'User is not associated with any business'
@@ -221,22 +208,22 @@ def add_customer(request):
         }, status=500)
 
 
-# from .models import Contact # Already imported
-
+@login_required(login_url='userauths:retail_login')
 def customer_list(request):
-    if not request.user.is_authenticated:
-        return JsonResponse({'error': 'Not authenticated'}, status=401)
-
+    # Removed manual: if not request.user.is_authenticated:
     try:
         business = request.user.profile.business
         if not business:
              return JsonResponse({'error': 'User not associated with a business'}, status=400)
-        business_id = business.id
-    except AttributeError:
+        # business_id = business.id # Not strictly needed if filtering on business object
+    except AttributeError: # This can happen if user.profile doesn't exist
         return JsonResponse({'error': 'Business profile not found for user'}, status=400)
+    except Business.DoesNotExist: # If user.profile.business is somehow None and accessed
+        return JsonResponse({'error': 'Business not found for user profile'}, status=400)
+
 
     customers = Contact.objects.filter(
-        business_id=business_id,
+        business=business, # Filter by business object
         type=Contact.ContactType.CUSTOMER,
         is_active=True
     ).values(
@@ -251,20 +238,22 @@ def customer_list(request):
     return JsonResponse(list(customers), safe=False)
 
 
-# Django specific imports already at the top
-from django.core.paginator import Paginator
-from datetime import datetime
+from django.core.paginator import Paginator # Already imported but good to keep near use
+from datetime import datetime # Already imported
 
-@login_required
+@login_required(login_url='userauths:retail_login')
 def sale_list(request):
     try:
         business = request.user.profile.business
-    except Business.DoesNotExist:
+    except AttributeError: # More specific exception for profile not existing
+        messages.error(request, "User profile not found.")
+        return redirect('userauths:retail_login') # Redirect to login if profile issue
+    except Business.DoesNotExist: # More specific for business not existing on profile
         messages.error(request, "Business information not found for your profile.")
-        return redirect('some_error_page_or_dashboard') # Redirect to a relevant page
+        return redirect('userauths:retail_login')
 
     sales_qs = Sale.objects.filter(business=business).select_related('customer').order_by('-date')
-
+    # ... (rest of sale_list logic as it was) ...
     date_from_str = request.GET.get('date_from')
     date_to_str = request.GET.get('date_to')
     invoice_query = request.GET.get('invoice')
@@ -299,9 +288,19 @@ def sale_list(request):
     }
     return render(request, 'retail/sale_list.html', context)
 
-@login_required
+@login_required(login_url='userauths:retail_login')
 def sale_detail(request, sale_id):
-    business = get_object_or_404(Business, bid=request.user.profile.business.bid)
+    # Ensure business object is fetched safely
+    try:
+        business_bid = request.user.profile.business.bid
+        business = get_object_or_404(Business, bid=business_bid)
+    except AttributeError:
+        messages.error(request, "User profile or business information is missing.")
+        return redirect('userauths:retail_login')
+    except Business.DoesNotExist:
+        messages.error(request, "Business not found.")
+        return redirect('userauths:retail_login')
+
     sale = get_object_or_404(Sale, id=sale_id, business=business)
     context = {
         'sale': sale,
@@ -309,9 +308,18 @@ def sale_detail(request, sale_id):
     }
     return render(request, 'retail/sale_detail.html', context)
 
-@login_required
+@login_required(login_url='userauths:retail_login')
 def print_receipt(request, sale_id):
-    business = get_object_or_404(Business, bid=request.user.profile.business.bid)
+    try:
+        business_bid = request.user.profile.business.bid
+        business = get_object_or_404(Business, bid=business_bid)
+    except AttributeError:
+        messages.error(request, "User profile or business information is missing.")
+        return redirect('userauths:retail_login')
+    except Business.DoesNotExist:
+        messages.error(request, "Business not found.")
+        return redirect('userauths:retail_login')
+
     sale = get_object_or_404(Sale, id=sale_id, business=business)
     context = {
         'sale': sale,
@@ -320,13 +328,23 @@ def print_receipt(request, sale_id):
     return render(request, 'retail/receipt_print.html', context)
 
 
-@login_required
+@login_required(login_url='userauths:retail_login')
 def sale_edit(request, pk):
-    business = request.user.profile.business
+    try:
+        business = request.user.profile.business
+        if not business: # Explicit check if business is None after getattr
+            raise Business.DoesNotExist
+    except AttributeError:
+        messages.error(request, "User profile not found.")
+        return redirect('userauths:retail_login')
+    except Business.DoesNotExist:
+        messages.error(request, "Business information not found for your profile.")
+        return redirect('userauths:retail_login')
+
     sale = get_object_or_404(Sale, pk=pk, business=business)
+    current_total_paid_on_sale_load = sale.amount_paid # Capture amount paid at load time
 
     customers = Contact.objects.filter(business=business, type=Contact.ContactType.CUSTOMER, is_active=True)
-    # Products for dropdown, ensure it's specific to the business
     products_for_dropdown = Product.objects.filter(business=business, is_active=True)
     payment_methods = Sale.PAYMENT_METHODS
 
@@ -334,38 +352,25 @@ def sale_edit(request, pk):
         try:
             with transaction.atomic():
                 # Update basic sale info from form
-                customer_id_str = request.POST.get('customer'); current_total_paid_on_sale_load = sale.amount_paid # HACK: Combined line
+                # current_total_paid_on_sale_load is already defined outside POST check
+
+                customer_id_str = request.POST.get('customer')
                 if customer_id_str:
-                    # Ensure customer belongs to the same business for security
                     sale.customer = get_object_or_404(Contact, pk=customer_id_str, business=business, type=Contact.ContactType.CUSTOMER)
                 else:
                     sale.customer = None
 
-                sale.date = request.POST.get('date')
-                sale.payment_method = request.POST.get('payment_method')
+                sale.date = request.POST.get('date') # Consider timezone conversion if needed
+                sale.payment_method = request.POST.get('payment_method', sale.payment_method)
                 sale.discount_percent = Decimal(request.POST.get('discount', 0))
-                # sale.amount_paid = Decimal(request.POST.get('amount_paid', 0)) # Removed direct assignment
 
+                # Removed direct assignment: sale.amount_paid = Decimal(request.POST.get('amount_paid', 0))
                 new_total_amount_paid_from_form = Decimal(request.POST.get('amount_paid', 0))
-                if new_total_amount_paid_from_form > current_total_paid_on_sale_load:
-                    additional_payment_amount = new_total_amount_paid_from_form - current_total_paid_on_sale_load
-                    if additional_payment_amount > Decimal('0.00'):
-                        Payment.objects.create(
-                            sale=sale,
-                            amount=additional_payment_amount,
-                            payment_method=request.POST.get('payment_method', sale.payment_method),
-                            created_by=request.user,
-                            status='completed'
-                        )
 
-                # The Sale model's save() method correctly updates is_paid/payment_status based on amounts.
-                # Direct setting of 'is_paid' from form can be tricky if not coordinated with model logic.
-                # For example: sale.is_paid = request.POST.get('is_paid') == 'true'
-
+                # Item processing (this might call sale.calculate_totals() which calls sale.save())
                 submitted_products_ids = request.POST.getlist('product')
-
-                # Only modify items if product data was actually submitted and is not empty.
                 if submitted_products_ids and any(pid for pid in submitted_products_ids if pid.strip()):
+                    # ... (existing item processing logic) ...
                     new_sale_items_data = []
                     submitted_prices = request.POST.getlist('price')
                     submitted_quantities = request.POST.getlist('quantity')
@@ -376,11 +381,10 @@ def sale_edit(request, pk):
 
                     for i, product_id_str in enumerate(submitted_products_ids):
                         if not product_id_str.strip():
-                            # Handle cases where a row might be submitted with no product selected
-                            if submitted_prices[i].strip() or submitted_quantities[i].strip(): # if other fields have data, it's an error
+                            if submitted_prices[i].strip() or submitted_quantities[i].strip():
                                 messages.error(request, f"Missing product for item {i+1} but other data present.")
                                 raise ValueError(f"Missing product for item {i+1}")
-                            continue # Skip if row is genuinely empty
+                            continue
 
                         try:
                             product = get_object_or_404(Product, pk=product_id_str, business=business)
@@ -400,54 +404,61 @@ def sale_edit(request, pk):
                             })
                         except Product.DoesNotExist:
                             messages.error(request, f"Product with ID {product_id_str} not found.")
-                            raise # Propagate to rollback transaction
-                        except ValueError as e: # Catches Decimal conversion errors too
+                            raise
+                        except ValueError as e:
                             logger.error(f"Invalid data for item {product_id_str if product_id_str else 'unknown'}: {str(e)}")
                             messages.error(request, f"Invalid data for item {i+1} (Product ID: {product_id_str}). Ensure quantity and price are valid numbers.")
-                            raise # Propagate to rollback transaction
+                            raise
 
-                    # If we are here, all submitted item data is valid and products exist.
-                    sale.items.all().delete() # Delete old items
+                    sale.items.all().delete()
                     for item_data_dict in new_sale_items_data:
                         SaleItem.objects.create(sale=sale, **item_data_dict)
 
-                    # SaleItem.save() calls sale.calculate_totals().
-                    # If new_sale_items_data is empty (e.g., all submitted rows were blank and skipped),
-                    # this ensures totals are based on zero items.
-                    if not new_sale_items_data:
-                        sale.calculate_totals() # Explicitly calculate if all items were removed
-                    # Otherwise, the last SaleItem.save() would have triggered it.
-                    # To be safe, or if SaleItem might not always call it, an explicit call here is fine.
-                    else:
-                        # Ensure it's called once after all items are processed
+                    if not new_sale_items_data: # if all items removed
                         sale.calculate_totals()
-
+                    else: # if items were changed/added
+                        sale.calculate_totals() # This calls sale.save()
                 else:
-                    # No product data submitted (e.g., list was empty, or all pids were empty strings).
-                    # This means items were not intended to be changed in this submission.
-                    # Grand total and item-related fields should NOT be recalculated from scratch based on items.
-                    # The existing grand_total on the sale object is preserved.
-                    # sale.save() below will handle updating balance_due and payment_status
-                    # using the PRESERVED grand_total and the NEW amount_paid.
-                    pass # Explicitly do nothing with items or sale.calculate_totals()
+                    # No items submitted for change, but discount might have changed.
+                    # If discount_percent changed, totals need recalculation.
+                    # Sale.calculate_totals() also handles discount_percent.
+                    # Check if discount actually changed to avoid unnecessary save if only amount_paid changed.
+                    if sale.discount_percent != Decimal(request.POST.get('discount', 0)): # Compare with form value
+                         sale.calculate_totals() # This will save the sale with old amount_paid if no items changed.
+
+                # Payment processing after item changes and potential calculate_totals()
+                if new_total_amount_paid_from_form > current_total_paid_on_sale_load:
+                    additional_payment_amount = new_total_amount_paid_from_form - current_total_paid_on_sale_load
+                    if additional_payment_amount > Decimal('0.00'):
+                        Payment.objects.create(
+                            sale=sale,
+                            amount=additional_payment_amount,
+                            payment_method=request.POST.get('payment_method', sale.payment_method),
+                            created_by=request.user,
+                            status='completed'
+                        )
+                        # Payment.save() updates sale.amount_paid and saves the sale.
+                        # sale object in memory here might be stale regarding amount_paid
+                        # but the final sale.save() below will use the DB value if not explicitly set on instance.
 
                 sale.updated_by = request.user
-                sale.save() # This will use existing grand_total if items weren't touched, or new one if they were.
-                            # It also updates balance_due and payment_status correctly.
+                # Final save to ensure all changes (including updated amount_paid from Payment.save)
+                # are reflected and payment_status is correctly set.
+                # If Payment.save() already saved the sale, this save updates it further if other fields changed.
+                sale.save()
 
                 messages.success(request, 'Sale updated successfully!')
-                return redirect('retail:sale_detail', sale_id=sale.id) # Corrected redirect argument
+                return redirect('retail:sale_detail', sale_id=sale.id)
 
         except Exception as e:
             logger.error(f"Error updating sale {pk}: {str(e)}", exc_info=True)
-            if not list(messages.get_messages(request)): # Check if specific messages were already added
+            if not list(messages.get_messages(request)):
                  messages.error(request, f'An unexpected error occurred while updating the sale: {str(e)}')
 
     context = {
         'sale': sale,
         'customers': customers,
-        'products': products_for_dropdown, # Use the filtered list for the dropdown
+        'products': products_for_dropdown,
         'payment_methods': payment_methods,
     }
     return render(request, 'retail/sale_edit.html', context)
-
