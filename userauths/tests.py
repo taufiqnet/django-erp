@@ -69,6 +69,23 @@ class RetailLoginViewTests(TestCase):
         )
         UserProfile.objects.create(user=self.user_profile_no_business, user_type='customer', business=None) # Changed user_type to 'customer'
 
+        # User for testing case-insensitive and whitespace stripping for business type
+        self.case_test_business = Business.objects.create(
+            name="Case Test Retail Co",
+            type=" Retail ", # Note: leading/trailing spaces and mixed case
+            email="casetest@example.com",
+            bid="CASETBID"
+        )
+        self.case_test_user = User.objects.create_user(
+            username='casetestuser',
+            password='password123',
+            email='casetest@example.com'
+        )
+        self.case_test_profile = UserProfile.objects.create(
+            user=self.case_test_user,
+            business=self.case_test_business,
+            user_type='staff'
+        )
 
     def test_retail_login_page_loads_get_request(self):
         response = self.client.get(self.login_url)
@@ -161,3 +178,19 @@ class RetailLoginViewTests(TestCase):
         # This handles potential query parameters like ?next=...
         self.assertTrue(self.login_url in response.url)
         self.assertEqual(response.url.split('?')[0], self.login_url)
+
+    def test_retail_login_successful_case_insensitive_whitespace_business_type(self):
+        if not self.retail_dashboard_url:
+            self.skipTest("retail:sales_view URL not configured, skipping dependent test.")
+
+        response = self.client.post(self.login_url, {
+            'username': 'casetestuser',
+            'password': 'password123'
+        })
+        self.assertEqual(response.status_code, 302, response.content) # Show content on failure
+        self.assertRedirects(response, self.retail_dashboard_url)
+
+        response_after_login = self.client.get(self.retail_dashboard_url)
+        self.assertEqual(response_after_login.status_code, 200)
+        self.assertTrue(response_after_login.context['user'].is_authenticated)
+        self.assertEqual(response_after_login.context['user'].username, 'casetestuser')
