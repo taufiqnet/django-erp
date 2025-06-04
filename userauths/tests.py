@@ -3,7 +3,9 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.messages import get_messages
 from business.models import Business
-from userauths.models import UserProfile
+from userauths.models import UserProfile # Kept as is
+from contact.models import Contact # New import
+from django.core.exceptions import ValidationError # New import
 
 User = get_user_model()
 
@@ -205,3 +207,59 @@ class RetailLoginViewTests(TestCase):
         self.assertEqual(response_after_login.status_code, 200)
         self.assertTrue(response_after_login.context['user'].is_authenticated)
         self.assertEqual(response_after_login.context['user'].username, 'casetestuser')
+
+# New Test Class for UserProfile Model
+class UserProfileModelTests(TestCase):
+    def setUp(self):
+        User = get_user_model() # Ensures User is correctly defined for this class
+        self.user1 = User.objects.create_user(username='modeltestuser1', email='modeltest1@example.com', password='password123')
+        # Ensure unique bid for business to avoid issues if tests are run multiple times or in parallel
+        self.business1 = Business.objects.create(name='Model Test Business 1', email='modelbiz1@example.com', bid='mtb_unique_bid_001')
+
+        self.user2 = User.objects.create_user(username='modeltestuser2', email='modeltest2@example.com', password='password123')
+        self.contact1 = Contact.objects.create(
+            business=self.business1,
+            first_name='ModelTest',
+            last_name='Contact1',
+            email='modelcontact1@example.com',
+            mobile='1234509876' # String for mobile
+        )
+        self.user3 = User.objects.create_user(username='modeltestuser3', email='modeltest3@example.com', password='password123')
+
+    def test_user_profile_creation(self):
+        profile = UserProfile.objects.create(user=self.user1, user_type='staff', business=self.business1)
+        self.assertEqual(self.user1.profile, profile)
+
+    def test_user_profile_business_association(self):
+        # Create a new profile for this test to ensure isolation
+        # Recreating user1's profile here for this specific test or ensuring it's clean.
+        # If setUp creates it, this might be redundant or cause issues if not handled.
+        # For now, assuming self.user1 has no profile or it's okay to re-create/re-associate.
+        # Better: Create a new user for this test or ensure clean state.
+        # Let's use user1 as per prompt, assuming it's fine or setUp doesn't create its profile.
+        profile = UserProfile.objects.create(user=self.user1, user_type='staff', business=self.business1)
+        self.assertEqual(profile.business, self.business1)
+        self.assertIn(profile, self.business1.staff_profiles.all())
+
+    def test_user_profile_contact_link(self):
+        profile = UserProfile.objects.create(user=self.user2, user_type='customer', contact_link=self.contact1)
+        self.assertEqual(profile.contact_link, self.contact1)
+        self.assertEqual(self.contact1.user_profile_link, profile)
+        self.assertIsNone(profile.business, "Customer UserProfile should not have a direct business link.")
+
+    def test_user_profile_staff_requires_business(self):
+        User = get_user_model()
+        # Use a unique username for the user in this specific test
+        staff_user = User.objects.create_user(username='staffcheckuser_model', email='staffcheck_model@example.com', password='password123')
+        with self.assertRaises(ValidationError, msg="Staff UserProfile should require a business."):
+            # Note: The prompt implies a CheckConstraint is in the model.
+            # Django's CheckConstraint validation runs at the DB level or via full_clean().
+            profile = UserProfile(user=staff_user, user_type='staff', business=None)
+            profile.full_clean()
+
+    def test_user_profile_customer_cannot_have_business(self):
+        # Assuming a CheckConstraint like:
+        # models.Q(user_type='customer', business__isnull=True)
+        with self.assertRaises(ValidationError, msg="Customer UserProfile should not have a direct business link."):
+            profile = UserProfile(user=self.user3, user_type='customer', business=self.business1, contact_link=self.contact1)
+            profile.full_clean()
