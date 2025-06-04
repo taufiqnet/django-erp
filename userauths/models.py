@@ -44,7 +44,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
 
     contact_link = models.OneToOneField( # Added field
-        'contact.Contact',
+        Contact,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
